@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.lovepeaceharmony.androidapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application
+        android:name=".utility.LPHApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
+
+        <!--Fabric naveen.kumar@nuvedalearning.com account-->
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e3cf13e42700399d77c9f0c5ce36cfd1d8ea3da2" />
+
+        <!--Fb initialization start-->
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <!--Fb initialization end-->
+
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:configChanges="keyboard|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.AddReminderActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.LoginDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ui.activity.CreateAccountActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ui.activity.NewsDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".ui.activity.CategoryNewsListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".ui.activity.ProfilePicUploadActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <provider
+            android:name=".db.ContentProviderDb"
+            android:authorities="org.lovepeaceharmony.androidapp.db.contentProviderAuthorities"
+            android:exported="false" />
+
+
+        <receiver android:name=".utility.AlarmReceiver"/>
+
+       <!-- <receiver android:name=".utility.AlarmReceiver"
+            android:exported="false"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="ALARM_RECEIVER_INTENT_TRIGGER"/>
+            </intent-filter>
+
+        </receiver>-->
+
+        <receiver
+            android:name=".utility.AlarmBootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".utility.VolumeChangeReceiver">
+            <intent-filter>
+                <action android:name="android.media.VOLUME_CHANGED_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".utility.ThreadClearService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+
+    </application>
+
+</manifest>

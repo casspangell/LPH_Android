@@ -1,0 +1,73 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textViewStyle">@style/OpenSansRegularTextViewStyle</item>
+        <item name="colorPrimaryDark">@color/colorTitleBar</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+
+    <style name="OpenSansRegularTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="fontFamily">@font/open_sans_regular</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="OpenSansSemiBoldTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/open_sans_semi_bold</item>
+        <item name="fontFamily">@font/open_sans_semi_bold</item> <!-- target android sdk versions < 26 and > 14 if theme other than AppCompat -->
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <!-- for tab text -->
+    <style name="AppTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <!--<item name="android:fontFamily">sans-serif</item>-->
+        <item name="android:textViewStyle">@style/OpenSansSemiBoldTextViewStyle</item>
+        <item name="android:textStyle">bold</item>
+        <!--<item name="android:textSize">@dimen/font_size_mini</item>-->
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="AppTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabMaxWidth">264dp</item>
+        <item name="tabIndicatorColor">@android:color/transparent</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabPaddingStart">6dp</item>
+        <item name="tabPaddingEnd">6dp</item>
+        <item name="android:background">@drawable/tab_selector</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="tabTextAppearance">@style/AppTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+
+    </style>
+
+    <style name="AppTabLayoutNews" parent="Widget.Design.TabLayout">
+        <item name="tabMaxWidth">264dp</item>
+        <item name="tabIndicatorColor">@android:color/transparent</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabPaddingStart">6dp</item>
+        <item name="tabPaddingEnd">6dp</item>
+        <item name="android:background">@drawable/tab_selector_news</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="tabTextAppearance">@style/AppTabTextAppearance</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+
+    </style>
+
+    <!--<style name="Theme_Dialog" parent="android:Theme.Holo.Dialog">
+        <item name="android:windowMinWidthMajor">90%</item>
+    </style>-->
+
+    <style name="ProgressBarTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
+
+</resources>

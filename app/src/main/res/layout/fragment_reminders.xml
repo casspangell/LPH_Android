@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_no_data_found"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:enabled="false"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/no_data"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/black" />
+
+
+        <RelativeLayout
+            android:id="@+id/rl_progressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/ProgressBarTheme" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:tint="#FFF"
+        app:elevation="6dp"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:layout_anchor="@id/recycler_view"
+        app:layout_anchorGravity="bottom|right|end"/>
+
+
+</android.support.design.widget.CoordinatorLayout>

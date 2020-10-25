@@ -1,0 +1,271 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="org.lovepeaceharmony.androidapp.ui.fragment.FavoriteNewsFragment">
+
+    <LinearLayout
+        android:id="@+id/favourites_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+
+        <RelativeLayout
+            android:id="@+id/swipe_refresh_feeds_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/pb_view_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:theme="@style/ProgressBarTheme"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_progressContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/ProgressBarTheme" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:id="@+id/empty_favorite_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/OpenSansSemiBoldTextViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/no_favorites_to_show"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="62dp"
+                android:layout_marginStart="62dp"
+                android:gravity="center"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:text="@string/look_like_not_added_favorite"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="16dp"
+                tools:ignore="UseCompoundDrawables">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/favorite_hint_1"
+                    android:textColor="@android:color/black" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:contentDescription="@string/favorites"
+                    android:src="@drawable/ic_star_border_black_24dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingBottom="16dp"
+                android:text="@string/favorite_hint_2"
+                android:textColor="@android:color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/ripple_light_grey" />
+
+            <TextView
+                android:id="@+id/tv_recent_articles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/ripple"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/recent_articles"
+                android:textColor="@android:color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/ripple_light_grey" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/login_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/OpenSansSemiBoldTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/login_to_view_favorites"
+            android:textAlignment="center"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/login_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/facebook_sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/facebook_btn"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingEnd="0dp"
+                android:paddingStart="16dp">
+
+                <TextView
+                    style="@style/OpenSansSemiBoldTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawableStart="@drawable/ic_facebook_logo"
+                    android:gravity="center"
+                    android:text="@string/login_with_facebook"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/fb_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="30dp"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/google_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/google_btn"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingEnd="0dp"
+                android:paddingStart="8dp">
+
+                <LinearLayout
+                    android:id="@+id/icon_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@android:color/white"
+                    android:gravity="center"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/sign_in_with_google"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_google_logo" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/OpenSansSemiBoldTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="24dp"
+                    android:layout_toEndOf="@id/icon_layout"
+                    android:gravity="center"
+                    android:text="@string/sign_in_with_google"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/ripple"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/sign_in_with_email"
+                android:textColor="@android:color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/ripple_light_grey" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

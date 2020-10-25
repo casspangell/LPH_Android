@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>-->
+    <color name="colorPrimary">#7A71AE</color>
+    <color name="colorTitleBar">#746eaf</color>
+    <color name="colorPrimaryDark">#68328C</color>
+    <!--<color name="colorAccent">#FF4081</color>-->
+    <color name="colorAccent">#68328c</color>
+    <color name="loading_color">#662D91</color>
+
+    <color name="bottom_bar_bg">#F8F8F8</color>
+    <color name="tab_background">#EFEFEF</color>
+    <color name="top_bar_yellow">#F4D255</color>
+    <color name="top_bar_orange">#F3A944</color>
+    <!--<color name="white">#FFFFFF</color>-->
+    <!--<color name="black">#000000</color>-->
+    <color name="about_selected_color">#FF6026</color>
+    <color name="profile_selected_color">#B8B44E</color>
+    <color name="line_divider">#494643</color>
+    <color name="fb_btn_color">#3B5998</color>
+    <color name="google_btn_color">#418BEA</color>
+    <color name="ripple_light_grey">#FFDDDDDD</color>
+    <color name="dark_grey">#616161</color>
+    <color name="profile_grey">#8E8E93</color>
+    <color name="profile_pic_grey">#E4E4E4</color>
+    <color name="profile_item_color">#EFEFF3</color>
+    <color name="profile_green_color">#B6C047</color>
+    <color name="milestone_chant_orange">#F5AA3A</color>
+    <color name="milestone_chat_yellow">#FFD549</color>
+    <color name="tool_tip_color1">#746eaf</color>
+    <color name="tool_tip_color2">#00B6B1</color>
+    <color name="tool_tip_color3">#BCC35C</color>
+    <color name="bottom_icon_color">#8F8F94</color>
+</resources>

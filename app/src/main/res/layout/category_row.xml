@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:weightSum="2"
+    android:layout_margin="5dp">
+
+
+    <ImageView
+        android:id="@+id/iv_default_category"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_weight="1.2"
+        android:contentDescription="@string/news"
+        android:visibility="gone"
+        android:src="@drawable/ic_default_category"/>
+
+    <ImageView
+        android:id="@+id/iv_news_pic"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_weight="1.2"
+        android:contentDescription="@string/news"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:layout_marginStart="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_no_posts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tv_unread_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/about_selected_color"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/tv_favorite_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+
+</LinearLayout>

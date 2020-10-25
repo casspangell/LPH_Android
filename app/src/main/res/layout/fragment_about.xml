@@ -1,0 +1,79 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.lovepeaceharmony.androidapp.ui.fragment.ChantFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/profile_pic_grey"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tv_view_website"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/ripple_white"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/visit_our_website"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/tv_donate_now"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/ripple_white"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="@string/donate_now"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            style="@style/AppTabLayout"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabBackground="@drawable/tab_selector_about" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

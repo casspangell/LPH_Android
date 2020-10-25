@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:padding="10dp">
+
+        <LinearLayout
+            android:id="@+id/lay_reminder_row_time_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/default_time_template"
+                android:textColor="@android:color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_am_pm"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:gravity="bottom"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lay_reminder_row_time_container"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/repeats" />
+
+        <TextView
+            android:id="@+id/tv_repeat_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+
+    <ToggleButton
+        android:id="@+id/toggle_enabled"
+        android:layout_width="45dp"
+        android:layout_height="28dp"
+        android:background="@drawable/toggle_selector"
+        android:layout_margin="5dp"
+        android:textOff=""
+        android:text=""
+        android:textOn=""
+        android:checked="false"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

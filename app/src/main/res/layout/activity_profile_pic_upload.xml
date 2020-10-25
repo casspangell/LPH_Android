@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/header_layout" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:drawableStart="@drawable/ic_chevron_left_black_24dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:text="@string/back"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/profile_picture"
+            style="@style/OpenSansSemiBoldTextViewStyle"
+            android:textColor="@android:color/black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:gravity="center">
+
+        <org.lovepeaceharmony.androidapp.utility.RoundedImageView
+            android:id="@+id/iv_image"
+            android:layout_width="144dp"
+            android:layout_height="144dp"
+            android:background="@drawable/circle_mask"
+            android:scaleType="centerCrop"
+            app:maskDrawable="@drawable/circle_mask" />
+
+        <org.lovepeaceharmony.androidapp.utility.RoundedImageView
+            android:id="@+id/iv_default_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_centerInParent="true"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            android:src="@drawable/ic_person_black_24dp"
+            android:tint="@color/profile_grey"
+            app:maskDrawable="@drawable/circle_mask" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/ripple_profile_item"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_photo_camera"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:text="@string/take_a_new_photo" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_choose_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/ripple_profile_item"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_gallery"
+            android:gravity="center"
+            android:paddingStart="0dp"
+            android:paddingEnd="12dp"
+            android:textColor="@android:color/black"
+            android:text="@string/choose_a_photo" />
+
+    </LinearLayout>
+</LinearLayout>
