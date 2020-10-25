@@ -23,6 +23,7 @@ import com.facebook.login.widget.LoginButton
 import com.google.firebase.auth.FirebaseAuth
 import org.json.JSONException
 import org.json.JSONObject
+import org.lovepeaceharmony.androidapp.BuildConfig
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.ui.activity.LoginActivity
 import org.lovepeaceharmony.androidapp.ui.activity.LoginDetailActivity
@@ -79,9 +80,9 @@ class ProfileFragment : Fragment() {
         val tvVersion = view.findViewById<TextView>(R.id.tvVersion)
 
         try {
-            val pInfo = context?.packageManager?.getPackageInfo(context?.packageName, 0)
-            val version = "version " + pInfo?.versionName
-            tvVersion.text = version
+            context?.let {
+                tvVersion.text = "version ${it.packageManager.getPackageInfo(it.packageName, 0)}"
+            }
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }

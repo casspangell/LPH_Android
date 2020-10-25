@@ -16,7 +16,7 @@ class ContentProviderDb : ContentProvider() {
     private var databaseHelper: LPHDbHelper? = null
 
     override fun onCreate(): Boolean {
-        databaseHelper = LPHDbHelper(context)
+        context?.let { databaseHelper = LPHDbHelper(it) }
         return true
     }
 

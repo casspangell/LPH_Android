@@ -13,19 +13,9 @@ import org.lovepeaceharmony.androidapp.R
  * MessageBox
  * Created by Naveen Kumar M on 02/01/18.
  */
-class MessageBox(activityInstance: Context, dialogTitle: String, dialogMessage: String) {
+class MessageBox(private val context: Context, private val title: String, private val message: String) {
 
     private var progressDialog: Dialog? = null
-    private var context: Context? = null
-    private var title: String? = ""
-    private var message: String? = ""
-
-    init {
-        this.context = activityInstance
-        this.title = dialogTitle
-        this.message = dialogMessage
-    }
-
 
     fun showProgress() {
         progressDialog = Dialog(context)
