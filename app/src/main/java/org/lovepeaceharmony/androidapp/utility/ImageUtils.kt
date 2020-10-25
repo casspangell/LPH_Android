@@ -121,7 +121,7 @@ class ImageUtils {
             cursor.close()
             path
         } else
-            uri.path
+            uri.path ?: ""
     }
 
     /**
@@ -246,7 +246,7 @@ class ImageUtils {
         scaleMatrix.setScale(ratioX, ratioY, middleX, middleY)
 
         val canvas = Canvas(scaledBitmap!!)
-        canvas.matrix = scaleMatrix
+        canvas.setMatrix(scaleMatrix)
         canvas.drawBitmap(bmp, middleX - bmp.width / 2, middleY - bmp.height / 2, Paint(Paint.FILTER_BITMAP_FLAG))
 
         // check the rotation of the image and display it properly
@@ -295,7 +295,7 @@ class ImageUtils {
         val cursor = context.contentResolver.query(contentUri, null, null, null, null)
         try {
             if (cursor == null) {
-                return contentUri.path
+                return contentUri.path ?: ""
             } else {
                 cursor.moveToFirst()
                 val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
@@ -600,7 +600,7 @@ class ImageUtils {
                         fileName = selectedPath!!.substring(selectedPath!!.lastIndexOf("/") + 1)
                         // Log.i("file","name"+file_name);
 
-                        val uploadedBitmap: Bitmap? = data.extras.get("data") as? Bitmap
+                        val uploadedBitmap: Bitmap? = data.extras?.get("data") as? Bitmap
 
 //                        val uploadedBitmap = BitmapFactory.decodeFile(selectedPath)
                         val byteArrayOutputStream = ByteArrayOutputStream()
@@ -635,7 +635,7 @@ class ImageUtils {
 
 //                    bitmap = compressImage(selectedImage!!.toString(), 144f, 144f)
                     LPHLog.d("selectedPath : " + selectedPath!!)
-                    imageAttachmentCallBack!!.imageAttachment(from, fileName, uploadedBitmap, selectedImage, encoded)
+                    imageAttachmentCallBack!!.imageAttachment(from, fileName, uploadedBitmap, selectedImage!!, encoded)
                 } catch (exception: OutOfMemoryError) {
                     exception.printStackTrace()
                     Toast.makeText(context, context.getString(R.string.upload_out_of_memory), Toast.LENGTH_SHORT).show()
@@ -681,7 +681,7 @@ class ImageUtils {
 
         try {
 
-            path = getRealPathFromURI(uri.path)
+            path = getRealPathFromURI(uri.path ?: "")
             fileName = path.substring(path.lastIndexOf("/") + 1)
         } catch (e: Exception) {
             e.printStackTrace()

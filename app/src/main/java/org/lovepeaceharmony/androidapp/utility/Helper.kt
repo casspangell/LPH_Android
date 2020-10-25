@@ -23,7 +23,6 @@ import android.view.inputmethod.InputMethodManager
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.iid.FirebaseInstanceId
-import junit.framework.Assert
 import org.json.JSONException
 import org.json.JSONObject
 import org.lovepeaceharmony.androidapp.R
@@ -203,7 +202,7 @@ object Helper {
 
     fun getStringFromPreference(context: Context, key: String): String {
         val sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-        return sharedPreferences.getString(key, "")
+        return sharedPreferences.getString(key, "") ?: ""
     }
 
     fun getBooleanFromPreference(context: Context, key: String): Boolean {
@@ -496,10 +495,9 @@ object Helper {
     }
 
     fun setPlayList(context: Context, path: String, extension: String) {
-        Assert.assertNotNull(context)
 
         try {
-            val files = context.assets.list(path)
+            val files = context.assets.list(path) ?: return
 
             val filesWithExtension = ArrayList<String>()
 

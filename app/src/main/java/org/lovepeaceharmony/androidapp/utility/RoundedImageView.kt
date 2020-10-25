@@ -151,16 +151,14 @@ class RoundedImageView @JvmOverloads constructor(context: Context, attrs: Attrib
                     mDesaturateColorFilter
                 else
                     null
-                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint,
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
+                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint, Canvas.ALL_SAVE_FLAG)
                 super.onDraw(cacheCanvas)
                 cacheCanvas.restoreToCount(sc)
             } else if (mDesaturateOnPress && isPressed) {
                 val sc = cacheCanvas.save()
                 cacheCanvas.drawRect(0f, 0f, mCachedWidth.toFloat(), mCachedHeight.toFloat(), mBlackPaint)
                 mMaskedPaint.colorFilter = mDesaturateColorFilter
-                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint,
-                        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG or Canvas.FULL_COLOR_LAYER_SAVE_FLAG)
+                cacheCanvas.saveLayer(mBoundsF, mMaskedPaint, Canvas.ALL_SAVE_FLAG)
                 super.onDraw(cacheCanvas)
                 cacheCanvas.restoreToCount(sc)
             } else {

@@ -98,7 +98,7 @@ class NewsDetailActivity : AppCompatActivity(), OnRefreshCallback{
                 }
             })
 
-            webView.loadUrl(newsVo?.newsDetailUrl)
+            newsVo?.newsDetailUrl?.let { webView.loadUrl(it) }
 
             /*val aQuery = AQuery(context)
             val imageWidth = Helper.getDisplayWidth(context!!)
