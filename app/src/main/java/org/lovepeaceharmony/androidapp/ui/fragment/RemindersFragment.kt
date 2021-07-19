@@ -7,14 +7,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.Fragment
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -70,20 +70,20 @@ class RemindersFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Rem
         tvNoDataFound = view.findViewById(R.id.tv_no_data_found)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        remindersAdapter = ReminderAdapter(context!!, null, this)
+        remindersAdapter = ReminderAdapter(requireContext(), null, this)
         recyclerView.adapter = remindersAdapter
 
-        recyclerView.addItemDecoration(DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         recyclerView.setHasFixedSize(true)
         recyclerView.itemAnimator = DefaultItemAnimator()
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy > 0 || dy < 0 && fabButton.isShown)
                     fabButton.hide()
             }
 
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
 
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     fabButton.show()
@@ -102,17 +102,17 @@ class RemindersFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Rem
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null)
-            activity!!.registerReceiver(mReminderBroadCast, IntentFilter(Constants.BROADCAST_REMINDERS))
+            requireActivity().registerReceiver(mReminderBroadCast, IntentFilter(Constants.BROADCAST_REMINDERS))
     }
 
     override fun onDetach() {
         super.onDetach()
         if (activity != null)
-            activity!!.unregisterReceiver(mReminderBroadCast)
+            requireActivity().unregisterReceiver(mReminderBroadCast)
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        return AlarmModel.getCursorLoader(context!!)
+        return AlarmModel.getCursorLoader(requireContext())
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor?) {

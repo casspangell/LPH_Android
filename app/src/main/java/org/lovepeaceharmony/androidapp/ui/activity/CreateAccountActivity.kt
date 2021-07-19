@@ -3,7 +3,7 @@ package org.lovepeaceharmony.androidapp.ui.activity
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText

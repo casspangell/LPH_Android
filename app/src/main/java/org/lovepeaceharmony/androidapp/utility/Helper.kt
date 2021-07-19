@@ -11,8 +11,8 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AlertDialog
 import android.text.Html
 import android.text.Spanned
 import android.util.DisplayMetrics
@@ -22,7 +22,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
 import org.json.JSONObject
 import org.lovepeaceharmony.androidapp.R
@@ -364,9 +364,8 @@ object Helper {
                                 .build())
                 .buildShortDynamicLink()
                 .addOnSuccessListener { shortDynamicLink ->
-                    val mInvitationUrl = shortDynamicLink.shortLink
                     mProgressDialog.hide()
-                    startInvite(mInvitationUrl, subject, context)
+                    shortDynamicLink.shortLink?.let { startInvite(it, subject, context) }
                 }
     }
 
@@ -768,11 +767,14 @@ object Helper {
             try {
                 val lphService = LPHServiceFactory.getCALFService(context?.get()!!)
                 val params = HashMap<String, String>()
-                val fcmToken: String = FirebaseInstanceId.getInstance()?.token!!
-                params[Constants.API_DEVICE_TOKEN] = fcmToken
-                params[Constants.API_DATE] = dateString
-                params[Constants.API_MINUTES] = minutes
-                response = lphService.updateMileStone(params)
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { fcmToken ->
+                    if (fcmToken.isSuccessful.not()) return@addOnCompleteListener
+                    params[Constants.API_DEVICE_TOKEN] = fcmToken.result
+                    params[Constants.API_DATE] = dateString
+                    params[Constants.API_MINUTES] = minutes
+                    response = lphService.updateMileStone(params)
+                }
+
             } catch (e: LPHException) {
                 e.printStackTrace()
                 response.setThrowable(e)

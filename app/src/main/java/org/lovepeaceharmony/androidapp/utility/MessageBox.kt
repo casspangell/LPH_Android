@@ -49,7 +49,7 @@ class MessageBox(private val context: Context, private val title: String, privat
     }
 
     fun showMessageForRetry(action: DialogInterface.OnClickListener) {
-        val alert = android.support.v7.app.AlertDialog.Builder(context!!)
+        val alert = androidx.appcompat.app.AlertDialog.Builder(context!!)
         alert.setTitle(title)
         alert.setMessage(message)
         alert.setCancelable(false)

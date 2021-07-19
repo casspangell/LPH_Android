@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.CursorIndexOutOfBoundsException
 import android.net.Uri
-import android.support.v4.content.CursorLoader
+import androidx.loader.content.CursorLoader
 import org.codehaus.jackson.annotate.JsonIgnoreProperties
 import org.codehaus.jackson.annotate.JsonProperty
 import org.lovepeaceharmony.androidapp.db.ContentProviderDb

@@ -2,7 +2,7 @@ package org.lovepeaceharmony.androidapp.ui.fragment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.*
 import android.widget.CheckBox
 import org.lovepeaceharmony.androidapp.R
@@ -212,7 +212,7 @@ class RepeatDialog : DialogFragment() {
             }
         }
 
-        dialog.setTitle(null)
+        dialog?.setTitle(null)
         return rootView
     }
 

@@ -2,9 +2,9 @@ package org.lovepeaceharmony.androidapp.adapters
 
 import android.content.Context
 import android.database.Cursor
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -124,7 +124,7 @@ class NewsAdapter(private val context: Context, cursor: Cursor?, private val onN
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(context).inflate(R.layout.news_row, parent, false)
         return ViewHolder(itemView)
     }

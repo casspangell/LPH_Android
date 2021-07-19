@@ -8,11 +8,11 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -20,7 +20,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.ui.fragment.AboutFragment
@@ -81,14 +82,18 @@ class MainActivity : AppCompatActivity(), OnTabChange {
         setContentView(R.layout.activity_main)
         initView()
 
-        val fcmToken = FirebaseInstanceId.getInstance().token
-        val deviceToken = Helper.getStringFromPreference(this, Constants.SHARED_PREF_DEVICE_TOKEN)
-        val token = Helper.getStringFromPreference(this, Constants.SHARED_PREF_TOKEN)
-        if(deviceToken == null || deviceToken.isEmpty() && !token.isEmpty() && Helper.isConnected(context = this@MainActivity)){
-            LPHLog.d("FCM TOKEN : " + fcmToken!!)
-            val updateDeviceTokenAsync = UpdateDeviceTokenAsync(this, fcmToken!!)
-            updateDeviceTokenAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+       FirebaseMessaging.getInstance().token.addOnCompleteListener { tokenTask ->
+            if (tokenTask.isSuccessful.not()) return@addOnCompleteListener
+            val fcmToken = tokenTask.result
+            val deviceToken = Helper.getStringFromPreference(this, Constants.SHARED_PREF_DEVICE_TOKEN)
+            val token = Helper.getStringFromPreference(this, Constants.SHARED_PREF_TOKEN)
+            if(deviceToken.isEmpty() && token.isNotEmpty() && Helper.isConnected(context = this@MainActivity)){
+                LPHLog.d("FCM TOKEN : " + fcmToken!!)
+                val updateDeviceTokenAsync = UpdateDeviceTokenAsync(this, fcmToken)
+                updateDeviceTokenAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+            }
         }
+
         registerReceiver(toolTipReceiver, IntentFilter(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
         registerReceiver(clearService, IntentFilter(Constants.BROADCAST_CLEAR_THREAD))
         startService(Intent(this, ThreadClearService::class.java))
@@ -130,10 +135,11 @@ class MainActivity : AppCompatActivity(), OnTabChange {
 
         if (isFromProfile) {
             /*Default Profile Selected*/
-            profileFragment = ProfileFragment.newInstance()
-            profileFragment!!.setOnTabChange(this)
-            fragmentManager.beginTransaction()
-                    .replace(R.id.home_container, profileFragment).commit()
+            profileFragment = ProfileFragment.newInstance().run {
+                setOnTabChange(this@MainActivity)
+                fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+                return@run this
+            }
 
             layoutProfile!!.setBackgroundColor(profileSelectedColor)
             imageProfile!!.setColorFilter(whiteColor)
@@ -142,10 +148,11 @@ class MainActivity : AppCompatActivity(), OnTabChange {
             /*Default Chant Selected*/
             val bundle = Bundle()
             bundle.putInt(Constants.BUNDLE_TAB_INDEX, 0)
-            chantFragment = ChantFragment.newInstance()
-            chantFragment?.arguments = bundle
-            fragmentManager.beginTransaction()
-                    .replace(R.id.home_container, chantFragment).commit()
+            chantFragment = ChantFragment.newInstance().run {
+                arguments = bundle
+                fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+                return@run this
+            }
 
             layoutChant!!.setBackgroundColor(chantSelectedColor)
             imageChant!!.setColorFilter(whiteColor)
@@ -162,9 +169,10 @@ class MainActivity : AppCompatActivity(), OnTabChange {
                 chantFragment = ChantFragment.newInstance()
             val bundle = Bundle()
             bundle.putInt(Constants.BUNDLE_TAB_INDEX, 0)
-            chantFragment?.arguments = bundle
-            fragmentManager.beginTransaction()
-                    .replace(R.id.home_container, chantFragment).commit()
+            chantFragment?.run {
+                arguments = bundle
+                fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+            }
 
             /*Selected*/
             view.setBackgroundColor(chantSelectedColor)
@@ -186,9 +194,10 @@ class MainActivity : AppCompatActivity(), OnTabChange {
         }
 
         layoutNews!!.setOnClickListener { view ->
-            newsFragment = NewsFragment.newInstance()
-            fragmentManager.beginTransaction()
-                    .replace(R.id.home_container, newsFragment).commit()
+            newsFragment = NewsFragment.newInstance().run {
+                fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+                return@run this
+            }
 
             /*Selected*/
             view.setBackgroundColor(newsSelectedColor)
@@ -234,10 +243,11 @@ class MainActivity : AppCompatActivity(), OnTabChange {
         }
 
         layoutProfile!!.setOnClickListener { view ->
-            profileFragment = ProfileFragment.newInstance()
-            profileFragment!!.setOnTabChange(this@MainActivity)
-            fragmentManager.beginTransaction()
-                    .replace(R.id.home_container, profileFragment).commit()
+            profileFragment = ProfileFragment.newInstance().run {
+                setOnTabChange(this@MainActivity)
+                fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+                return@run this
+            }
 
             /*Selected*/
             view.setBackgroundColor(profileSelectedColor)
@@ -421,9 +431,10 @@ class MainActivity : AppCompatActivity(), OnTabChange {
         bundle.putInt(Constants.BUNDLE_TAB_INDEX, 2)
         if(chantFragment == null)
             chantFragment = ChantFragment.newInstance()
-        chantFragment!!.arguments = bundle
-        fragmentManager.beginTransaction()
-                .replace(R.id.home_container, chantFragment).commit()
+        chantFragment?.run {
+            arguments = bundle
+            fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+        }
 
         /*Selected*/
         layoutChant!!.setBackgroundColor(chantSelectedColor)
@@ -449,9 +460,10 @@ class MainActivity : AppCompatActivity(), OnTabChange {
         newsFragment = NewsFragment.newInstance()
         val bundle = Bundle()
         bundle.putInt(Constants.BUNDLE_TAB_INDEX, 2)
-        newsFragment!!.arguments = bundle
-        fragmentManager.beginTransaction()
-                .replace(R.id.home_container, newsFragment).commit()
+        newsFragment?.run {
+            arguments = bundle
+            fragmentManager.beginTransaction().replace(R.id.home_container, this).commit()
+        }
 
         /*Selected*/
         layoutNews!!.setBackgroundColor(newsSelectedColor)
