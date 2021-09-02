@@ -11,8 +11,6 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AlertDialog
 import android.text.Html
 import android.text.Spanned
 import android.util.DisplayMetrics
@@ -20,8 +18,13 @@ import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
 import org.json.JSONObject
@@ -44,7 +47,7 @@ import java.util.*
 object Helper {
 
     private var mProgressDialog: ProgressDialog? = null
-    val MINUTE_INTERVAL: Long = 1000 * 60 * 1 //1 minutes
+    const val MINUTE_INTERVAL: Long = 1000 * 60 * 1 //1 minutes
 
 
     /**
@@ -63,8 +66,6 @@ object Helper {
             val alert = builder.create()
             alert.show()
         }
-
-        //        new android.support.v7.app.AlertDialog.Builder(context).setTitle(title).setMessage(message).setPositiveButton(android.R.string.yes, null).show();
     }
 
     fun getRepeatText(context: Context, repeatsInts: List<Int>): String {
@@ -72,7 +73,7 @@ object Helper {
         for (i in repeatsInts.indices) {
             val repeatId = repeatsInts[i]
             if (repeatId == 0) {
-                stringBuilder.append(context.getString(R.string.every_day))
+                stringBuilder.append(context.getString(R.string.everyday))
                 break
             } else {
                 if (i == 0) {
@@ -89,7 +90,7 @@ object Helper {
         var repeatText = ""
 
         when (repeatId) {
-            0 -> repeatText = context.getString(R.string.every_day)
+            0 -> repeatText = context.getString(R.string.everyday)
 
             1 -> repeatText = context.getString(R.string.sun)
 
@@ -114,18 +115,32 @@ object Helper {
 
     fun checkExternalStoragePermission(context: Context?): Boolean {
         return if (context != null) {
-            Build.VERSION.SDK_INT < 23 || (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
+            Build.VERSION.SDK_INT < 23 || (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED)
         } else {
             false
         }
     }
 
     fun convertFromDpToPixel(context: Context, dp: Float): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics)
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics
+        )
     }
 
     fun convertFromSpToPixel(context: Context, dp: Float): Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, dp, context.resources.displayMetrics)
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP,
+            dp,
+            context.resources.displayMetrics
+        )
     }
 
     /**
@@ -135,7 +150,8 @@ object Helper {
      * @return boolean
      */
     fun isNotValidEmail(email: String): Boolean {
-        val emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+        val emailPattern =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
         var isValid = false
         if (email.isNotEmpty() && email.matches(emailPattern.toRegex())) {
             isValid = true
@@ -143,7 +159,11 @@ object Helper {
         return !isValid
     }
 
-    fun showConfirmationAlertTwoButton(context: Context, message: String, callback: ConfirmationAlertCallback) {
+    fun showConfirmationAlertTwoButton(
+        context: Context,
+        message: String,
+        callback: ConfirmationAlertCallback
+    ) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(context.getString(R.string.app_name))
         builder.setMessage(message)
@@ -166,7 +186,11 @@ object Helper {
         neutralButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey))
     }
 
-    fun showResetConfirmationAlert(context: Context, message: String, callback: ConfirmationAlertCallback) {
+    fun showResetConfirmationAlert(
+        context: Context,
+        message: String,
+        callback: ConfirmationAlertCallback
+    ) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(context.getString(R.string.are_you_sure))
         builder.setMessage(message)
@@ -201,26 +225,31 @@ object Helper {
     }
 
     fun getStringFromPreference(context: Context, key: String): String {
-        val sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences =
+            context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getString(key, "") ?: ""
     }
 
     fun getBooleanFromPreference(context: Context, key: String): Boolean {
-        val fashdrobePreference = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val fashdrobePreference =
+            context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return fashdrobePreference.getBoolean(key, false)
     }
 
     fun getIntFromPreference(context: Context, key: String): Int {
-        val sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences =
+            context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getInt(key, 0)
     }
 
     fun getFloatFromPreference(context: Context, key: String): Float {
-        val sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences =
+            context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getFloat(key, 0f)
     }
 
     fun updateMileStonePendingMinutes(context: Context, minutes: Float) {
+        LPHLog.d("updateMileStonePendingMinutes $minutes")
         val cache = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         val lphConstants = cache?.edit()
         lphConstants?.putFloat(Constants.SHARED_PREF_PENDING_MINUTES, minutes)
@@ -230,7 +259,9 @@ object Helper {
 
 
     fun updateLocalMileStoneMinutes(context: Context, minutes: Float) {
-        var mileStoneMinutes = getIntFromPreference(context, Constants.SHARED_PREF_MILESTONE_MINUTES)
+        LPHLog.d("updateLocalMileStoneMinutes $minutes")
+        var mileStoneMinutes =
+            getIntFromPreference(context, Constants.SHARED_PREF_MILESTONE_MINUTES)
         mileStoneMinutes += minutes.toInt()
         val cache = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
         val lphConstants = cache?.edit()
@@ -336,8 +367,16 @@ object Helper {
         mProgressDialog.isIndeterminate = true
         mProgressDialog.show()
 
-        LPHLog.d("Invite Code : " + getStringFromPreference(context, Constants.SHARED_PREF_INVITE_COUPON))
-        val link = "https://lovepaceharmony.org/?invitedby=" + getStringFromPreference(context, Constants.SHARED_PREF_INVITE_COUPON)
+        LPHLog.d(
+            "Invite Code : " + getStringFromPreference(
+                context,
+                Constants.SHARED_PREF_INVITE_COUPON
+            )
+        )
+        val link = "https://lovepaceharmony.org/?invitedby=" + getStringFromPreference(
+            context,
+            Constants.SHARED_PREF_INVITE_COUPON
+        )
         val userName = getStringFromPreference(context, Constants.SHARED_PREF_USER_NAME)
         val subject = String.format("%s wants you to chant now!", userName)
         LPHLog.d("Link : " + link + " package : " + context.applicationContext.packageName)
@@ -345,28 +384,31 @@ object Helper {
         val info = manager.getPackageInfo(context.packageName, 0)
 
         FirebaseDynamicLinks.getInstance().createDynamicLink()
-                .setLink(Uri.parse(link))
-                .setDynamicLinkDomain("jf627.app.goo.gl")
-                .setAndroidParameters(
-                        DynamicLink.AndroidParameters.Builder(context.applicationContext.packageName)
-                                .setMinimumVersion(info.versionCode)
-                                .build())
-                .setIosParameters(
-                        DynamicLink.IosParameters.Builder("org.lovepeaceharmony.ios.app")
-                                .setAppStoreId("1355584112")
-                                .setMinimumVersion("1.0")
-                                .build())
-                .setSocialMetaTagParameters(
-                        DynamicLink.SocialMetaTagParameters.Builder()
-                                .setTitle(subject)
-                                .setDescription("Let's chant together! Use Love Peace Harmony")
-                                .setImageUrl(Uri.parse("https://lovepeaceharmony.org/content/uploads/2015/10/LPH_1170x440.jpg"))
-                                .build())
-                .buildShortDynamicLink()
-                .addOnSuccessListener { shortDynamicLink ->
-                    mProgressDialog.hide()
-                    shortDynamicLink.shortLink?.let { startInvite(it, subject, context) }
-                }
+            .setLink(Uri.parse(link))
+            .setDynamicLinkDomain("jf627.app.goo.gl")
+            .setAndroidParameters(
+                DynamicLink.AndroidParameters.Builder(context.applicationContext.packageName)
+                    .setMinimumVersion(info.versionCode)
+                    .build()
+            )
+            .setIosParameters(
+                DynamicLink.IosParameters.Builder("org.lovepeaceharmony.ios.app")
+                    .setAppStoreId("1355584112")
+                    .setMinimumVersion("1.0")
+                    .build()
+            )
+            .setSocialMetaTagParameters(
+                DynamicLink.SocialMetaTagParameters.Builder()
+                    .setTitle(subject)
+                    .setDescription("Let's chant together! Use Love Peace Harmony")
+                    .setImageUrl(Uri.parse("https://lovepeaceharmony.org/content/uploads/2015/10/LPH_1170x440.jpg"))
+                    .build()
+            )
+            .buildShortDynamicLink()
+            .addOnSuccessListener { shortDynamicLink ->
+                mProgressDialog.hide()
+                shortDynamicLink.shortLink?.let { startInvite(it, subject, context) }
+            }
     }
 
     private fun startInvite(mInvitationUrl: Uri, subject: String, context: Context) {
@@ -374,7 +416,10 @@ object Helper {
 
         val invitationLink = mInvitationUrl.toString()
         val msg = "Let's chant together! Use Love Peace Harmony link: " + invitationLink
-        val msgHtml = String.format("<p>Let's chant together! Use " + "<a href=\"%s\">Love Peace Harmony </a>!</p>", invitationLink)
+        val msgHtml = String.format(
+            "<p>Let's chant together! Use " + "<a href=\"%s\">Love Peace Harmony </a>!</p>",
+            invitationLink
+        )
 
         LPHLog.d("Invitation Link : " + invitationLink)
 
@@ -403,9 +448,9 @@ object Helper {
 
     fun getSource(loginType: Constants.LoginType): String {
 
-        val source:String
+        val source: String
 
-        when(loginType) {
+        when (loginType) {
             Constants.LoginType.Facebook -> {
                 source = "facebook"
             }
@@ -427,14 +472,18 @@ object Helper {
         return source
     }
 
-    fun isLoggedInUser(context: Context) : Boolean {
+    fun isLoggedInUser(context: Context): Boolean {
         var isLoggedInUser = false
-        val isLoggedIn = Helper.getBooleanFromPreference(context = context, key = Constants.SHARED_PREF_IS_LOGIN)
-        val loginType = Helper.getStringFromPreference(context = context, key = Constants.SHARED_PREF_LOGIN_TYPE)
+        val isLoggedIn =
+            Helper.getBooleanFromPreference(context = context, key = Constants.SHARED_PREF_IS_LOGIN)
+        val loginType = Helper.getStringFromPreference(
+            context = context,
+            key = Constants.SHARED_PREF_LOGIN_TYPE
+        )
         if (isLoggedIn && loginType != Constants.LoginType.WithoutEmail.name) {
             isLoggedInUser = true
         }
-        return isLoggedInUser
+        return Firebase.auth.currentUser != null
     }
 
 
@@ -447,24 +496,41 @@ object Helper {
         return outPutFormat.format(time)
     }
 
+    private fun getCurrentServerTime(): String {
+        val time = Calendar.getInstance().time
+        val outPutFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault())
+        LPHLog.d("Current Time in India : " + outPutFormat.format(time))
+        outPutFormat.timeZone = TimeZone.getTimeZone("GMT")
+        LPHLog.d("Current Time in Global : " + outPutFormat.format(time))
+        return outPutFormat.format(time)
+    }
 
-    fun callUpdateMileStoneAsync(context: WeakReference<Context>, minutes: Float){
-        if(minutes > 0f && isConnected(context.get()!!)){
-            LPHLog.d("Pending Minutes : " +  "%.2f".format(minutes))
-            var chantingDate = getStringFromPreference(context.get()!!, Constants.SHARED_PREF_PENDING_DATE)
-            if(chantingDate == "" || chantingDate.isEmpty())
-                chantingDate= getCurrentGMT()
-            val updateMileStoneAsync = UpdateMileStoneAsync(context,  chantingDate, "%.2f".format(minutes))
-            updateMileStoneAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
+
+    fun callUpdateMileStoneAsync(context: WeakReference<Context>, minutes: Float) {
+        if (minutes > 0f && isConnected(context.get()!!)) {
+            LPHLog.d("Pending Seconds : ${minutes.div(60).toInt()}")
+            var chantingDate =
+                getStringFromPreference(context.get()!!, Constants.SHARED_PREF_PENDING_DATE)
+            if (chantingDate == "" || chantingDate.isEmpty()) chantingDate = getCurrentServerTime()
+
+            Firebase.auth.currentUser?.let {
+                LPHLog.d("callUpdateMileStoneAsync $minutes && user is user:${it.uid} && chantingDate is $chantingDate")
+                Firebase.database.reference
+                    .child("user:${it.uid}")
+                    .child("chanting_milestone")
+                    .child(chantingDate).setValue(ChantingMilestone(chantingDate, minutes.div(60).toLong()))
+            }
         }
     }
 
     fun numberWithSuffix(count: Long): String {
         if (count < 1000) return "" + count
         val exp = (Math.log(count.toDouble()) / Math.log(1000.0)).toInt()
-        return String.format("%.0f%c",
-                count / Math.pow(1000.0, exp.toDouble()),
-                "kMGTPE"[exp - 1])
+        return String.format(
+            "%.0f%c",
+            count / Math.pow(1000.0, exp.toDouble()),
+            "kMGTPE"[exp - 1]
+        )
     }
 
     private fun makeDecimal(`val`: Long, div: Long, sfx: String): String {
@@ -472,9 +538,12 @@ object Helper {
         `val` = `val` / (div / 10)
         val whole = `val` / 10
         val tenths = `val` % 10
-        return if (tenths == 0L || whole >= 10) String.format("%d%s", whole, sfx) else String.format("%d.%d%s", whole, tenths, sfx)
+        return if (tenths == 0L || whole >= 10) String.format(
+            "%d%s",
+            whole,
+            sfx
+        ) else String.format("%d.%d%s", whole, tenths, sfx)
     }
-
 
 
     fun formatNumberToText(`val`: Long): String {
@@ -510,7 +579,7 @@ object Helper {
                         val songsModel = SongsModel()
                         songsModel.id = i
                         songsModel.songTitle = songTitle
-                        songsModel.songPath = "songs/" + file
+                        songsModel.songPath = "songs/$file"
                         songsModel.isChecked = true
                         songsModel.isToolTip = false
                         SongsModel.insertSong(context, songsModel)
@@ -535,7 +604,6 @@ object Helper {
         var fName = fileName.replace(".mp3", "")
         fName = fName.replace("01_", "")
         fName = fName.replace("02_", "")
-        fName = fName.replace("03_", "")
         fName = fName.replace("04_", "")
         fName = fName.replace("05_", "")
         fName = fName.replace("06_", "")
@@ -575,102 +643,11 @@ object Helper {
         AlarmModel.clearAllAlarms(context)
     }
 
-    class RegisterAsync internal constructor(context: WeakReference<Context>,
-                                                     private val email: String, private val password: String, private val profilePicUrl: String,
-                                                     private val name: String, private val isFromProfile: Boolean, private val loginType: Constants.LoginType) : AsyncTask<Void, Void, Response<Any>>() {
-        private var progress: MessageBox? = null
-        private var context: WeakReference<Context>? = null
-
-        init {
-            this.context = context
-        }
-        override fun onPreExecute() {
-            progress = MessageBox(context?.get()!!, context?.get()!!.resources.getString(R.string.processing_request), context?.get()!!.resources.getString(R.string.please_wait))
-            progress!!.showProgress()
-            super.onPreExecute()
-        }
-
-        override fun doInBackground(vararg voids: Void): Response<Any> {
-            var response = Response<Any>()
-            try {
-                val lphService = LPHServiceFactory.getCALFService(context?.get()!!)
-                val params = HashMap<String, String>()
-                params[Constants.API_NAME] = name
-                params[Constants.API_EMAIL] = email
-                params[Constants.API_PASSWORD] = password
-                params[Constants.API_PROFILE_PIC_URL] =  profilePicUrl
-                params[Constants.API_SOURCE] =  getSource(loginType)
-                val inviteCode = getStringFromPreference(context = context?.get()!!, key = Constants.SHARED_PREF_INVITED_BY)
-                if(inviteCode != null && !inviteCode.isEmpty())
-                    params[Constants.API_INVITE_TOKEN] = inviteCode
-                response = lphService.register(params)
-            } catch (e: LPHException) {
-                e.printStackTrace()
-                response.setThrowable(e)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-                response.setThrowable(e)
-            } catch (e: IOException) {
-                e.printStackTrace()
-                response.setThrowable(e)
-            }
-
-            return response
-        }
-
-        override fun onPostExecute(response: Response<Any>) {
-            super.onPostExecute(response)
-            if (progress != null) {
-                progress!!.hideProgress()
-                progress = null
-            }
-            if (response.isSuccess()) {
-
-                val res: String = response.getResult() as String
-                LPHLog.d("Response onPost 1: " + res)
-                val jsonObj  = JSONObject(res)
-                val dataObj = jsonObj.getJSONObject(Constants.PARSE_DATA)
-                val userObj = dataObj.getJSONObject(Constants.PARSE_USER)
-                val name = userObj.optString(Constants.API_NAME)
-                val email = userObj.optString(Constants.API_EMAIL)
-                val source = userObj.optString(Constants.API_SOURCE)
-                val profilePic = userObj.optString(Constants.API_PROFILE_PIC_URL)
-                val id = userObj.optInt(Constants.PARSE_ID)
-                val inviteCoupon = userObj.optString(Constants.PARSE_INVITE_COUPON)
-                val token = dataObj.optString(Constants.API_TOKEN)
-
-                val cache = context?.get()!!.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-                val lphConstants = cache?.edit()
-                lphConstants?.putBoolean(Constants.SHARED_PREF_IS_LOGIN, true)
-                lphConstants?.putString(Constants.SHARED_PREF_LOGIN_TYPE, loginType.name)
-                lphConstants?.putString(Constants.SHARED_PREF_TOKEN, token)
-                lphConstants?.putString(Constants.SHARED_PREF_USER_NAME, name)
-                lphConstants?.putString(Constants.SHARED_PREF_EMAIL, email)
-                lphConstants?.putString(Constants.SHARED_PREF_SOURCE, source)
-                lphConstants?.putString(Constants.SHARED_PREF_PROFILE_PIC_URL, profilePic)
-                lphConstants?.putString(Constants.SHARED_PREF_INVITE_COUPON, inviteCoupon)
-                lphConstants?.putInt(Constants.SHARED_PREF_ID, id)
-                lphConstants?.putString(Constants.SHARED_PREF_INVITED_BY, "")
-                lphConstants?.putString(Constants.SHARED_PREF_PASSWORD, password)
-                lphConstants?.apply()
-
-//                clearAllDbValues(context = context?.get()!!)
-                Helper.setPlayList(context?.get()!!, "songs", ".mp3")
-                val intent = Intent(context?.get()!!, MainActivity::class.java)
-                intent.putExtra(Constants.BUNDLE_IS_FROM_PROFILE, isFromProfile)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context?.get()!!.startActivity(intent)
-//                context!!.finish()
-            } else {
-                MessageBox(context?.get()!!, context?.get()!!.resources.getString(R.string.alert), response.getServerMessage()!!).showMessage()
-            }
-        }
-    }
-
-
-    class MarkFavoriteAsync internal constructor(context: WeakReference<Context>,
-                                             private val newsId: Int, private val isFavorite: Boolean,
-                                                 private val onRefreshCallback: OnRefreshCallback, private val categoryId: Int) : AsyncTask<Void, Void, Response<Any>>() {
+    class MarkFavoriteAsync internal constructor(
+        context: WeakReference<Context>,
+        private val newsId: Int, private val isFavorite: Boolean,
+        private val onRefreshCallback: OnRefreshCallback, private val categoryId: Int
+    ) : AsyncTask<Void, Void, Response<Any>>() {
         private val mWeakContext: WeakReference<Context>? = context
 
         override fun doInBackground(vararg p0: Void?): Response<Any> {
@@ -679,7 +656,7 @@ object Helper {
                 val lphService = LPHServiceFactory.getCALFService(mWeakContext?.get()!!)
                 val params = HashMap<String, String>()
                 params[Constants.API_NEWS_ID] = newsId.toString()
-                val isFavoriteVal: Int = if(isFavorite) 1 else 0
+                val isFavoriteVal: Int = if (isFavorite) 1 else 0
                 params[Constants.API_IS_FAVORITE] = isFavoriteVal.toString()
                 response = lphService.markFavorite(params)
             } catch (e: LPHException) {
@@ -698,31 +675,44 @@ object Helper {
 
         override fun onPostExecute(response: Response<Any>?) {
             super.onPostExecute(response)
-            if(response?.isSuccess()!!) {
+            if (response?.isSuccess()!!) {
                 NewsVo.updateIsFavorite(mWeakContext?.get()!!, newsId, isFavorite)
-                if(categoryId != 0){
+                if (categoryId != 0) {
                     val categoryVo = CategoryVo.getCategoryVo(mWeakContext?.get()!!, categoryId)
-                    if(categoryVo!= null){
+                    if (categoryVo != null) {
                         var favCount = categoryVo.favoriteCount
-                        if(isFavorite) {
+                        if (isFavorite) {
                             favCount += 1
-                            CategoryVo.updateCategoryFavCount(mWeakContext.get()!!, categoryId, favCount)
-                        } else if(favCount > 0){
+                            CategoryVo.updateCategoryFavCount(
+                                mWeakContext.get()!!,
+                                categoryId,
+                                favCount
+                            )
+                        } else if (favCount > 0) {
                             favCount -= 1
-                            CategoryVo.updateCategoryFavCount(mWeakContext.get()!!, categoryId, favCount)
+                            CategoryVo.updateCategoryFavCount(
+                                mWeakContext.get()!!,
+                                categoryId,
+                                favCount
+                            )
                         }
                     }
                 }
                 onRefreshCallback.onRefresh()
             } else {
-                Helper.showAlert(context = mWeakContext?.get()!!, message = response.getServerMessage())
+                Helper.showAlert(
+                    context = mWeakContext?.get()!!,
+                    message = response.getServerMessage()
+                )
             }
         }
     }
 
-    class MarkReadAsync internal constructor(context: WeakReference<Context>,
-                                             private val newsId: Int, private val isRead: Boolean,
-                                             private val onRefreshCallback: OnRefreshCallback, private val categoryId: Int) : AsyncTask<Void, Void, Response<Any>>() {
+    class MarkReadAsync internal constructor(
+        context: WeakReference<Context>,
+        private val newsId: Int, private val isRead: Boolean,
+        private val onRefreshCallback: OnRefreshCallback, private val categoryId: Int
+    ) : AsyncTask<Void, Void, Response<Any>>() {
         private val mWeakContext: WeakReference<Context>? = context
 
         override fun doInBackground(vararg p0: Void?): Response<Any> {
@@ -731,7 +721,7 @@ object Helper {
                 val lphService = LPHServiceFactory.getCALFService(mWeakContext?.get()!!)
                 val params = HashMap<String, String>()
                 params[Constants.API_NEWS_ID] = newsId.toString()
-                val isReadVal: Int = if(isRead) 1 else 0
+                val isReadVal: Int = if (isRead) 1 else 0
                 params[Constants.API_IS_READ] = isReadVal.toString()
                 response = lphService.markRead(params)
             } catch (e: LPHException) {
@@ -750,14 +740,18 @@ object Helper {
 
         override fun onPostExecute(response: Response<Any>?) {
             super.onPostExecute(response)
-            if(response?.isSuccess()!!) {
-                if(categoryId != 0){
+            if (response?.isSuccess()!!) {
+                if (categoryId != 0) {
                     val categoryVo = CategoryVo.getCategoryVo(mWeakContext?.get()!!, categoryId)
-                    if(categoryVo!= null){
+                    if (categoryVo != null) {
                         var unReadCount = categoryVo.unreadCount
-                        if(unReadCount > 0)
-                        unReadCount -= 1
-                        CategoryVo.updateCategoryReadCount(mWeakContext.get()!!, categoryId, unReadCount)
+                        if (unReadCount > 0)
+                            unReadCount -= 1
+                        CategoryVo.updateCategoryReadCount(
+                            mWeakContext.get()!!,
+                            categoryId,
+                            unReadCount
+                        )
                     }
                 }
                 NewsVo.updateIsRead(mWeakContext?.get()!!, newsId, isRead)
@@ -766,7 +760,11 @@ object Helper {
         }
     }
 
-    private class UpdateMileStoneAsync internal constructor(context: WeakReference<Context>, private val dateString: String, private  val minutes: String) : AsyncTask<Void, Void, Response<Any>>() {
+    private class UpdateMileStoneAsync internal constructor(
+        context: WeakReference<Context>,
+        private val dateString: String,
+        private val minutes: String
+    ) : AsyncTask<Void, Void, Response<Any>>() {
 
         private val context: WeakReference<Context>? = context
 
@@ -800,7 +798,8 @@ object Helper {
         override fun onPostExecute(response: Response<Any>) {
             super.onPostExecute(response)
             if (response.isSuccess()) {
-                val cache = context?.get()?.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                val cache = context?.get()
+                    ?.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
                 val lphConstants = cache?.edit()
                 lphConstants?.putFloat(Constants.SHARED_PREF_PENDING_MINUTES, 0f)
                 lphConstants?.apply()
@@ -809,7 +808,6 @@ object Helper {
             }
         }
     }
-
 
 
 }

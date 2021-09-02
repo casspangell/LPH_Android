@@ -223,7 +223,7 @@ class AddReminderActivity : AppCompatActivity() {
                     alarmModel.id = alarmId
                     AlarmScheduler.setReminder(context!!, AlarmReceiver::class.java, alarmModel)
                     onBackPressed()
-                } else if (tvRepeatText.text.toString().trim { it <= ' ' }.equals(context!!.getString(R.string.every_day), ignoreCase = true)) {
+                } else if (tvRepeatText.text.toString().trim { it <= ' ' }.equals(context!!.getString(R.string.everyday), ignoreCase = true)) {
                     val times = tvTime.text.toString().split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
                     var hour = Integer.parseInt(times[0])
                     val minute = Integer.parseInt(times[1])
@@ -341,7 +341,7 @@ class AddReminderActivity : AppCompatActivity() {
         var repeat = Repeat()
         repeat.id = 0 //Every Day
         repeat.isChecked = false
-        repeat.shortName = context!!.getString(R.string.every_day)
+        repeat.shortName = context!!.getString(R.string.everyday)
         val rand = Random()
         repeat.alarmId = rand.nextInt(9999)
         repeatList.add(0, repeat)

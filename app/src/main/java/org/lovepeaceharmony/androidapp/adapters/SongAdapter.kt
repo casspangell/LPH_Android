@@ -3,144 +3,36 @@ package org.lovepeaceharmony.androidapp.adapters
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
-import androidx.fragment.app.FragmentActivity
-import androidx.core.content.res.ResourcesCompat
-import androidx.recyclerview.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.ToggleButton
+import androidx.core.view.doOnPreDraw
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetView
 import org.lovepeaceharmony.androidapp.R
+import org.lovepeaceharmony.androidapp.databinding.SongsRowBinding
 import org.lovepeaceharmony.androidapp.model.SongsModel
 import org.lovepeaceharmony.androidapp.utility.Constants
-import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
+import org.lovepeaceharmony.androidapp.utility.init
 
 /**
  * SongsAdapter
  * Created by Naveen Kumar M on 28/12/17.
  */
-class SongsAdapter(private val activity: FragmentActivity, private val context: Context, cursor: Cursor?, private val onSongRefresh: OnSongRefresh): CursorRecyclerViewAdapter<SongsAdapter.ViewHolder>(null){
+class SongsAdapter(
+    private val activity: FragmentActivity,
+    private val context: Context,
+    private val onSongRefresh: OnSongRefresh
+) : CursorRecyclerViewAdapter<SongsAdapter.SongViewHolder>(null) {
 
-    class ViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        var tvTitle: TextView
-        var toggleButton: ToggleButton
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SongViewHolder(
+        SongsRowBinding.inflate(LayoutInflater.from(context), parent, false),
+        activity, onSongRefresh
+    )
 
-        init {
-            tvTitle = view.findViewById(R.id.tv_title)
-            toggleButton = view.findViewById(R.id.toggle_enabled)
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.songs_row, parent, false)
-        return ViewHolder(itemView)
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, cursor: Cursor?) {
-        val songsModel = SongsModel.getValueFromCursor(cursor!!)
-        viewHolder.tvTitle.text = songsModel.songTitle
-        viewHolder.toggleButton.isChecked = songsModel.isChecked
-
-        if(cursor.position == 0 && songsModel.isToolTip){
-            val isToolTipShown = Helper.getBooleanFromPreference(context, Constants.SHARED_PREF_IS_TOOL_TIP_SHOWN)
-            LPHLog.d("isToolTipShown : " +isToolTipShown)
-            if(!isToolTipShown){
-                /*val sequence = TapTargetSequence(activity)
-                        .targets(
-                                // This tap target will target the back button, we just need to pass its containing toolbar
-                                TapTarget.forView(viewHolder.toggleButton, context.getString(R.string.use_the_switches_tool_tip)).tintTarget(true).cancelable(false)
-                                        .dimColor(android.R.color.white)
-                                        .outerCircleColor(R.color.tool_tip_color2)
-                                        .targetCircleColor(android.R.color.black)
-                                        .transparentTarget(true)
-                                        .textColor(android.R.color.white)
-                                        .id(2)
-
-                        )
-                        .listener(object : TapTargetSequence.Listener {
-                            // This listener will tell us when interesting(tm) events happen in regards
-                            // to the sequence
-                            override fun onSequenceFinish() {
-                                LPHLog.d("Tool Tip : Sequence Finished SongAdapter")
-                                SongsModel.updateIsToolTip(context, 0, false)
-                                onSongRefresh.onRefresh()
-                                val intent1 = Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT)
-                                context.sendBroadcast(intent1)
-                            }
-
-                            override fun onSequenceStep(lastTarget: TapTarget, targetClicked: Boolean) {
-                                Log.d("TapTargetView", "Clicked on " + lastTarget.id())
-                            }
-
-                            override fun onSequenceCanceled(lastTarget: TapTarget) {
-                            }
-                        })
-
-                sequence.start()*/
-
-
-                TapTargetView.showFor(activity, TapTarget.forView(viewHolder.toggleButton, context.getString(R.string.use_the_switches_tool_tip), context.getString(R.string.tap_here_to_continue))
-                        .cancelable(false)
-//                    .drawShadow(true)
-                        .dimColor(android.R.color.white)
-                        .outerCircleColor(R.color.tool_tip_color2)
-                        .targetCircleColor(android.R.color.black)
-                        .transparentTarget(true)
-                        .textColor(android.R.color.white)
-                        .titleTextSize(18)
-                        .descriptionTextSize(14)
-                        .textTypeface(ResourcesCompat.getFont(activity, R.font.open_sans_semi_bold))
-                        .descriptionTypeface(ResourcesCompat.getFont(activity, R.font.open_sans_regular))
-                        .id(1)
-                        .tintTarget(false), object : TapTargetView.Listener() {
-                    override fun onTargetClick(view: TapTargetView) {
-                        super.onTargetClick(view)
-                        // .. which evidently starts the sequence we defined earlier
-                        LPHLog.d("Tool Tip : Sequence Finished SongAdapter")
-                        SongsModel.updateIsToolTip(context, 0, false)
-                        onSongRefresh.onRefresh()
-                        val intent1 = Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT)
-                        context.sendBroadcast(intent1)
-                    }
-
-                    override fun onOuterCircleClick(view: TapTargetView?) {
-                        super.onOuterCircleClick(view)
-                        view?.dismiss(true)
-                        LPHLog.d("Tool Tip : Sequence Finished SongAdapter")
-                        SongsModel.updateIsToolTip(context, 0, false)
-                        onSongRefresh.onRefresh()
-                        val intent1 = Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT)
-                        context.sendBroadcast(intent1)
-                    }
-
-                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        Log.d("TapTargetViewSample", "You dismissed me :(")
-                    }
-                })
-            }
-        }
-
-        viewHolder.view.tag = songsModel
-        viewHolder.toggleButton.tag = songsModel
-        viewHolder.toggleButton.setOnCheckedChangeListener { compoundButton, isChecked ->
-            LPHLog.d("onCheckedChanged : " + isChecked)
-            val songsModel1 = compoundButton.tag as SongsModel
-            SongsModel.updateIsEnabled(context, songsModel1.songTitle, isChecked)
-            onSongRefresh.onRefresh()
-            onSongRefresh.onDisableSong(songsModel1.songTitle, isChecked, songsModel1)
-        }
-
-        viewHolder.view.setOnClickListener { view ->
-            val songsModel1 = view.tag as SongsModel
-            onSongRefresh.onItemClick(songsModel1.songTitle, songsModel.id)
-//            if (songsModel1.isChecked)
-
-        }
+    override fun onBindViewHolder(viewHolder: SongViewHolder, cursor: Cursor?) {
+        cursor?.let { viewHolder.bind(it) }
     }
 
     interface OnSongRefresh {
@@ -149,6 +41,45 @@ class SongsAdapter(private val activity: FragmentActivity, private val context: 
         fun onDisableSong(songTitle: String, isChecked: Boolean, songsModel: SongsModel)
     }
 
+    class SongViewHolder(
+        private val binding: SongsRowBinding,
+        private val activity: FragmentActivity,
+        private val onSongRefresh: OnSongRefresh,
+    ) : RecyclerView.ViewHolder(binding.root) {
 
+        fun bind(cursor: Cursor) = with(binding) {
+            val songsModel = SongsModel.getValueFromCursor(cursor)
+            tvTitle.text = songsModel.songTitle
+            with(toggleEnabled) {
+                if (cursor.position == 0 && songsModel.isToolTip) doOnPreDraw {
+                    TapTarget.forView(
+                        it,
+                        it.context.getString(R.string.use_the_switches_to_customize_your_chant),
+                        it.context.getString(R.string.tap_anywhere_to_continue)
+                    ).init(activity, R.color.tool_tip_color2) {
+                        SongsModel.updateIsToolTip(it.context, 0, false)
+                        onSongRefresh.onRefresh()
+                        it.context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
+                    }
+                }
+                isChecked = songsModel.isChecked
+                tag = songsModel
+                setOnCheckedChangeListener { compoundButton, isChecked ->
+                    LPHLog.d("onCheckedChanged : $isChecked")
+                    val songsModel1 = compoundButton.tag as SongsModel
+                    SongsModel.updateIsEnabled(context, songsModel1.songTitle, isChecked)
+                    onSongRefresh.onRefresh()
+                    onSongRefresh.onDisableSong(songsModel1.songTitle, isChecked, songsModel1)
+                }
+            }
 
+            with(root) {
+                tag = songsModel
+                setOnClickListener { view ->
+                    val songsModel1 = view.tag as SongsModel
+                    onSongRefresh.onItemClick(songsModel1.songTitle, songsModel.id)
+                }
+            }
+        }
+    }
 }

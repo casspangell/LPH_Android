@@ -2,4 +2,6 @@
 <resources>
     <!--Font size-->
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="root_margin">8dp</dimen>
+    <dimen name="btn_padding">12dp</dimen>
 </resources>

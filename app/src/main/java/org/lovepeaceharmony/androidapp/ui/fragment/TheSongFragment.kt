@@ -64,7 +64,7 @@ class TheSongFragment : Fragment(), YouTubePlayer.OnInitializedListener {
 
     override fun onInitializationFailure(provider: YouTubePlayer.Provider, errorReason: YouTubeInitializationResult) {
         if (errorReason.isUserRecoverableError) {
-            errorReason.getErrorDialog(activity!!, RECOVERY_DIALOG_REQUEST).show()
+            errorReason.getErrorDialog(requireActivity(), RECOVERY_DIALOG_REQUEST).show()
         } else {
             val errorMessage = String.format(
                     "There was an error initializing the YouTubePlayer",

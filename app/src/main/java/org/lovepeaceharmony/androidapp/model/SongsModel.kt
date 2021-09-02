@@ -157,7 +157,7 @@ class SongsModel {
                 contentValues.put(IS_CHECKED, 1)
             else
                 contentValues.put(IS_CHECKED, 0)
-            context.contentResolver.update(contentUri, contentValues, SONG_TITLE + "=? ", arrayOf(songTitle))
+            context.contentResolver.update(contentUri, contentValues, "$SONG_TITLE=? ", arrayOf(songTitle))
         }
 
         fun updateIsToolTip(context: Context, songId: Int, isEnabled: Boolean) {
@@ -167,7 +167,7 @@ class SongsModel {
                 contentValues.put(IS_TOOL_TIP, 1)
             else
                 contentValues.put(IS_TOOL_TIP, 0)
-            context.contentResolver.update(contentUri, contentValues, ID + "=? ", arrayOf(songId.toString()))
+            context.contentResolver.update(contentUri, contentValues, "$ID=? ", arrayOf(songId.toString()))
         }
 
         fun clearSongModel(context: Context?): Int {

@@ -1,4 +1,5 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -26,10 +27,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:tint="@color/bottom_icon_color"
                 android:background="?android:selectableItemBackground"
                 android:contentDescription="@string/shuffle"
-                android:src="@drawable/ic_shuffle_icon" />
+                android:src="@drawable/ic_shuffle_icon"
+                app:tint="@color/bottom_icon_color" />
 
             <ImageView
                 android:id="@+id/iv_rewind"

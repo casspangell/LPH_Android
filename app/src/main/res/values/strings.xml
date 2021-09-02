@@ -11,57 +11,129 @@
     <string name="facebook_app_id">372387683172262</string>
     <string name="fb_login_protocol_scheme">fb372387683172262</string>
 
+    <string name="default_time_template">HH:MM</string>
 
-
-    <!--Home-->
+    <!--Navigation-->
     <string name="chant">Chant</string>
-    <string name="news">News</string>
     <string name="about">About</string>
-    <string name="profile">Profile</string>
-    <string name="permission_granted">permission granted</string>
-    <string name="enable_storage_permission">Please enable storage permission in settings for this app</string>
-    <string name="storage_permission_needed">Storage permission is needed to access the local storage</string>
-    <string name="please_wait">Please Wait</string>
-    <string name="processing_request">Processing Request</string>
+    <string name="news">News</string>
+    <string name="logout">Logout</string>
 
-    <!--Chant Fragment-->
+    <!--Chant Now Controller-->
+    <string name="chanting_for_world_peace">Chanting for World Peace</string>
     <string name="chant_now">Chant Now</string>
     <string name="reminders">Reminders</string>
     <string name="milestones">Milestones</string>
-    <string name="visit_our_website">Visit our website</string>
-    <string name="donate_now">Donate now</string>
-    <string name="please_enable_your_song">Please enable your song &amp; play.</string>
-    <string name="shuffle_not_possible">Shuffle is not possible. Please enable your song &amp; play.</string>
-    <string name="repeat_not_possible">Repeat is not possible. Please enable your song &amp; play.</string>
-    <string name="now_playing">Now playing:</string>
-    <string name="shuffle_is_off">Shuffle is OFF</string>
-    <string name="shuffle_is_on">Shuffle is ON</string>
-    <string name="repeat_is_off">Repeat is OFF</string>
-    <string name="repeat_is_on">Repeat is ON</string>
-    <string name="no_next_song">No next song</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="shuffle_turned_on">Shuffle Turned On</string>
+    <string name="shuffle_turned_off">Shuffle Turned Off</string>
+    <string name="repeat_turned_on">Repeat Turned On</string>
+    <string name="repeat_turned_off">Repeat Turned Off</string>
+    <string name="love_peace_harmony_in_many_languages">Love Peace Harmony in Many Languages</string>
+    <string name="expressions_of_love_peace_harmony">Expressions of Love Peace Harmony</string>
+    <string name="set_reminders_to_chant">Set reminders to chant</string>
+    <string name="chant_any_time">Chant any time</string>
+    <string name="view_your_milestones">View your milestones</string>
+    <string name="turn_on_off_chants">Turn on / off chants</string>
+    <string name="everyday">Everyday</string>
+    <string name="off">Off</string>
+    <string name="sun">Sun</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="use_the_switches_to_customize_your_chant">Use the switches to customize your chanting playlist.</string>
+    <string name="now_playing_colon">Now playing:</string>
+    <string name="mandarin_soul_language_and_english">Mandarin, Soul Language, and English</string>
+    <string name="instrumental">Instrumental</string>
+    <string name="hindi">Hindi</string>
+    <string name="hindi_soul_language_english">Hindi, Soul Language, English</string>
+    <string name="spanish">Spanish</string>
+    <string name="mandarin_english_german">Mandarin, English, German</string>
+    <string name="fresh">French</string>
+    <string name="french_and_creole">French &amp; Creole</string>
+    <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiian)</string>
+    <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, English and Hawaiian</string>
+    <string name="love_peace_harmony_in_english">Love Peace Harmony in English</string>
+
+    <!--Chant Reminder Screen-->
+    <string name="no_reminder_added">No reminder added</string>
+    <string name="repeat_off">Repeat - Off</string>
+    <string name="repeats">Repeats</string>
+    <string name="alarm_already_added_for_this_item">Alarm already added for this time!</string>
+    <string name="repeat">Repeat</string>
+    <string name="default_">Default</string>
+    <string name="edit_reminder">Edit Reminder</string>
+    <string name="sound">Sound</string>
+    <string name="do_you_want_to_delete_the_alarm">Do you want to delete the alarm?</string>
+    <string name="maxium_number_of_reminders_reached">Maximum number of reminders reached</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="done">Done</string>
+    <string name="ok">Ok</string>
+    <string name="delete_reminder">Delete Reminder</string>
+    <string name="select_repeat">Select Repeat</string>
+    <string name="alert">Alert</string>
+    <string name="on">On</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+
+    <!--Milestones Screen-->
+    <string name="you_have_chanted_for_a_total_of">You have chanted for a total of</string>
+    <string name="erase_milestones">Erase Milestones</string>
+    <string name="do_you_want_to_reset_all_your_milestones">Do You Want to Reset All Your Milestones?</string>
+    <string name="milestone_data_deleted">Milestone Data Deleted</string>
+    <string name="days_straight">Days Straight</string>
+    <string name="days">Days</string>
+    <string name="longest_streak">Longest streak:</string>
+
+    <!--Login / Signup Screen-->
+    <string name="connect_with_google">Connect with Google</string>
+    <string name="connect_with_facebook">Connect with Facebook</string>
+    <string name="login">Login</string>
+    <string name="do_not_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email_password_cant_be_empty">Email/password can\'t be empty</string>
+    <string name="please_check_your_internet_connection">Please check your internet connection</string>
+    <string name="create_an_account">Create an Account</string>
+    <string name="back">Back</string>
+    <string name="submit">Submit</string>
+
+    <!--Constants-->
+    <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>
+    <string name="something_went_wrong_please_try_again">Something went wrong, please try again</string>
+    <string name="please_enter_your_name">Please enter your name</string>
+    <string name="invalid_email_address">Invalid email address</string>
+    <string name="please_enter_your_password">Please enter your password</string>
+    <string name="password_needs_to_be_at_least_6_characters">Password needs to be at least 6 characters</string>
+    <string name="please_enter_confirmation_password">Please enter confirmation password</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="its_time_to_chant">It\'s time to chant!!!</string>
+    <string name="please_enable_your_song_and_play">Please enable your song &amp; play</string>
     <string name="no_previous_song">No previous song</string>
+    <string name="no_next_song">No next song</string>
 
-
-    <!--News Fragment-->
-    <string name="recent">Recent</string>
-    <string name="categories">Categories</string>
-    <string name="favorites">Favorites</string>
-    <string name="login_to_view_favorites">Login to view favorites</string>
-    <string name="no_favorites_to_show">No favorites to show</string>
-    <string name="look_like_not_added_favorite">It looks like you haven\'t added any favorites yet.</string>
-    <string name="favorite_hint_1">When reading an article, tap the</string>
-    <string name="favorite_hint_2">on the right to add it to favorites.</string>
-    <string name="recent_articles">Recent Articles</string>
-    <string name="posts">posts</string>
-    <string name="post">post</string>
-    <string name="unread">unread</string>
-    <string name="favorite_category">favorite(s)</string>
-    <string name="full_stop">.</string>
-
-    <!--About Fragment-->
+    <!--About Controller-->
     <string name="the_song">The Song</string>
     <string name="the_movement">The Movement</string>
     <string name="master_sha">Master Sha</string>
+    <string name="visit_our_website">Visit Our Website</string>
+    <string name="donate_now">Donate Now</string>
+
+    <!--Not localized-->
+    <string name="no_data">No data available.</string>
+    <string name="love_peace_harmony">Love Peace Harmony</string>
+    <string name="heal_and_transform_the_world">Heal and Transform the World</string>
+
     <string name="about_master_sha_content">Dr. and Master Zhi Gang Sha, an 11-time New York Times bestselling author with 21 books written on alternative medicine, is a pioneer in modern-day spirituality. As a medical doctor trained in Western medicine, traditional Chinese medicine and acupuncture, Master Sha is the creator of Soul Mind Body Medicine®.\n\n
 
 As the founder of the Institute of Soul Healing and Enlightenment™ and the Love Peace Harmony Foundation, Master Sha was honored in 2006 with the prestigious Martin Luther King, Jr. Commemorative Commission Award for his humanitarian efforts. In 2014, Master Sha was recognized by the cities of Maui and Honolulu in Hawaii for his compassionate service to promote <i>love, peace and harmony</i> worldwide. Master Sha was invited in 2015 to be one of the founding signatories of the Fuji Declaration, whose mission is to create lasting peace on Earth. Master Sha is a member of Rotary E-Club of World Peace and is a founding signatory of Conscious Business Declaration, which aims to define a new standard for business in the 21st century. In 2016, Master Sha received a commendation from Los Angeles County for his humanitarian efforts both locally and worldwide.\n\n
@@ -88,8 +160,8 @@ Addendum: The Divine Soul Song <i>Love, Peace and Harmony</i> has been credited 
         By 2020, we hope to inspire 1.5 billion people to sing <i>Love, Peace and Harmony</i> for 15 minutes every day. Your participation is absolutely essential to create world <i>love, peace and harmony</i>.\n\n
 
         Together, we’ll celebrate the power of the human spirit and its ability to transcend, transform and triumph to create miracles. Imagine a world where everyone holds the message of <i>love, peace and harmony</i>.\n</string>
-    
-    
+
+
     <string name="master_shat_content"><B><U>Dr. and Master Zhi Gang Sha</U></B> is a world-renowned healer, Tao Grandmaster, philanthropist, humanitarian, and creator of
 Tao Calligraphy. He is the founder of Soul Mind Body Medicine™ and an eleven-time <i>New York Times</i> bestselling author of
 24 books. An M.D. in China and a doctor of traditional Chinese medicine in China and Canada, Master Sha is the founder of
@@ -113,112 +185,23 @@ tirelessly to create a Love Peace Harmony World Family. In 2017, he received the
 Chee Sansanee Sthirasuta of Sathira-Dhammasathan, for being a person who acts like a Boddhisattva, doing good for
 society. He continues to deliver free webcasts, teleconferences, and events that attract viewers and listeners from around
 the world.</string>
-
-    <!--Reminder Fragment-->
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="add_reminder">Add Reminder</string>
-    <string name="edit_reminder">Edit Reminder</string>
-    <string name="repeat">Repeat</string>
-    <string name="repeats">Repeat:</string>
-    <string name="sound">Sound</string>
-    <string name="default_time_template">HH:MM</string>
-    <string name="every_day">Every Day</string>
-    <string name="once">Once</string>
-    <string name="default_notification">Default</string>
-    <string name="sunday">Sunday</string>
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="off">Off</string>
-    <string name="ok">OK</string>
-    <string name="please_select_time">Please select the Alarm time.</string>
-    <string name="no_data">No data available.</string>
-    <string name="reminder_for_chant">It\'s time to chant!!!</string>
-    <string name="delete_reminder">Delete Reminder</string>
-    <string name="reminder_deleted_successfully">Reminder deleted successfully!</string>
-    <string name="sun">Sun</string>
-    <string name="mon">Mon</string>
-    <string name="tue">Tue</string>
-    <string name="wed">Wed</string>
-    <string name="thu">Thu</string>
-    <string name="fri">Fri</string>
-    <string name="sat">Sat</string>
-
-    <!--Splash Screen-->
-    <string name="can">can</string>
-    <string name="change">Change</string>
-    <string name="the">the</string>
-    <string name="world">World!</string>
-    <string name="one_song">One Song</string>
-
-    <!--Login-->
-    <string name="login_with_facebook">Login with Facebook</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="sign_in_with_email">Sign in with Email</string>
-    <string name="continue_without_sign_in">Continue without signing in</string>
-    <string name="you_can_sing_in_later">You can always sign in later from the \"Profile\" screen</string>
-    <string name="back">Back</string>
-    <string name="email_address">Email Address</string>
-    <string name="password">Password</string>
-    <string name="sign_in">Sign in</string>
-    <string name="create_an_account">Create an Account</string>
-    <string name="please_enter_email">Please enter Email Address</string>
-    <string name="please_enter_password">Please enter Password</string>
-    <string name="internet_warning">Please check your internet connection and try again</string>
-    <string name="warning">Warning</string>
-    <string name="name">Name</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="create_account">Create Account</string>
-    <string name="email_error">Please enter correct Email Address</string>
-    <string name="please_enter_name">Please enter Name</string>
-    <string name="please_enter_confirm_password">Please enter Confirm Password</string>
-    <string name="password_match_error">Confirm Password doesn\'t match</string>
-    <string name="loading">Loading&#8230;</string>
-    <string name="alert">Alert</string>
-    <string name="no_connection">No Internet Connection</string>
-
-    <!--Profile-->
-    <string name="share_this_app">Share this App</string>
-    <string name="manage_news_favourites">Manage news favorites</string>
-    <string name="view_chanting_milestones">View chanting milestones</string>
-    <string name="sign_out">Sign out</string>
-    <string name="profile_picture">Profile Picture</string>
-    <string name="take_a_new_photo">Take a new photo</string>
-    <string name="choose_a_photo">Choose a photo</string>
-    <string name="camera_not_supported">Your device is not supported camera!</string>
-    <string name="upload_out_of_memory">Can\'t upload. This file size is not supported</string>
-    <string name="uploaded_successfully">Uploaded successfully!</string>
-
-
-    <!--Milestones-->
-    <string name="erase_mile_stone">Erase milestones</string>
-    <string name="you_have_chanted_total_of">You have chanted for a total of</string>
-    <string name="days_straight">days straight!</string>
-    <string name="minutes">minutes!</string>
-    <string name="thanks_to_you">Thanks to your invitations,</string>
-    <string name="more_people_are_chanting">more people are chanting</string>
-    <string name="love_peace_harmony">Love, Peace and Harmony!</string>
-    <string name="login_to_view_milestone">Login to view milestones</string>
-    <string name="are_you_sure">Are you sure?</string>
-    <string name="this_cannot_be_undone">This cannot be undone.</string>
-    <string name="erase">Erase</string>
-
-    <!--Chants Now-->
     <string name="shuffle">Shuffle</string>
     <string name="rewind">Rewind</string>
     <string name="play">Play</string>
     <string name="forward">Forward</string>
-    <string name="mandarin_soul_english">Mandarin, Soul Language and English</string>
     <string name="volume_down">Volume Down</string>
     <string name="volume_up">Volume Up</string>
-    <string name="chant_any_time_tool_tip">Chant any time, set reminders, and track your chanting stats</string>
-    <string name="use_the_switches_tool_tip">Use the switches to customize your chanting playlist</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="erase">Erase</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="this_cannot_be_undone">This cannot be undone.</string>
+    <string name="enable_storage_permission">Please enable storage permission in settings for this app</string>
+    <string name="repeat_not_possible">Repeat is not possible. Please enable your song &amp; play.</string>
+    <string name="shuffle_not_possible">Shuffle is not possible. Please enable your song &amp; play.</string>
     <string name="get_news_updates_tool_tip">Get news updates, manage your profile and more here.</string>
-    <string name="tap_here_to_continue">&#160;&#160;&#160;&#160;Tap here to continue&#160;&#160;</string>
-
+    <string name="permission_granted">permission granted</string>
+    <string name="reminder_deleted_successfully">Reminder deleted successfully!</string>
+    <string name="please_select_time">Please select the Alarm time.</string>
+    <string name="once">Once</string>
 
 </resources>

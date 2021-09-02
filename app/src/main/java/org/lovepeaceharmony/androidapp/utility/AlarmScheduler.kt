@@ -147,7 +147,7 @@ object AlarmScheduler {
 
         LPHLog.d("AlarmReceiver showNotification alarmId : " + alarmId)
         val notification = builder.setContentTitle(context.getString(R.string.app_name))
-                .setContentText(context.getString(R.string.reminder_for_chant))
+                .setContentText(context.getString(R.string.its_time_to_chant))
                 .setAutoCancel(true)
                 .setSound(uri)
                 .setSmallIcon(R.mipmap.ic_launcher_round)

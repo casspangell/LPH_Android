@@ -1,0 +1,207 @@
+<resources>
+    <string name="app_name">Chant LPH</string>
+    <string name="love_peace_harmony_messenger">Love Peace Harmony Messenger</string>
+
+    <!--Naveen Account-->
+    <!--<string name="facebook_app_id">1600162746712906</string>
+    <string name="fb_login_protocol_scheme">fb1600162746712906</string>-->
+
+
+    <!--Eric Jerome Account-->
+    <string name="facebook_app_id">372387683172262</string>
+    <string name="fb_login_protocol_scheme">fb372387683172262</string>
+
+    <string name="default_time_template">HH:MM</string>
+
+    <!--Navigation-->
+    <string name="chant">Singen</string>
+    <string name="about">Über</string>
+    <string name="news">Neues</string>
+    <string name="logout">Abmelden</string>
+
+    <!--Chant Now Controller-->
+    <string name="chanting_for_world_peace">Singen für Weltfrieden</string>
+    <string name="chant_now">Jetzt singen</string>
+    <string name="reminders">Erinnerungen</string>
+    <string name="milestones">Meilensteine</string>
+    <string name="now_playing">Jetzt spielen</string>
+    <string name="shuffle_turned_on">Zufallswiedergabe aktiviert</string>
+    <string name="shuffle_turned_off">Zufallswiedergabe deaktiviert</string>
+    <string name="repeat_turned_on">Wiederholung aktiviert</string>
+    <string name="repeat_turned_off">Wiederholung deaktiviert</string>
+    <string name="love_peace_harmony_in_many_languages">Liebe Frieden Harmonie in vielen Sprachen</string>
+    <string name="expressions_of_love_peace_harmony">Äußerungen von Liebe Frieden Harmonie</string>
+    <string name="set_reminders_to_chant">Erinnerungen setzen zum Singen</string>
+    <string name="chant_any_time">Jederzeit singen</string>
+    <string name="view_your_milestones">Meilensteine ansehen</string>
+    <string name="turn_on_off_chants">Singen an / abschalten</string>
+    <string name="everyday">Täglich</string>
+    <string name="off">Aus</string>
+    <string name="sun">So</string>
+    <string name="mon">Mo</string>
+    <string name="tue">Di</string>
+    <string name="wed">Mi</string>
+    <string name="thu">Do</string>
+    <string name="fri">Fr</string>
+    <string name="sat">Sa</string>
+    <string name="use_the_switches_to_customize_your_chant">Nutze die Schalter um die Sing Playliste anzupassen.</string>
+    <string name="now_playing_colon">Jetzt spielen:</string>
+    <string name="mandarin_soul_language_and_english">Mandarin, Seelensprache und Englisch</string>
+    <string name="instrumental">Instumental</string>
+    <string name="hindi">Hindi</string>
+    <string name="hindi_soul_language_english">Hindi, Seelensprache, Englisch</string>
+    <string name="spanish">Spanisch</string>
+    <string name="mandarin_english_german">Mandarin, Englisch, Deutsch</string>
+    <string name="fresh">Französisch</string>
+    <string name="french_and_creole">Französisch &amp; Kreolisch</string>
+    <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiianisch)</string>
+    <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, Englisch und Hawaiianisch</string>
+    <string name="love_peace_harmony_in_english">Love Peace Harmony in Englisch</string>
+
+    <!--Chant Reminder Screen-->
+    <string name="no_reminder_added">Keine Erinnerung hinzugefügt</string>
+    <string name="repeat_off">Wiederholen - Aus</string>
+    <string name="repeats">Wiederholungen</string>
+    <string name="alarm_already_added_for_this_item">Alarm bereits für diese Uhrzeit hinzugefügt!</string>
+    <string name="repeat">Wiederholen</string>
+    <string name="default_">Standard</string>
+    <string name="edit_reminder">Erinnerung ändern</string>
+    <string name="sound">Klang</string>
+    <string name="do_you_want_to_delete_the_alarm">Wollen Sie den Alarm löschen?</string>
+    <string name="maxium_number_of_reminders_reached">Maximale Anzahl von Erinnerungen erreicht</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="save">Speichern</string>
+    <string name="done">Fertig</string>
+    <string name="ok">Ok</string>
+    <string name="delete_reminder">Erinnerung löschen</string>
+    <string name="select_repeat">Wiederholen wählen</string>
+    <string name="alert">Alarm</string>
+    <string name="on">An</string>
+    <string name="sunday">Sonntag</string>
+    <string name="monday">Montag</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="thursday">Donnerstag</string>
+    <string name="friday">Freitag</string>
+    <string name="saturday">Samstag</string>
+
+    <!--Milestones Screen-->
+    <string name="you_have_chanted_for_a_total_of">Sie haben in Summe gesungen</string>
+    <string name="erase_milestones">Meilensteine löschen</string>
+    <string name="do_you_want_to_reset_all_your_milestones">Wollen Sie all ihre Meilensteine zurücksetzen?</string>
+    <string name="milestone_data_deleted">Meilensteine gelöscht</string>
+    <string name="days_straight">Tage lang</string>
+    <string name="days">Tage</string>
+    <string name="longest_streak">Längster Beitrag:</string>
+
+    <!--Login / Signup Screen-->
+    <string name="connect_with_google">Verbinden mit Google</string>
+    <string name="connect_with_facebook">Verbinden mit Facebook</string>
+    <string name="login">Anmelden</string>
+    <string name="do_not_have_an_account_sign_up">Sie haben keinen Account? Hier anmelden</string>
+    <string name="email">Email</string>
+    <string name="password">Passwort</string>
+    <string name="confirm_password">Passwort bestätigen</string>
+    <string name="email_password_cant_be_empty">Email/Passwort darf nicht leer sein</string>
+    <string name="please_check_your_internet_connection">Bitte prüfen sie ihre Internetverbindung</string>
+    <string name="create_an_account">Account erstellen</string>
+    <string name="back">zurück</string>
+    <string name="submit">absenden</string>
+
+    <!--Constants-->
+    <string name="tap_anywhere_to_continue">Tippen sie an beliebiger Stelle um fortzufahren</string>
+    <string name="something_went_wrong_please_try_again">Etwas ging schief, bitte versuchen sie es erneut</string>
+    <string name="please_enter_your_name">Bitte geben Sie ihren Namen ein</string>
+    <string name="invalid_email_address">Ungültige Mailadresse</string>
+    <string name="please_enter_your_password">Bitte geben Sie ihr Passwort ein</string>
+    <string name="password_needs_to_be_at_least_6_characters">Das Passwort muss mindestens 6 Zeichen lang sein</string>
+    <string name="please_enter_confirmation_password">Bitte bestätigen sie ihr Passwort</string>
+    <string name="passwords_do_not_match">Die Passwörter stimmen nicht überein</string>
+    <string name="its_time_to_chant">Es ist Zeit zu singen!!!!</string>
+    <string name="please_enable_your_song_and_play">Bitte schalten sie Singen &amp; Spielen an</string>
+    <string name="no_previous_song">Kein vorheriges Lied</string>
+    <string name="no_next_song">Kein nächstes Lied</string>
+
+    <!--About Controller-->
+    <string name="the_song">Das Lied</string>
+    <string name="the_movement">Die Bewegung</string>
+    <string name="master_sha">Master Sha</string>
+    <string name="visit_our_website">Besuchen sie unsere Webseite</string>
+    <string name="donate_now">Jetzt spenden</string>
+
+    <!--Not localized-->
+    <string name="no_data">No data available.</string>
+    <string name="love_peace_harmony">Love Peace Harmony</string>
+    <string name="heal_and_transform_the_world">Heal and Transform the World</string>
+
+    <string name="about_master_sha_content">Dr. and Master Zhi Gang Sha, an 11-time New York Times bestselling author with 21 books written on alternative medicine, is a pioneer in modern-day spirituality. As a medical doctor trained in Western medicine, traditional Chinese medicine and acupuncture, Master Sha is the creator of Soul Mind Body Medicine®.\n\n
+
+As the founder of the Institute of Soul Healing and Enlightenment™ and the Love Peace Harmony Foundation, Master Sha was honored in 2006 with the prestigious Martin Luther King, Jr. Commemorative Commission Award for his humanitarian efforts. In 2014, Master Sha was recognized by the cities of Maui and Honolulu in Hawaii for his compassionate service to promote <i>love, peace and harmony</i> worldwide. Master Sha was invited in 2015 to be one of the founding signatories of the Fuji Declaration, whose mission is to create lasting peace on Earth. Master Sha is a member of Rotary E-Club of World Peace and is a founding signatory of Conscious Business Declaration, which aims to define a new standard for business in the 21st century. In 2016, Master Sha received a commendation from Los Angeles County for his humanitarian efforts both locally and worldwide.\n\n
+
+As a grandmaster of many ancient disciplines, including qigong, tai chi, kung fu, feng shui and the I Ching, Master Sha was named Qigong Master of the Year at the Fifth World Congress on Qigong.\n</string>
+
+    <string name="about_movement_content">Love Peace Harmony Foundation was founded in 2006 and formally registered in the USA as a nonprofit in 2008. The mission of the Foundation is to serve all humanity and to make others happier and healthier. The goal is to raise the consciousness of humanity by chanting <i>Love, Peace and Harmony</i> to uplift the frequency and vibration of Mother Earth. On a practical level, the Foundation initiates and partners with other aligned organizations and nonprofits to offer assistance and support on numerous local and global humanitarian efforts.\n\n
+
+Some of the current projects range from “Peaceful Moms Healthy Babies” in Vancouver, musical concerts in Toronto to raise funds for local nonprofits; meditation, chanting and stress reduction for veterans with PTSD and formerly incarcerated veterans in Hawaii, USA; meditation and chanting for adults, children and mentally and physically disabled children in Mumbai, Bangalore and New Delhi, India; International Day of Peace celebration in Sydney and chanting for animals’ well-being in Sydney, Australia to name a few.\n\n
+
+The Foundation also has partnered with other nonprofits to help make others happier and healthier in several countries. Most recently we supported WandAid’s http://wandaid.org humanitarian work in Nepal to provide families with the resources to be able to rebuild their lives after the earthquakes in that country. Another partner in the project was the Roddick Foundation .\n\
+
+The Foundation has a prototype outreach program with Bhutan for developing countries and remote locations. This program works with children and families in isolated villages to support their access to education, healthcare and proper nutrition. The Foundation will be teaching the local villagers how they can use Master Sha’s Four Power Techniques and chanting to help people maintain health and happiness. Also we will be bringing essential micro nutrients from our nonprofit partner, Vitamin Angels, to help malnourished children, pregnant women and lactating mothers sustain health and vitality.\n\
+
+Love Peace Harmony Foundation is growing and we are looking forward to collaborating with more people, organizations and countries to be happy and healthy. We look forward to your support and collaboration.\n\n
+
+Addendum: The Divine Soul Song <i>Love, Peace and Harmony</i> has been credited with many deeply transformative experiences by the people who have experienced it, lowering crime rates, incidences of physical abuse, and improving the health for women in low income homes in Mumbai, as well as increasing children’s intelligence and school performance. Chanting <i>Love, Peace and Harmony</i> for children in the slums of Mumbai (Dharavi, Asia’s largest slum) also resulted in greater emotional balance, happiness and other emotional benefits. Many of these remarkable results are being documented now and a growing body of substantiable information is being gathered so that the benefits of this song can spread even wider.\n</string>
+
+    <string name="about_song_content">Join together with 1.5 billion people to chant <i>Love, Peace and Harmony</i> by 2020. \n\n
+        When many people join hearts and souls together to chant and meditate, this automatically creates a powerful field. We become what we chant, so as we chant to create world <i>love, peace and harmony</i>, each of us is transforming the message we carry within.\n\n
+
+        <i>Love, Peace and Harmony</i>, a song received by Dr. and Master Sha from the Divine, carries the high frequency and vibration of love, forgiveness, compassion and light. Your body naturally resonates with this elevated frequency, and responds by activating <i>love, peace and harmony</i> throughout your being.\n\n
+
+        By 2020, we hope to inspire 1.5 billion people to sing <i>Love, Peace and Harmony</i> for 15 minutes every day. Your participation is absolutely essential to create world <i>love, peace and harmony</i>.\n\n
+
+        Together, we’ll celebrate the power of the human spirit and its ability to transcend, transform and triumph to create miracles. Imagine a world where everyone holds the message of <i>love, peace and harmony</i>.\n</string>
+
+
+    <string name="master_shat_content"><B><U>Dr. and Master Zhi Gang Sha</U></B> is a world-renowned healer, Tao Grandmaster, philanthropist, humanitarian, and creator of
+Tao Calligraphy. He is the founder of Soul Mind Body Medicine™ and an eleven-time <i>New York Times</i> bestselling author of
+24 books. An M.D. in China and a doctor of traditional Chinese medicine in China and Canada, Master Sha is the founder of
+Tao Academy™ and Love Peace Harmony Foundation™, which is dedicated to helping families worldwide create happier
+and healthier lives.\n\n
+A grandmaster of many ancient disciplines, including tai chi, qigong, kung fu, feng shui, and the I Ching, Master Sha was
+named Qigong Master of the Year at the Fifth World Congress on Qigong. In 2006, he was honored with the prestigious
+Martin Luther King, Jr. Commemorative Commission Award for his humanitarian efforts, and in 2016 Master Sha received
+rare and prestigious appointments as Shu Fa Jia (National Chinese Calligrapher Master) and Yan Jiu Yuan (Honorable
+Researcher Professor), the highest titles a Chinese calligrapher can receive, by the State Ethnic of Academy of Painting in
+China.\n\n
+Master Sha was named Honorary Member of the Club of Budapest Foundation, an organization dedicated to resolving the
+social, political, economic, and ecological challenges of the twenty-first century. Officially launching in 2015, Master Sha has
+been invited to become one of the Founding Signatories of the Fuji Declaration, whose mission is to create lasting peace on
+Earth. Master Sha is a member of Rotary E-Club of World Peace and is a founding signatory of the Conscious Business
+Declaration, which aims to define a new standard for business in the twenty-first century that will increase economic
+prosperity while healing the environment and improving humanity’s well-being. In 2016, Master Sha received a
+Commendation from Los Angeles County for his humanitarian efforts both locally and worldwide, and a Commendation
+from the Hawaii Senate as a selfless humanitarian who celebrates the power of the human spirit as he travels the world
+tirelessly to create a Love Peace Harmony World Family. In 2017, he received the International Tara Award from Ven. Mae
+Chee Sansanee Sthirasuta of Sathira-Dhammasathan, for being a person who acts like a Boddhisattva, doing good for
+society. He continues to deliver free webcasts, teleconferences, and events that attract viewers and listeners from around
+the world.</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="rewind">Rewind</string>
+    <string name="play">Play</string>
+    <string name="forward">Forward</string>
+    <string name="volume_down">Volume Down</string>
+    <string name="volume_up">Volume Up</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="erase">Erase</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="this_cannot_be_undone">This cannot be undone.</string>
+    <string name="enable_storage_permission">Please enable storage permission in settings for this app</string>
+    <string name="repeat_not_possible">Repeat is not possible. Please enable your song &amp; play.</string>
+    <string name="shuffle_not_possible">Shuffle is not possible. Please enable your song &amp; play.</string>
+    <string name="get_news_updates_tool_tip">Get news updates, manage your profile and more here.</string>
+    <string name="permission_granted">permission granted</string>
+    <string name="reminder_deleted_successfully">Reminder deleted successfully!</string>
+    <string name="please_select_time">Please select the Alarm time.</string>
+    <string name="once">Once</string>
+
+</resources>

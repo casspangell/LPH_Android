@@ -638,7 +638,6 @@ class ImageUtils {
                     imageAttachmentCallBack!!.imageAttachment(from, fileName, uploadedBitmap, selectedImage!!, encoded)
                 } catch (exception: OutOfMemoryError) {
                     exception.printStackTrace()
-                    Toast.makeText(context, context.getString(R.string.upload_out_of_memory), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

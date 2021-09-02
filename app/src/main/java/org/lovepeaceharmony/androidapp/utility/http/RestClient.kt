@@ -10,7 +10,6 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
-import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
 /**
@@ -29,7 +28,14 @@ class RestClient {
         private val CALF_ENCODING_FORMAT = "UTF-8"
 
         @Throws(IOException::class)
-        fun httpRequest(context: Context, isPagination: Boolean, strUrl: String, postDataParams: HashMap<String, String>?, httpMethod: HTTPMethod, authToken: String): String {
+        fun httpRequest(
+            context: Context,
+            isPagination: Boolean,
+            strUrl: String,
+            postDataParams: HashMap<String, String>?,
+            httpMethod: HTTPMethod,
+            authToken: String
+        ): String {
             val response = StringBuilder()
             var strUrl1 = strUrl
             if (Helper.isConnected(context)) {
@@ -52,10 +58,10 @@ class RestClient {
                     conn.setRequestProperty("charset", "utf-8")
                 } else if (httpMethod == HTTPMethod.POST) {
                     conn.requestMethod = "POST"
-                } else if (httpMethod == HTTPMethod.DELETE){
+                } else if (httpMethod == HTTPMethod.DELETE) {
                     conn.requestMethod = "DELETE"
                 }
-                if(!authToken.isEmpty())
+                if (!authToken.isEmpty())
                     conn.setRequestProperty("Authorization", "Bearer " + authToken)
 //                conn.doInput = true
 //                conn.doOutput = true
@@ -64,7 +70,8 @@ class RestClient {
                     conn.doOutput = true
                     val os = conn.outputStream
                     val writer = BufferedWriter(
-                            OutputStreamWriter(os, CALF_ENCODING_FORMAT))
+                        OutputStreamWriter(os, CALF_ENCODING_FORMAT)
+                    )
                     if (postDataParams != null)
                         writer.write(getPostDataString(postDataParams))
 
@@ -88,23 +95,33 @@ class RestClient {
                 LPHLog.d("Response: " + response.toString())
                 return response.toString()
             } else if (!isPagination) {
-                Helper.showConfirmationAlertTwoButton(context, context.getString(R.string.internet_warning), object : ConfirmationAlertCallback {
-                    override fun onPositiveButtonClick() {
-                        try {
-                            httpRequest(context, isPagination, strUrl, postDataParams, httpMethod, authToken)
-                        } catch (e: IOException) {
-                            e.printStackTrace()
+                Helper.showConfirmationAlertTwoButton(
+                    context,
+                    context.getString(R.string.please_check_your_internet_connection),
+                    object : ConfirmationAlertCallback {
+                        override fun onPositiveButtonClick() {
+                            try {
+                                httpRequest(
+                                    context,
+                                    isPagination,
+                                    strUrl,
+                                    postDataParams,
+                                    httpMethod,
+                                    authToken
+                                )
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                            }
                         }
-                    }
 
-                    override fun onNegativeButtonClick() {
+                        override fun onNegativeButtonClick() {
 
-                    }
+                        }
 
-                    override fun onNeutralButtonClick() {
+                        override fun onNeutralButtonClick() {
 
-                    }
-                })
+                        }
+                    })
 
             }
 
@@ -138,7 +155,11 @@ class RestClient {
         }
 
         @Throws(ParseException::class, IOException::class)
-        fun httpFileUpload(urlTo: String, params: HashMap<String, String>, filepath: String): String {
+        fun httpFileUpload(
+            urlTo: String,
+            params: HashMap<String, String>,
+            filepath: String
+        ): String {
             val connection: HttpURLConnection
             val outputStream: DataOutputStream
             val inputStream: InputStream
@@ -166,7 +187,10 @@ class RestClient {
             connection.requestMethod = "POST"
             connection.setRequestProperty("Connection", "Keep-Alive")
             connection.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0")
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary)
+            connection.setRequestProperty(
+                "Content-Type",
+                "multipart/form-data; boundary=" + boundary
+            )
 
 
             for ((key, value) in params) {
@@ -218,7 +242,12 @@ class RestClient {
         }
 
         @Throws(ParseException::class, IOException::class)
-        fun httpFileUpload(urlTo: String, params: HashMap<String, String>, filepathList: List<String>, fileField: String): String {
+        fun httpFileUpload(
+            urlTo: String,
+            params: HashMap<String, String>,
+            filepathList: List<String>,
+            fileField: String
+        ): String {
             val connection: HttpURLConnection
             val outputStream: DataOutputStream
             val inputStream: InputStream
@@ -246,7 +275,10 @@ class RestClient {
             connection.requestMethod = "POST"
             connection.setRequestProperty("Connection", "Keep-Alive")
             connection.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0")
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary)
+            connection.setRequestProperty(
+                "Content-Type",
+                "multipart/form-data; boundary=" + boundary
+            )
 
 
             for ((key, value) in params) {
@@ -313,7 +345,11 @@ class RestClient {
         }
 
         @Throws(ParseException::class, IOException::class)
-        fun httpFileUploadMultipleArray(urlTo: String, params: HashMap<String, String>, uploadPathHashMap: HashMap<String, List<String>>): String {
+        fun httpFileUploadMultipleArray(
+            urlTo: String,
+            params: HashMap<String, String>,
+            uploadPathHashMap: HashMap<String, List<String>>
+        ): String {
             val connection: HttpURLConnection
             val outputStream: DataOutputStream
             val inputStream: InputStream
@@ -341,7 +377,10 @@ class RestClient {
             connection.requestMethod = "POST"
             connection.setRequestProperty("Connection", "Keep-Alive")
             connection.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0")
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary)
+            connection.setRequestProperty(
+                "Content-Type",
+                "multipart/form-data; boundary=" + boundary
+            )
 
 
             for ((key, value) in params) {
@@ -354,7 +393,8 @@ class RestClient {
             for ((fileField, filepathList) in uploadPathHashMap) {
                 for ((i, filepath) in filepathList.withIndex()) {
                     LPHLog.d("filePath upload: " + filepath)
-                    val q = filepath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val q =
+                        filepath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                     val idx = q.size - 1
                     outputStream.writeBytes(twoHyphens + boundary + lineEnd)
                     outputStream.writeBytes("Content-Disposition: form-data; name=\"" + fileField + "[" + i + "]" + "\"; filename=\"" + q[idx] + "\"" + lineEnd)
@@ -410,7 +450,12 @@ class RestClient {
         }
 
         @Throws(IOException::class)
-        fun httpFileUploadProgress(urlTo: String, params: HashMap<String, String>, filepathList: List<String>, filefield: String): String {
+        fun httpFileUploadProgress(
+            urlTo: String,
+            params: HashMap<String, String>,
+            filepathList: List<String>,
+            filefield: String
+        ): String {
             val inputStream: InputStream? = null
 
             val boundary = "---------------------------boundary"
@@ -432,7 +477,10 @@ class RestClient {
             connection.useCaches = false
 
             connection.requestMethod = "POST"
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary)
+            connection.setRequestProperty(
+                "Content-Type",
+                "multipart/form-data; boundary=" + boundary
+            )
 
             val metadataPart = ("--" + boundary + "\r\n"
                     + "Content-Disposition: form-data; name=\"metadata\"\r\n\r\n"
@@ -443,7 +491,15 @@ class RestClient {
 
             val filePathList = filepathList[0]
             val file = File(filePathList)
-            val stringData = generateFileHeader(filePathList, boundary, filefield, lineEnd, tail, metadataPart, 0)
+            val stringData = generateFileHeader(
+                filePathList,
+                boundary,
+                filefield,
+                lineEnd,
+                tail,
+                metadataPart,
+                0
+            )
             val fileLength = file.length() + tail.length
             val requestLength = stringData.length + fileLength
             connection.setRequestProperty("Content-length", "" + requestLength)
@@ -492,7 +548,15 @@ class RestClient {
         }
 
 
-        private fun generateFileHeader(filepath: String, boundary: String, filefield: String, lineEnd: String, tail: String, metadataPart: String, i: Int): String {
+        private fun generateFileHeader(
+            filepath: String,
+            boundary: String,
+            filefield: String,
+            lineEnd: String,
+            tail: String,
+            metadataPart: String,
+            i: Int
+        ): String {
 
             LPHLog.d("filePath upload: " + filepath)
             val q = filepath.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()

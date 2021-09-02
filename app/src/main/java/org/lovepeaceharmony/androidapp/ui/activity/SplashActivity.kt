@@ -2,12 +2,11 @@ package org.lovepeaceharmony.androidapp.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import org.json.JSONException
 import org.json.JSONObject
@@ -41,26 +40,26 @@ class SplashActivity : AppCompatActivity() {
 
 
         FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener(this) { pendingDynamicLinkData ->
-                    // Get deep link from result (may be null if no link is found)
-                    var deepLink: Uri? = null
-                    if (pendingDynamicLinkData != null) {
-                        deepLink = pendingDynamicLinkData.link
-                    }
-                    //
-                    // If the user isn't signed in and the pending Dynamic Link is
-                    // an invitation, sign in the user anonymously, and record the
-                    // referrer's UID.
-                    //
-                    if (deepLink != null && deepLink.getBooleanQueryParameter("invitedby", false)) {
-                        inviteCoupon = deepLink.getQueryParameter("invitedby")
-                        val cache = this@SplashActivity.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
-                        val lphConstants = cache?.edit()
-                        lphConstants?.putString(Constants.SHARED_PREF_INVITED_BY, inviteCoupon)
-                        lphConstants?.apply()
-                    }
+            .getDynamicLink(intent)
+            .addOnSuccessListener(this) { pendingDynamicLinkData ->
+                // Get deep link from result (may be null if no link is found)
+                val deepLink = pendingDynamicLinkData?.link
+                //
+                // If the user isn't signed in and the pending Dynamic Link is
+                // an invitation, sign in the user anonymously, and record the
+                // referrer's UID.
+                //
+                if (deepLink != null && deepLink.getBooleanQueryParameter("invitedby", false)) {
+                    inviteCoupon = deepLink.getQueryParameter("invitedby")
+                    val cache = this@SplashActivity.getSharedPreferences(
+                        Constants.SHARED_PREF_NAME,
+                        Context.MODE_PRIVATE
+                    )
+                    val lphConstants = cache?.edit()
+                    lphConstants?.putString(Constants.SHARED_PREF_INVITED_BY, inviteCoupon)
+                    lphConstants?.apply()
                 }
+            }
 
 
 
@@ -68,45 +67,23 @@ class SplashActivity : AppCompatActivity() {
          * Showing splash screen with a timer. This will be useful when you
          * want to show case your app logo / company
          */
-        {
-            startApp()
-        }, 1000)
+            {
+                startApp()
+            }, 1000
+        )
 
     }
 
 
-
     private fun startApp() {
-        val settings = getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE) // 0 - for private mode
+        val settings = getSharedPreferences(
+            Constants.SHARED_PREF_NAME,
+            Context.MODE_PRIVATE
+        ) // 0 - for private mode
         val isLoggedIn = settings.getBoolean(Constants.SHARED_PREF_IS_LOGIN, false)
         val loginType = Helper.getStringFromPreference(this, Constants.SHARED_PREF_LOGIN_TYPE)
 
-        if (isLoggedIn && loginType != Constants.LoginType.WithoutEmail.name) {
-            val email = Helper.getStringFromPreference(this, Constants.SHARED_PREF_EMAIL)
-            val password = Helper.getStringFromPreference(this, Constants.SHARED_PREF_PASSWORD)
-            val source = Helper.getStringFromPreference(this, Constants.SHARED_PREF_SOURCE)
-            val weakReferenceContext = WeakReference(this.context!!)
-            if(Helper.isConnected(this)) {
-
-                val loginAsync = LoginAsync(this, email, password, source.toLowerCase(), weakReferenceContext)
-                loginAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-            } else {
-                Helper.showConfirmationAlertTwoButton(this, this.getString(R.string.internet_warning), object : ConfirmationAlertCallback {
-                    override fun onPositiveButtonClick() {
-                        val loginAsync = LoginAsync(this@SplashActivity, email, password, source.toLowerCase(), weakReferenceContext)
-                        loginAsync.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR)
-                    }
-
-                    override fun onNegativeButtonClick() {
-
-                    }
-
-                    override fun onNeutralButtonClick() {
-
-                    }
-                })
-            }
-        } else if(isLoggedIn && loginType == Constants.LoginType.WithoutEmail.name) {
+         if (isLoggedIn && loginType == Constants.LoginType.WithoutEmail.name) {
             val intent = Intent(this@SplashActivity, MainActivity::class.java)
             intent.putExtra(Constants.BUNDLE_IS_FROM_PROFILE, false)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -121,7 +98,13 @@ class SplashActivity : AppCompatActivity() {
 
     }
 
-    private class LoginAsync internal constructor(context: SplashActivity, private val email: String, private val password: String, private val source: String, private val weakReferenceContext: WeakReference<Context>) : AsyncTask<Void, Void, Response<Any>>() {
+    private class LoginAsync internal constructor(
+        context: SplashActivity,
+        private val email: String,
+        private val password: String,
+        private val source: String,
+        private val weakReferenceContext: WeakReference<Context>
+    ) : AsyncTask<Void, Void, Response<Any>>() {
         private val context: WeakReference<SplashActivity> = WeakReference(context)
 
 
@@ -148,9 +131,9 @@ class SplashActivity : AppCompatActivity() {
             super.onPostExecute(response)
             if (response.isSuccess()) {
                 val res: String = response.getResult() as String
-                LPHLog.d("Response onPost 1: " + res)
+                LPHLog.d("Response onPost 1: $res")
 
-                val jsonObj  = JSONObject(res)
+                val jsonObj = JSONObject(res)
                 val dataObj = jsonObj.getJSONObject(Constants.PARSE_DATA)
                 val userObj = dataObj.getJSONObject(Constants.PARSE_USER)
                 val name = userObj.optString(Constants.API_NAME)
@@ -161,10 +144,14 @@ class SplashActivity : AppCompatActivity() {
                 val inviteCoupon = userObj.optString(Constants.PARSE_INVITE_COUPON)
                 val token = dataObj.optString(Constants.API_TOKEN)
 
-                val cache = context.get()!!.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+                val cache = context.get()!!
+                    .getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
                 val lphConstants = cache.edit()
                 lphConstants.putBoolean(Constants.SHARED_PREF_IS_LOGIN, true)
-                lphConstants.putString(Constants.SHARED_PREF_LOGIN_TYPE, Constants.LoginType.Email.name)
+                lphConstants.putString(
+                    Constants.SHARED_PREF_LOGIN_TYPE,
+                    Constants.LoginType.Email.name
+                )
                 lphConstants.putString(Constants.SHARED_PREF_TOKEN, token)
                 lphConstants.putString(Constants.SHARED_PREF_USER_NAME, name)
                 lphConstants.putString(Constants.SHARED_PREF_PASSWORD, password)
@@ -176,8 +163,11 @@ class SplashActivity : AppCompatActivity() {
                 lphConstants.apply()
 
 //                Helper.clearAllDbValues(context = context.get()!!)
-                val pendingMinutes = Helper.getFloatFromPreference(context.get()!!, Constants.SHARED_PREF_PENDING_MINUTES)
-                LPHLog.d("Pending minutes in Splash Activity : " + pendingMinutes)
+                val pendingMinutes = Helper.getFloatFromPreference(
+                    context.get()!!,
+                    Constants.SHARED_PREF_PENDING_MINUTES
+                )
+                LPHLog.d("Pending minutes in Splash Activity : $pendingMinutes")
                 Helper.callUpdateMileStoneAsync(weakReferenceContext, pendingMinutes)
 
                 val intent = Intent(context.get()!!, MainActivity::class.java)
@@ -186,7 +176,11 @@ class SplashActivity : AppCompatActivity() {
                 context.get()!!.startActivity(intent)
                 context.get()!!.finish()
             } else {
-                MessageBox(context.get()!!, context.get()!!.resources.getString(R.string.alert), response.getServerMessage()!!).showMessage()
+                MessageBox(
+                    context.get()!!,
+                    context.get()!!.resources.getString(R.string.alert),
+                    response.getServerMessage()!!
+                ).showMessage()
             }
         }
     }
