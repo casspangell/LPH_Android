@@ -32,4 +32,7 @@
     <color name="tool_tip_color2">#00B6B1</color>
     <color name="tool_tip_color3">#BCC35C</color>
     <color name="bottom_icon_color">#8F8F94</color>
+    <color name="love">#523075</color>
+    <color name="peace">#489B8F</color>
+    <color name="harmony">#90BA55</color>
 </resources>

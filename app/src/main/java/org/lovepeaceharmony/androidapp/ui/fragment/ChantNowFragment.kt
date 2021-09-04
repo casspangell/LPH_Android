@@ -14,12 +14,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.core.content.ContextCompat
-import androidx.loader.content.Loader
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -30,15 +24,24 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.adapters.SongsAdapter
 import org.lovepeaceharmony.androidapp.model.SongsModel
 import org.lovepeaceharmony.androidapp.utility.Constants
 import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
+import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
 import java.io.IOException
-import java.lang.ref.WeakReference
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -49,10 +52,17 @@ import java.util.concurrent.TimeUnit
  * create an instance of this fragment.
  * Created by Naveen Kumar M on 09/11/17.
  */
-class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, AudioManager.OnAudioFocusChangeListener {
+@AndroidEntryPoint
+@ExperimentalCoroutinesApi
+class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
+    MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener,
+    AudioManager.OnAudioFocusChangeListener {
+
+    private val viewModel by activityViewModels<MainViewModel>()
 
     // Media Player
     private var mp: MediaPlayer? = null
+
     // Handler to update UI timer, progress bar etc,.
     private val mHandler = Handler()
     private val minuteHandler = Handler()
@@ -77,7 +87,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
     private var updatingMinutes: Float? = 0f
     private lateinit var mAudioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
-    private  lateinit var mPlaybackAttributes: AudioAttributes
+    private lateinit var mPlaybackAttributes: AudioAttributes
     private lateinit var phoneStateListener: PhoneStateListener
     private lateinit var telephonyManager: TelephonyManager
     private var isOnCall = false
@@ -95,7 +105,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 val songDuration = "" + Helper.milliSecondsToTimer(totalDuration)
                 val currentDur = "" + Helper.milliSecondsToTimer(currentDuration)
 
-                if(currentDuration <= totalDuration) {
+                if (currentDuration <= totalDuration) {
                     // Displaying Total Duration time
                     songTotalDurationLabel!!.text = songDuration
                     // Displaying time completed playing
@@ -136,6 +146,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
     private val toolTipReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            LPHLog.d("Tool Tip : Tool Tip Receiver ChantNowFragment")
             SongsModel.updateIsToolTip(context, 0, true)
             restartLoader()
         }
@@ -143,30 +154,31 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mAudioManager = context!!.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        enabledSongModelList = SongsModel.getEnabledSongsMadelList(context!!)
+        mAudioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        enabledSongModelList = SongsModel.getEnabledSongsMadelList(requireContext())
         callStateListener()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             val mHandler = Handler()
             mPlaybackAttributes = AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
 
             mFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                    .setAudioAttributes(mPlaybackAttributes)
-                    .setAcceptsDelayedFocusGain(true)
-                    .setWillPauseWhenDucked(true)
-                    .setOnAudioFocusChangeListener(this, mHandler)
-                    .build()
+                .setAudioAttributes(mPlaybackAttributes)
+                .setAcceptsDelayedFocusGain(true)
+                .setWillPauseWhenDucked(true)
+                .setOnAudioFocusChangeListener(this, mHandler)
+                .build()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_chant_now, container, false)
         LPHLog.d("ChantNow : InitView callled ")
@@ -175,56 +187,71 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        activity!!.registerReceiver(mMessageReceiver, IntentFilter(Constants.BROADCAST_RECEIVER_VOLUME))
-        activity!!.registerReceiver(toolTipReceiver, IntentFilter(Constants.BROADCAST_CHANT_NOW_ADAPTER))
+        requireActivity().registerReceiver(
+            mMessageReceiver,
+            IntentFilter(Constants.BROADCAST_RECEIVER_VOLUME)
+        )
+        if (!viewModel.isToolTipShown) requireContext().registerReceiver(
+            toolTipReceiver,
+            IntentFilter(Constants.BROADCAST_CHANT_NOW_ADAPTER)
+        )
         val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
-        activity!!.registerReceiver(mNoisyReceiver, filter)
+        requireActivity().registerReceiver(mNoisyReceiver, filter)
         super.onActivityCreated(savedInstanceState)
     }
 
 
     override fun onDetach() {
         super.onDetach()
-        activity!!.unregisterReceiver(mMessageReceiver)
-        activity!!.unregisterReceiver(mNoisyReceiver)
-        activity!!.unregisterReceiver(toolTipReceiver)
+        requireActivity().unregisterReceiver(mMessageReceiver)
+        requireActivity().unregisterReceiver(mNoisyReceiver)
+        requireActivity().unregisterReceiver(toolTipReceiver)
     }
 
     private fun initView() {
         songProgressBar = rootView!!.findViewById(R.id.songProgressBar)
         volumeSeekBar = rootView!!.findViewById(R.id.volume_progress)
-        val colorAscent = ContextCompat.getColor(context!!, R.color.top_bar_orange)
+        val colorAscent = ContextCompat.getColor(requireContext(), R.color.top_bar_orange)
         songProgressBar!!.progressTintList = ColorStateList.valueOf(colorAscent)
         songProgressBar!!.thumbTintList = ColorStateList.valueOf(colorAscent)
         val recyclerView = rootView!!.findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context!!)
-        songsAdapter = SongsAdapter(activity!!, context!!, null, object : SongsAdapter.OnSongRefresh {
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        songsAdapter =
+            SongsAdapter(requireActivity(), requireContext(), object : SongsAdapter.OnSongRefresh {
                 override fun onRefresh() {
                     enabledSongModelList!!.clear()
-                    enabledSongModelList = SongsModel.getEnabledSongsMadelList(context!!)
+                    enabledSongModelList = SongsModel.getEnabledSongsMadelList(requireContext())
                     restartLoader()
                 }
 
                 override fun onItemClick(songTitle: String, index: Int) {
-                    val songList = SongsModel.getSongsModelList(context!!)
+                    val songList = SongsModel.getSongsModelList(requireContext())
                     val songsModel = songList?.get(index)
-                    if(songsModel!!.isChecked)
+                    if (songsModel!!.isChecked)
                         playSongByTitle(songTitle)
                     else
-                        Toast.makeText(context, context!!.getString(R.string.please_enable_your_song), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            resources.getString(R.string.please_enable_your_song_and_play),
+                            Toast.LENGTH_SHORT
+                        ).show()
                 }
 
-                override fun onDisableSong(songTitle: String, isChecked: Boolean, songsModel: SongsModel) {
+                override fun onDisableSong(
+                    songTitle: String,
+                    isChecked: Boolean,
+                    songsModel: SongsModel
+                ) {
                     var nowPlaying = tvNowPlaying!!.text.toString().trim()
                     nowPlaying = nowPlaying.replace("Now playing: ", "")
                     if (mp != null) {
-                        if(isShuffle) {
-                            if(!isChecked) {
-                                if(shuffledSongModelList!!.size > 0) {
+                        if (isShuffle) {
+                            if (!isChecked) {
+                                if (shuffledSongModelList!!.size > 0) {
                                     var selectedIndex = 0
-                                    for(i in shuffledSongModelList!!.indices){
+                                    for (i in shuffledSongModelList!!.indices) {
                                         val songsModel1 = shuffledSongModelList!![i]
-                                        if(songTitle == songsModel1.songTitle){
+                                        if (songTitle == songsModel1.songTitle) {
                                             selectedIndex = i
                                         }
                                     }
@@ -238,16 +265,19 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
                         }
                         if (mp!!.isPlaying && !isChecked && songTitle == nowPlaying) {
-                            if (Helper.isLoggedInUser(context!!)) {
-                                val weakReferenceContext = WeakReference(context!!)
-                                Helper.callUpdateMileStoneAsync(weakReferenceContext, minutes!!)
+                            if (Helper.isLoggedInUser(requireContext())) {
+                                minutes?.let { viewModel.updateMilestone(it) }
                                 updatingMinutes = 0f
                                 minutes = 0f
                             }
                             mp!!.seekTo(0)
                             mp!!.stop()
                             btnPlay!!.setImageResource(R.drawable.ic_play_button)
-                            Toast.makeText(context, context!!.getString(R.string.please_enable_your_song), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                resources.getString(R.string.please_enable_your_song_and_play),
+                                Toast.LENGTH_SHORT
+                            ).show()
                             currentSongIndex = 0
                             isSongPlay = false
                         }
@@ -256,10 +286,10 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                     }
                 }
             })
-            recyclerView.adapter = songsAdapter
+        recyclerView.adapter = songsAdapter
 
-        val selectedColor = ContextCompat.getColor(context!!, R.color.top_bar_orange)
-        val greyColor = ContextCompat.getColor(context!!, R.color.bottom_icon_color)
+        val selectedColor = ContextCompat.getColor(requireContext(), R.color.top_bar_orange)
+        val greyColor = ContextCompat.getColor(requireContext(), R.color.bottom_icon_color)
         btnPlay = rootView!!.findViewById(R.id.iv_play)
         val btnForward = rootView!!.findViewById<ImageView>(R.id.iv_forward)
         val btnRepeat = rootView!!.findViewById<ImageView>(R.id.iv_repeat)
@@ -272,8 +302,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         // Media player
         if (mp == null) {
             mp = MediaPlayer()
-            if(enabledSongModelList!!.size > 0) {
-                val songName = context!!.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+            if (enabledSongModelList!!.size > 0) {
+                val songName =
+                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
             }
@@ -282,22 +313,24 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
             LPHLog.d("isSongPlay : " + isSongPlay)
             LPHLog.d("currentSongIndex : " + currentSongIndex)
 
-            if(isSongPlay && shuffledSongModelList != null && isShuffle &&  shuffledSongModelList!!.size > 0) {
-                val songName = context!!.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
+            if (isSongPlay && shuffledSongModelList != null && isShuffle && shuffledSongModelList!!.size > 0) {
+                val songName =
+                    resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
-            } else if(isSongPlay && enabledSongModelList != null && enabledSongModelList!!.size > 0) {
-                val songName = context!!.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+            } else if (isSongPlay && enabledSongModelList != null && enabledSongModelList!!.size > 0) {
+                val songName =
+                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
             } else {
                 setDefaultSongTitle()
             }
 
-            if(isShuffle)
+            if (isShuffle)
                 btnShuffle.setColorFilter(selectedColor)
 
-            if(isRepeat)
+            if (isRepeat)
                 btnRepeat.setColorFilter(selectedColor)
         }
 
@@ -308,27 +341,25 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
         btnPlay!!.setOnClickListener {
             if (!Helper.checkExternalStoragePermission(context)) {
-                Toast.makeText(context, context!!.getString(R.string.enable_storage_permission), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.enable_storage_permission),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 // check for already playing
-                if (mp != null && mp!!.isPlaying && !isOnCall) {
-                    if (Helper.isLoggedInUser(context!!)) {
-                        val weakReferenceContext = WeakReference(context!!)
-                        Helper.callUpdateMileStoneAsync(weakReferenceContext, minutes!!)
+                if (mp != null && mp?.isPlaying == true && !isOnCall) {
+                    if (Helper.isLoggedInUser(requireContext())) {
+                        minutes?.let { viewModel.updateMilestone(it) }
                         minutes = 0f
                         updatingMinutes = 0f
                     }
-                    if(countDownTimer != null) {
+                    if (countDownTimer != null) {
                         countDownTimer?.cancel()
                         minuteHandler.removeCallbacks(minuteHandlerTask)
                     }
-//                    if (mp!!.isPlaying) {
                     pausePlayer()
-                    // Changing button image to play button
-//                    btnPlay!!.setImageResource(R.drawable.ic_play_button)
-
-//                    }
-                } else if(!isOnCall){
+                } else if (!isOnCall) {
                     // Resume song
                     if (mp != null) {
                         if (isSongPlay) {
@@ -338,7 +369,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 //                            mp!!.start()
                             // Changing button image to pause button
                             btnPlay!!.setImageResource(R.drawable.ic_pause_button)
-                        } else if(!isOnCall){
+                        } else if (!isOnCall) {
                             playSong(currentSongIndex)
                         }
 
@@ -354,17 +385,21 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
          * */
         btnForward.setOnClickListener {
             // get current song position
-            if(!isOnCall) {
+            if (!isOnCall) {
 
-                LPHLog.d("currentSongIndex Forward : "+ currentSongIndex)
+                LPHLog.d("currentSongIndex Forward : " + currentSongIndex)
                 if (currentSongIndex < enabledSongModelList!!.size - 1) {
                     playSong(currentSongIndex + 1)
 //                    currentSongIndex += 1
-                } else if(isRepeat) {
+                } else if (isRepeat) {
                     currentSongIndex = 0
                     playSong(currentSongIndex)
                 } else {
-                    Toast.makeText(context, context?.getString(R.string.no_next_song), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context?.getString(R.string.no_next_song),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 /*val currentPosition = mp!!.currentPosition
@@ -385,23 +420,27 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
          * */
         btnBackward.setOnClickListener {
             // get current song position
-            if(!isOnCall) {
-                LPHLog.d("currentSongIndex Backward : "+ currentSongIndex)
+            if (!isOnCall) {
+                LPHLog.d("currentSongIndex Backward : " + currentSongIndex)
 
                 if (currentSongIndex > 0) {
                     playSong(currentSongIndex - 1)
 //                    currentSongIndex -= 1
-                } else if(isShuffle && isRepeat) {
+                } else if (isShuffle && isRepeat) {
                     currentSongIndex = (shuffledSongModelList!!.size - 1)
                     playSong(currentSongIndex)
-                } else if(isRepeat) {
+                } else if (isRepeat) {
                     currentSongIndex = (enabledSongModelList!!.size - 1)
                     playSong(currentSongIndex)
                 } else {
-                    Toast.makeText(context, context?.getString(R.string.no_previous_song), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context?.getString(R.string.no_previous_song),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
-                LPHLog.d("currentSongIndex Backward : "+ currentSongIndex)
+                LPHLog.d("currentSongIndex Backward : " + currentSongIndex)
                 /*val currentPosition = mp!!.currentPosition
                 // check if seekBackward time is greater than 0 sec
                 if (currentPosition - seekBackwardTime >= 0) {
@@ -425,19 +464,31 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         btnRepeat.setOnClickListener {
             if (isRepeat) {
                 isRepeat = false
-                Toast.makeText(context, context?.getString(R.string.repeat_is_off), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context?.getString(R.string.repeat_turned_off),
+                    Toast.LENGTH_SHORT
+                ).show()
                 btnRepeat.setColorFilter(greyColor)
             } else {
-                if(enabledSongModelList != null && enabledSongModelList!!.size > 0) {
+                if (enabledSongModelList != null && enabledSongModelList!!.size > 0) {
                     // make repeat to true
                     isRepeat = true
-                    Toast.makeText(context, context?.getString(R.string.repeat_is_on), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context?.getString(R.string.repeat_turned_on),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     // make shuffle to false
 //                isShuffle = false
                     btnRepeat.setColorFilter(selectedColor)
 //                btnShuffle.setColorFilter(greyColor)
                 } else {
-                    Toast.makeText(context, context!!.getString(R.string.repeat_not_possible), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        resources.getString(R.string.repeat_not_possible),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -449,31 +500,43 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         btnShuffle.setOnClickListener {
             if (isShuffle) {
                 isShuffle = false
-                Toast.makeText(context, context!!.getString(R.string.shuffle_is_off), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.shuffle_turned_off),
+                    Toast.LENGTH_SHORT
+                ).show()
                 btnShuffle.setColorFilter(greyColor)
             } else {
                 shuffledSongModelList = ArrayList()
-                if(enabledSongModelList != null && enabledSongModelList!!.size > 0) {
+                if (enabledSongModelList != null && enabledSongModelList!!.size > 0) {
                     for (songModel: SongsModel in enabledSongModelList!!) {
                         if (songModel != enabledSongModelList!![currentSongIndex]) {
                             shuffledSongModelList?.add(songModel)
                         }
                     }
-                    Collections.shuffle(shuffledSongModelList)
+                    shuffledSongModelList?.shuffle()
                     shuffledSongModelList?.add(0, enabledSongModelList!![currentSongIndex])
-                    for(songModel: SongsModel in shuffledSongModelList!!){
+                    for (songModel: SongsModel in shuffledSongModelList!!) {
                         LPHLog.d("NAME: " + songModel.songTitle)
                     }
 
                     // make shuffle to true
                     isShuffle = true
-                    Toast.makeText(context, context?.getString(R.string.shuffle_is_on), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context?.getString(R.string.shuffle_turned_on),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     // make repeat to false
 //                isRepeat = false
                     btnShuffle.setColorFilter(selectedColor)
 //                    btnRepeat.setColorFilter(greyColor)
                 } else {
-                    Toast.makeText(context, context!!.getString(R.string.shuffle_not_possible), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        resources.getString(R.string.shuffle_not_possible),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
             }
@@ -481,23 +544,25 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
         updateVolume()
 
-        loaderManager.initLoader(Constants.URL_SONG_LOADER, null, this)
+        LoaderManager.getInstance(this).initLoader(Constants.URL_SONG_LOADER, null, this)
 
     }
 
 
     private fun setDefaultSongTitle() {
-        if(shuffledSongModelList != null && isShuffle &&  shuffledSongModelList!!.size > 0) {
-            val songName = context!!.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
+        if (shuffledSongModelList != null && isShuffle && shuffledSongModelList!!.size > 0) {
+            val songName =
+                resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
             tvNowPlaying!!.text = songName
             tvNowPlaying!!.visibility = View.VISIBLE
-        } else if(isShuffle && shuffledSongModelList!!.size == 0) {
+        } else if (isShuffle && shuffledSongModelList!!.size == 0) {
             tvNowPlaying!!.visibility = View.GONE
-        }else if(enabledSongModelList!!.size > 0) {
-            val songName = context!!.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+        } else if (enabledSongModelList!!.size > 0) {
+            val songName =
+                resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
             tvNowPlaying!!.text = songName
             tvNowPlaying!!.visibility = View.VISIBLE
-        } else if(enabledSongModelList!!.size == 0) {
+        } else if (enabledSongModelList!!.size == 0) {
             tvNowPlaying!!.visibility = View.GONE
         }
     }
@@ -509,8 +574,12 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 //            volumeSeekBar!!.invalidate()
 //            volumeSeekBar!!.progressDrawable.mutate()
             volumeSeekBar!!.progress = volumeLevel
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mAudioManager.adjustStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_UNMUTE,
+                    0
+                )
             } else {
                 mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
             }
@@ -519,9 +588,13 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
             volumeSeekBar!!.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar, progress: Int, b: Boolean) {
 //                    val progress = seekBar.progress
-                    if(progress > 0) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                            mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
+                    if (progress > 0) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            mAudioManager.adjustStreamVolume(
+                                AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_UNMUTE,
+                                0
+                            )
                         } else {
                             mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
                         }
@@ -535,8 +608,12 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mAudioManager.adjustStreamVolume(
+                            AudioManager.STREAM_MUSIC,
+                            AudioManager.ADJUST_UNMUTE,
+                            0
+                        )
                     } else {
                         mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
                     }
@@ -547,7 +624,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
 
     fun restartLoader() {
-        loaderManager.restartLoader(Constants.URL_SONG_LOADER, null, this)
+        LoaderManager.getInstance(this).restartLoader(Constants.URL_SONG_LOADER, null, this)
     }
 
     private fun playSong(songIndex: Int) {
@@ -555,7 +632,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         try {
 
             var songPlayList = enabledSongModelList
-            if(isShuffle) {
+            if (isShuffle) {
                 songPlayList = shuffledSongModelList
             }
             if (songPlayList!!.size > 0) {
@@ -563,7 +640,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 isSongPlay = true
                 mp!!.reset()
                 Log.d("SONG PATH : ", songPlayList[songIndex].songPath)
-                val descriptor = context!!.assets.openFd(songPlayList[songIndex].songPath)
+                val descriptor = requireContext().assets.openFd(songPlayList[songIndex].songPath)
                 val start = descriptor.startOffset
                 val end = descriptor.length
 
@@ -576,7 +653,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
                 timerStart()
 
-                val songName = context!!.getString(R.string.now_playing) + " " + songPlayList[songIndex].songTitle
+                val songName =
+                    resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].songTitle
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
 
@@ -590,7 +668,11 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 // Updating progress bar
                 updateProgressBar()
             } else {
-                Toast.makeText(context, context!!.getString(R.string.please_enable_your_song), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.please_enable_your_song_and_play),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
@@ -604,16 +686,15 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
     private fun playSongByTitle(songTitle: String) {
         var songPlayList = enabledSongModelList
-        if(isShuffle) {
+        if (isShuffle) {
             songPlayList = shuffledSongModelList
         }
         for (i in songPlayList!!.indices) {
             val songsModel = songPlayList[i]
             if (songTitle == songsModel.songTitle) {
-                if (Helper.isLoggedInUser(context!!)) {
-                    Helper.updateMileStonePendingMinutes(context!!, minutes!!)
-                    val weakReferenceContext = WeakReference(context!!)
-                    Helper.callUpdateMileStoneAsync(weakReferenceContext, minutes!!)
+                if (Helper.isLoggedInUser(requireContext())) {
+                    Helper.updateMileStonePendingMinutes(requireContext(), minutes!!)
+                    minutes?.let { viewModel.updateMilestone(it) }
                     minutes = 0f
                     updatingMinutes = 0f
                 }
@@ -632,10 +713,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
     override fun onCompletion(mediaPlayer: MediaPlayer) {
         LPHLog.d("ChantNow On Completion is called")
-        LPHLog.d("currentSongIndex OnCompletion Start : "+ currentSongIndex)
-        if (Helper.isLoggedInUser(context!!)) {
-            val weakReferenceContext = WeakReference(context!!)
-            Helper.callUpdateMileStoneAsync(weakReferenceContext, minutes!!)
+        LPHLog.d("currentSongIndex OnCompletion Start : $currentSongIndex")
+        if (Helper.isLoggedInUser(requireContext())) {
+            minutes?.let { viewModel.updateMilestone(it) }
             minutes = 0f
             updatingMinutes = 0f
         }
@@ -656,7 +736,11 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                     btnPlay!!.setImageResource(R.drawable.ic_play_button)
                 }
             } else {
-                Toast.makeText(context, context!!.getString(R.string.shuffle_not_possible), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.shuffle_not_possible),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             /*if (enabledSongModelList!!.size > 0) {
@@ -665,7 +749,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 currentSongIndex = rand.nextInt(enabledSongModelList!!.size - 1 - 0 + 1) + 0
                 playSong(currentSongIndex)
             } else {
-                Toast.makeText(context, context!!.getString(R.string.shuffle_not_possible), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, resources.getString(R.string.shuffle_not_possible), Toast.LENGTH_SHORT).show()
             }*/
         } else {
             LPHLog.d("ChantNow On Completion is called Else")
@@ -673,7 +757,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
             if (currentSongIndex < enabledSongModelList!!.size - 1) {
                 playSong(currentSongIndex + 1)
 //                currentSongIndex += 1
-            } else if(isRepeat) {
+            } else if (isRepeat) {
                 // play first song
                 currentSongIndex = 0
                 playSong(currentSongIndex)
@@ -690,7 +774,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
             }*/
         }
 
-        LPHLog.d("currentSongIndex OnCompletion End : "+ currentSongIndex)
+        LPHLog.d("currentSongIndex OnCompletion End : " + currentSongIndex)
 
     }
 
@@ -724,10 +808,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
     override fun onDestroy() {
         super.onDestroy()
         LPHLog.d("ChantNow OnDestroy ChantNow Fragment")
-        if (Helper.isLoggedInUser(context!!)) {
-            Helper.updateMileStonePendingMinutes(context!!, minutes!!)
-            val weakReferenceContext = WeakReference(context!!)
-            Helper.callUpdateMileStoneAsync(weakReferenceContext, minutes!!)
+        if (Helper.isLoggedInUser(requireContext())) {
+            Helper.updateMileStonePendingMinutes(requireContext(), minutes!!)
+            minutes?.let { viewModel.updateMilestone(it) }
             minutes = 0f
             updatingMinutes = 0f
         }
@@ -737,7 +820,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         else
             mAudioManager.abandonAudioFocus(this)
 
-        if (mp!= null && mp!!.isPlaying) {
+        if (mp != null && mp!!.isPlaying) {
             pausePlayer()
 //            mp!!.pause()
             // Changing button image to play button
@@ -765,14 +848,14 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
     }
 
     override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
-        return SongsModel.getCursorLoader(context!!)
+        return SongsModel.getCursorLoader(requireContext())
     }
 
     override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor?) {
         if (loader.id == Constants.URL_SONG_LOADER) {
             if (cursor != null) {
-                songsAdapter!!.swapCursor(cursor)
-                songsAdapter!!.notifyDataSetChanged()
+                songsAdapter?.swapCursor(cursor)
+                songsAdapter?.notifyDataSetChanged()
             }
         }
     }
@@ -795,16 +878,15 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
     }
 
     private fun pausePlayer() {
-        if(mp != null && mp!!.isPlaying) {
+        if (mp != null && mp!!.isPlaying) {
             mp?.pause()
             btnPlay!!.setImageResource(R.drawable.ic_play_button)
         }
     }
 
 
-
     private fun playPlayer() {
-        if(mp != null && successfullyRetrievedAudioFocus()) {
+        if (mp != null && successfullyRetrievedAudioFocus()) {
             mp?.start()
             btnPlay!!.setImageResource(R.drawable.ic_pause_button)
         }
@@ -813,14 +895,16 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
 
     private fun successfullyRetrievedAudioFocus(): Boolean {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val focusRequest: Int = mAudioManager.requestAudioFocus(mFocusRequest)
             return focusRequest == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         } else {
-            val focusRequest: Int = mAudioManager.requestAudioFocus(this,
+            val focusRequest: Int = mAudioManager.requestAudioFocus(
+                this,
                 AudioManager.STREAM_MUSIC,
-                AudioManager.AUDIOFOCUS_GAIN)
-            LPHLog.d("ChantNow focusRequest : " + focusRequest)
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+            LPHLog.d("ChantNow focusRequest : $focusRequest")
             return focusRequest == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         }
     }
@@ -829,14 +913,14 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
                 LPHLog.d("ChantNow AUDIOFOCUS_GAIN")
-                if(mp != null) {
+                if (mp != null) {
                     LPHLog.d("ChantNow Mp is not null")
 //                    val progress = volumeSeekBar?.progress
 //                    LPHLog.d("ChantNow volume : " + progress)
 //                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress!!, 0)
 //                    mp!!.setVolume(progress.toFloat(), progress.toFloat())
 
-                    if(isOnCall) {
+                    if (isOnCall) {
                         isOnCall = false
                         playPlayer()
                     }
@@ -850,8 +934,10 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
                 pausePlayer()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     mAudioManager.abandonAudioFocusRequest(mFocusRequest)
-                    mHandler.postDelayed(mDelayedStopRunnable,
-                            TimeUnit.SECONDS.toMillis(30))
+                    mHandler.postDelayed(
+                        mDelayedStopRunnable,
+                        TimeUnit.SECONDS.toMillis(30)
+                    )
                 } else
                     mAudioManager.abandonAudioFocus(this)
                 /*if(mp != null && mp!!.isPlaying) {
@@ -870,27 +956,28 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Medi
             }
             else -> {
                 LPHLog.d("ChantNow AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK")
-               /* if(mp != null && mp!!.isPlaying){
-                    mp!!.setVolume(0.1f, 0.1f)
-                }*/
+                /* if(mp != null && mp!!.isPlaying){
+                     mp!!.setVolume(0.1f, 0.1f)
+                 }*/
 //                pausePlayer()
             }
         }
     }
 
     //Handle incoming phone calls
-private fun callStateListener() {
-  // Get the telephony manager
-  telephonyManager = context!!.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-  //Starting listening for PhoneState changes
+    private fun callStateListener() {
+        // Get the telephony manager
+        telephonyManager =
+            requireContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        //Starting listening for PhoneState changes
 
-        phoneStateListener = object: PhoneStateListener() {
+        phoneStateListener = object : PhoneStateListener() {
             override fun onCallStateChanged(state: Int, incomingNumber: String?) {
-                when(state){
+                when (state) {
                     TelephonyManager.CALL_STATE_OFFHOOK, TelephonyManager.CALL_STATE_RINGING -> {
-                        if(mp != null) {
+                        if (mp != null) {
                             try {
-                                if(mp!!.isPlaying) {
+                                if (mp!!.isPlaying) {
                                     isOnCall = true
                                     LPHLog.d("ChantNow incoming call pause")
                                     pausePlayer()
@@ -901,7 +988,7 @@ private fun callStateListener() {
                         }
                     }
                     TelephonyManager.CALL_STATE_IDLE -> {
-                        if(isOnCall) {
+                        if (isOnCall) {
                             LPHLog.d("ChantNow incoming call resume")
                             playPlayer()
                         }
@@ -910,18 +997,17 @@ private fun callStateListener() {
             }
         }
 
-  // Register the listener with the telephony manager
-  // Listen for changes to the device call state.
-  telephonyManager.listen(phoneStateListener,
-          PhoneStateListener.LISTEN_CALL_STATE);
-}
+        // Register the listener with the telephony manager
+        // Listen for changes to the device call state.
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
+    }
 
     private fun timerStart() {
-        if(countDownTimer != null) {
+        if (countDownTimer != null) {
             countDownTimer?.cancel()
             minuteHandler.removeCallbacks(minuteHandlerTask)
         }
-        if (Helper.isLoggedInUser(context!!)) {
+        if (Helper.isLoggedInUser(requireContext())) {
             minuteHandler.postDelayed(minuteHandlerTask, Helper.MINUTE_INTERVAL)
             countDownTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
                 override fun onTick(milliTillFinish: Long) {
@@ -940,9 +1026,9 @@ private fun callStateListener() {
     private val minuteHandlerTask = object : Runnable {
         override fun run() {
             try {
-                if (Helper.isLoggedInUser(context!!)) {
-                    Helper.updateMileStonePendingMinutes(context!!, updatingMinutes!!)
-                    Helper.updateLocalMileStoneMinutes(context!!, updatingMinutes!!)
+                if (Helper.isLoggedInUser(requireContext())) {
+                    Helper.updateMileStonePendingMinutes(requireContext(), updatingMinutes!!)
+                    Helper.updateLocalMileStoneMinutes(requireContext(), updatingMinutes!!)
                     val intent1 = Intent(Constants.BROADCAST_MILESTONES)
                     context?.sendBroadcast(intent1)
                     updatingMinutes = 0f

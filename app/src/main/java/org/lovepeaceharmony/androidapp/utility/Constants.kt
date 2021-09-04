@@ -53,7 +53,9 @@ object Constants {
     const val SHARED_PREF_MILESTONE_DAYS = "MileStoneDays"
     const val SHARED_PREF_MILESTONE_MINUTES = "MileStoneMinutes"
     const val SHARED_PREF_MILESTONE_INVITE_COUNT = "MileStoneInviteCount"
-    const val SHARED_PREF_IS_TOOL_TIP_SHOWN ="IsToolTipShown"
+
+    /*Shared Pref Name*/
+    const val DATASTORE_NAME = "LPHDataStore"
 
     /*BroadCast Urls*/
     const val BROADCAST_RECEIVER_VOLUME = "VolumeBroadCastReceiver"

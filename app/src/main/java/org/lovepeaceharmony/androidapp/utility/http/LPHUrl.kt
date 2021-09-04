@@ -5,11 +5,13 @@ package org.lovepeaceharmony.androidapp.utility.http
  * Created by Naveen Kumar M on 02/01/18.
  */
 object LPHUrl {
-    private val BASE_URL = "https://lovepeaceharmony.org/app/api/"
+    const val BASE_URL = "https://lovepeaceharmony.org/app/api/"
+    const val LOGIN_PATH = "user/login"
+    const val LOGOUT_PATH = "user/logout"
 
     var registerUrl = BASE_URL + "user/register"
 
-    val loginUrl = BASE_URL + "user/login"
+    const val loginUrl = BASE_URL + "user/login"
 
     val uerUrl = BASE_URL + "user"
 

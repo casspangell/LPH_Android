@@ -1,7 +1,7 @@
 package org.lovepeaceharmony.androidapp.utility
 
 import android.app.Application
-import org.lovepeaceharmony.androidapp.BuildConfig
+import dagger.hilt.android.HiltAndroidApp
 
 
 /**
@@ -9,6 +9,7 @@ import org.lovepeaceharmony.androidapp.BuildConfig
  * Created by Naveen Kumar M on 13/12/17.
  */
 
+@HiltAndroidApp
 class LPHApplication : Application() {
 
     var isFromProfileFbLogin: Boolean = false
