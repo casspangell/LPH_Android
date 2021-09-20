@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/browser_actions_bg_grey"
     android:orientation="horizontal"
-    tools:context="org.lovepeaceharmony.androidapp.ui.fragment.MilestonesFragment">
+    tools:context="org.lovepeaceharmony.android.app.ui.fragment.MilestonesFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/time_container"

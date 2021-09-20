@@ -5,7 +5,7 @@
     android:id="@+id/lay_home_activity_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.lovepeaceharmony.androidapp.ui.activity.MainActivity">
+    tools:context="org.lovepeaceharmony.android.app.ui.activity.MainActivity">
 
     <include
         android:id="@+id/login_header"

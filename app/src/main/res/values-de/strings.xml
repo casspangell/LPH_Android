@@ -1,17 +1,8 @@
 <resources>
-    <string name="app_name">Chant LPH</string>
+    <string name="app_name">Sing LPH</string>
     <string name="love_peace_harmony_messenger">Love Peace Harmony Messenger</string>
 
-    <!--Naveen Account-->
-    <!--<string name="facebook_app_id">1600162746712906</string>
-    <string name="fb_login_protocol_scheme">fb1600162746712906</string>-->
-
-
-    <!--Eric Jerome Account-->
-    <string name="facebook_app_id">372387683172262</string>
-    <string name="fb_login_protocol_scheme">fb372387683172262</string>
-
-    <string name="default_time_template">HH:MM</string>
+    375288004327820  <string name="default_time_template">HH:MM</string>
 
     <!--Navigation-->
     <string name="chant">Singen</string>

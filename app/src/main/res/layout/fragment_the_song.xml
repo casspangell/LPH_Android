@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.lovepeaceharmony.androidapp.ui.fragment.TheSongFragment">
+    tools:context="org.lovepeaceharmony.android.app.ui.fragment.TheSongFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,13 +15,13 @@
             android:layout_height="200dp"
             android:visibility="visible" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="@android:color/black"
+            android:layout_margin="8dp"
             android:text="@string/about_song_content"
-            android:layout_margin="8dp"/>
+            android:textColor="@android:color/black" />
 
     </LinearLayout>
 
