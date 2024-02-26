@@ -8,6 +8,51 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:863691168348:android:a0049f6c5599a1cdc9e499",
+        "android_client_info": {
+          "package_name": "org.lovepeaceharmony.android.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863691168348-n10fu9vkedj03b56n5to5fgk71h0vh1h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.lovepeaceharmony.android.app",
+            "certificate_hash": "e02ea2eebf0b5ddff9da9af09694840e3b8b7e36"
+          }
+        },
+        {
+          "client_id": "863691168348-vu2f7gphaj140ak7l1e9rti6fljnn1ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQF7V_4i-7ApFSUP_OvHdVBVDdGsD_BJk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863691168348-s26jre0tp46dkk5tg72663scu19m5t7u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "863691168348-990dd80l6a4joakqbku2nmb90q5inqf8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.lovepeaceharmony.ios.app",
+                "app_store_id": "1355584112"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:863691168348:android:55419258f6cfd41dc9e499",
         "android_client_info": {
           "package_name": "org.lovepeaceharmony.androidapp"

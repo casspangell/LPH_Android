@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="8dp"
-    tools:context="org.lovepeaceharmony.androidapp.ui.fragment.ProfileFragment">
+    tools:context="org.lovepeaceharmony.android.app.ui.fragment.ProfileFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_name"
@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <org.lovepeaceharmony.androidapp.utility.RoundedImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
         android:layout_width="82dp"
         android:layout_height="82dp"

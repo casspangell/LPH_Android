@@ -5,15 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="org.lovepeaceharmony.androidapp.ui.activity.SplashActivity">
+    tools:context="org.lovepeaceharmony.android.app.ui.activity.SplashActivity">
 
     <include
-        app:layout_constraintVertical_bias="0"
+        android:id="@+id/header"
+        layout="@layout/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_centerInParent="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        layout="@layout/header"
-        android:layout_centerInParent="true"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_healing_ball"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/healing_ball" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
