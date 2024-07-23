@@ -2,12 +2,26 @@
 <resources>
     <!--<color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>-->
-    <color name="colorPrimary">#7A71AE</color>
+<<<<<<< Updated upstream
+    <color name="colorPrimary">#0049ac</color>
     <color name="colorTitleBar">#746eaf</color>
     <color name="colorPrimaryDark">#68328C</color>
     <!--<color name="colorAccent">#FF4081</color>-->
     <color name="colorAccent">#68328c</color>
     <color name="loading_color">#662D91</color>
+=======
+    <!--<color name="colorPrimary">#7A71AE</color>-->
+    <color name="colorPrimary">#0049ac</color>
+    <!--<color name="colorTitleBar">#746eaf</color>-->
+    <color name="colorTitleBar">#0049ac</color>
+    <!--color name="colorPrimaryDark">#68328C</color>-->
+    <color name="colorPrimaryDark">#0049ac</color>
+    <!--<color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#68328c</color>-->
+    <color name="colorAccent">#0049ac</color>
+    <!--<color name="loading_color">#662D91</color>-->
+    <color name="loading_color">#0049ac</color>
+>>>>>>> Stashed changes
 
     <color name="bottom_bar_bg">#F8F8F8</color>
     <color name="tab_background">#EFEFEF</color>
