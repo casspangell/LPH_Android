@@ -71,11 +71,14 @@ class LoginActivity : BaseActivity() {
 
 /*        btnGoogle.setOnClickListener { signInWithGoogle() }  */
 
+
         tvSignUp.setOnClickListener {
             this@LoginActivity.run {
                 startActivity(Intent(this, RegisterActivity::class.java))
             }
         }
+
+
     }
 
     private fun signInWithEmailAndPassword(email: String, password: String) {
