@@ -60,7 +60,7 @@ class LoginActivity : BaseActivity() {
     private fun initView() = with(binding) {
         header.bannerImage.isVisible = true
 
-        btnFacebook.setOnClickListener { signInWithFacebook() }
+/*        btnFacebook.setOnClickListener { signInWithFacebook() } */
 
         btnLogin.setOnClickListener {
             val email = emailContainer.editText?.text?.toString()
@@ -69,7 +69,7 @@ class LoginActivity : BaseActivity() {
                 signInWithEmailAndPassword(email, password)
         }
 
-        btnGoogle.setOnClickListener { signInWithGoogle() }
+/*        btnGoogle.setOnClickListener { signInWithGoogle() }  */
 
         tvSignUp.setOnClickListener {
             this@LoginActivity.run {
@@ -95,6 +95,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
+/* Support for login from social media - removed temporarily
     private fun signInWithFacebook() {
         with(binding.fbLoginButton) {
             setPermissions("public_profile", "email", "user_friends")
@@ -206,6 +207,8 @@ class LoginActivity : BaseActivity() {
                 }
             }
     }
+*/
+
 
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
