@@ -19,7 +19,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         super.onViewCreated(view, savedInstanceState)
         FragmentNewsBinding.bind(view).apply {
             webView.webViewClient = WebViewClient()
-            webView.loadUrl("https://www.drsha.com/news/")
+            webView.loadUrl("https://lovepeaceharmony.org/news/")
         }
     }
 }

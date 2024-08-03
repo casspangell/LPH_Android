@@ -14,14 +14,14 @@
     <string name="default_time_template">HH:MM</string>
 
     <!--Navigation-->
-    <string name="chant">Zingen</string>
+    <string name="chant">Luisteren</string>
     <string name="about">Over</string>
     <string name="news">News</string>
     <string name="logout">Uitloggen</string>
 
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Zingen voor Wereldvrede</string>
-    <string name="chant_now">Zing nu</string>
+    <string name="chant_now">Luisteren</string>
     <string name="reminders">Reminders</string>
     <string name="milestones">Mijlpalen</string>
     <string name="now_playing">Speelt nu</string>

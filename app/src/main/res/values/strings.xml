@@ -14,14 +14,14 @@
     <string name="default_time_template">HH:MM</string>
 
     <!--Navigation-->
-    <string name="chant">Chant</string>
+    <string name="chant">Listen</string>
     <string name="about">About</string>
     <string name="news">News</string>
     <string name="logout">Logout</string>
 
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Chanting for World Peace</string>
-    <string name="chant_now">Chant Now</string>
+    <string name="chant_now">Listen</string>
     <string name="reminders">Reminders</string>
     <string name="milestones">Milestones</string>
     <string name="now_playing">Now Playing</string>
@@ -29,7 +29,7 @@
     <string name="shuffle_turned_off">Shuffle Turned Off</string>
     <string name="repeat_turned_on">Repeat Turned On</string>
     <string name="repeat_turned_off">Repeat Turned Off</string>
-    <string name="love_peace_harmony_in_many_languages">Love Peace Harmony in Many Languages</string>
+    <string name="love_peace_harmony_in_many_languages">Love Peace Harmony Song</string>
     <string name="expressions_of_love_peace_harmony">Expressions of Love Peace Harmony</string>
     <string name="set_reminders_to_chant">Set reminders to chant</string>
     <string name="chant_any_time">Chant any time</string>

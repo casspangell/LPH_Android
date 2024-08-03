@@ -14,14 +14,14 @@
     <string name="default_time_template">HH:MM</string>
 
     <!--Navigation-->
-    <string name="chant">Chantez</string>
+    <string name="chant">Écouter</string>
     <string name="about">À Propos De</string>
     <string name="news">News</string>
     <string name="logout">Déconnexion</string>
 
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Chanter pour la paix dans le monde</string>
-    <string name="chant_now">Chanter Maintenant</string>
+    <string name="chant_now">Écouter</string>
     <string name="reminders">Rappels</string>
     <string name="milestones">Objectifs</string>
     <string name="now_playing">En Lecture</string>

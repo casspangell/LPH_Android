@@ -14,7 +14,6 @@
         android:background="@color/bottom_icon_color"
         android:gravity="bottom|center"
         android:padding="8dp"
-        android:text="@string/love_peace_harmony_messenger"
         android:textAppearance="?attr/textAppearanceSubtitle1"
         android:textColor="?colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
