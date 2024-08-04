@@ -98,7 +98,7 @@
     <string name="connect_with_google">Verbinden mit Google</string>
     <string name="connect_with_facebook">Verbinden mit Facebook</string>
     <string name="login">Anmelden</string>
-    <string name="do_not_have_an_account_sign_up">Sie haben keinen Account? Hier anmelden</string>
+    <string name="do_not_have_an_account_sign_up">Hier anmelden</string>
     <string name="email">Email</string>
     <string name="password">Passwort</string>
     <string name="confirm_password">Passwort bestätigen</string>

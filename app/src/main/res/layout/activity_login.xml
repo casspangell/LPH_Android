@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -60,6 +61,7 @@
         android:layout_marginHorizontal="@dimen/root_margin"
         android:padding="@dimen/btn_padding"
         android:text="@string/login"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/password_container" />
@@ -69,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/root_margin"
-        android:layout_marginVertical="@dimen/root_margin"
+        android:padding="@dimen/btn_padding"
         android:gravity="center"
         android:text="@string/reset_password"
         android:textColor="@color/com_facebook_button_background_color"
@@ -78,86 +80,70 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_facebook"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/root_margin"
-            android:padding="@dimen/btn_padding"
-            app:backgroundTint="@color/fb_btn_color"
-            app:icon="@drawable/ic_facebook_logo"
-            app:layout_constraintTop
-            app:layout_constraintTop_toBottomOf="@id/tv_reset_password"
-            app:layout_constraintVertical_bias="1" />
-
-
-    </LinearLayout>
-
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_facebook"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/root_margin"
-        android:padding="@dimen/btn_padding"
-        android:text="@string/connect_with_facebook"
-        android:textAllCaps="false"
-        app:backgroundTint="@color/fb_btn_color"
-        app:icon="@drawable/ic_facebook_logo"
-        app:layout_constraintBottom_toTopOf="@id/btn_google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_login"
-        app:layout_constraintVertical_bias="1"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_google"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/root_margin"
-        android:padding="@dimen/btn_padding"
-        android:text="@string/connect_with_google"
-        android:textAllCaps="false"
-        app:backgroundTint="@color/google_btn_color"
-        app:icon="@drawable/googleg_standard_color_18"
-        app:layout_constraintBottom_toTopOf="@id/tv_sign_up"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_facebook" />
-
-    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_sign_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/root_margin"
-        android:layout_marginVertical="@dimen/root_margin"
-        android:gravity="center"
+        android:padding="@dimen/btn_padding"
         android:text="@string/do_not_have_an_account_sign_up"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textAllCaps="false"
+        android:background="@drawable/button_border"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_google" />
+        app:layout_constraintTop_toBottomOf="@id/tv_reset_password" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/fb_login_button"
-        android:layout_width="wrap_content"
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/btn_facebook"
-        app:layout_constraintEnd_toEndOf="@id/btn_facebook"
-        app:layout_constraintStart_toStartOf="@id/btn_facebook"
-        app:layout_constraintTop_toTopOf="@id/btn_facebook" />
+        android:layout_gravity="bottom"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_facebook"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:contentDescription="@string/connect_with_facebook"
+                android:padding="@dimen/btn_padding"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/fb_btn_color"
+                app:icon="@drawable/ic_facebook_logo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_google"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:contentDescription="@string/connect_with_google"
+                android:padding="@dimen/btn_padding"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/google_btn_color"
+                app:icon="@drawable/googleg_standard_color_18" />
+
+        </LinearLayout>
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/fb_login_button"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="0dp"
+            android:background="@android:color/transparent"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar"
@@ -169,4 +155,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/or_connect_using_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="252dp"
+        android:text="Or connect using"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_sign_up" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:background="@color/dark_grey"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="563dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
