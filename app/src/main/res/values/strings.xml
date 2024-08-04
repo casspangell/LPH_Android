@@ -107,6 +107,7 @@
     <string name="create_an_account">Create an Account</string>
     <string name="back">Back</string>
     <string name="submit">Submit</string>
+    <string name="reset_password">Reset Password</string>
 
     <!--Constants-->
     <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>

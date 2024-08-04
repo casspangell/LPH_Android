@@ -1,11 +1,14 @@
 package org.lovepeaceharmony.androidapp.ui.activity
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.widget.Toast
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.core.view.isVisible
+import androidx.appcompat.app.AppCompatActivity
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -68,6 +71,18 @@ class LoginActivity : BaseActivity() {
             if (!email.isNullOrBlank() && !password.isNullOrBlank())
                 signInWithEmailAndPassword(email, password)
         }
+
+        /*tvResetPassword.setOnClickListener {
+            val email = emailContainer.editText?.text?.toString()
+            if (!email.isNullOrBlank()) {
+                requestPasswordReset(email)
+                }
+            else {
+                Toast.makeText(this, "Please enter your email.", Toast.LENGTH_SHORT).show()
+                }
+        }
+
+         */
 
         btnGoogle.setOnClickListener { signInWithGoogle() }
 
@@ -222,4 +237,39 @@ class LoginActivity : BaseActivity() {
             finish()
         } ?: Log.d("Firebase", "Failed")
     }
+
+    /*
+    private fun requestPasswordReset(email: String) {
+        val url = "https://yourapi.com/request-reset-password"
+        val params = HashMap<String, String>()
+        params["email"] = email
+
+        val jsonObject = JSONObject(params as Map<*, *>)
+
+        val request = JsonObjectRequest(
+            Request.Method.POST, url, jsonObject,
+            Response.Listener { response ->
+                showAlertDialog("Password Reset", "An email has been sent to reset your password.")
+            },
+            Response.ErrorListener { error ->
+                showAlertDialog("Error", "Error: ${error.message}")
+            }
+        )
+
+        Volley.newRequestQueue(this).add(request)
+    }
+
+     */
+
+    private fun showEmailSentDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Password Reset")
+            .setMessage("An email has been sent to reset your password.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+
 }
