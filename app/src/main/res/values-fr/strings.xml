@@ -19,6 +19,14 @@
     <string name="news">News</string>
     <string name="logout">Déconnexion</string>
 
+    <!--User Controller-->
+    <string name="delete_account">Supprimer le compte</string>
+    <string name="are_you_sure_warning">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</string>
+    <string name="success">Succès.</string>
+    <string name="yes">Oui</string>
+    <string name="failed_to_delete_user_data">Échec de la suppression des données utilisateur: </string>
+    <string name="failed_to_delete_account">Échec de la suppression du compte: </string>
+
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Chanter pour la paix dans le monde</string>
     <string name="chant_now">Écouter</string>

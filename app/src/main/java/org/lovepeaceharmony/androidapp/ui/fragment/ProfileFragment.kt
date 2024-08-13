@@ -4,13 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.app.AlertDialog
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.FirebaseDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.databinding.FragmentProfileBinding
@@ -32,6 +36,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProfileBinding.bind(view).apply {
             btnLogout.setOnClickListener { startLogout() }
+            btnDelete.setOnClickListener { showDeleteConfirmationDialog() }
         }
     }
 
@@ -78,4 +83,59 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         requireContext().startActivity(i)
     }
+
+    private fun showDeleteConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.delete_account))
+            .setMessage(getString(R.string.are_you_sure_warning))
+            .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                deleteUserAccount()
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+
+    private fun deleteUserAccount() {
+        val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+        val database = FirebaseDatabase.getInstance()
+
+        user?.let {
+            val userId = it.uid
+
+            // Delete user account
+            it.delete().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Delete user data from Realtime Database
+                    database.getReference("users").child(userId)
+                        .removeValue()
+                        .addOnSuccessListener {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.success),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            // Redirect to login or another appropriate screen
+                            val i = Intent(requireContext(), LoginActivity::class.java)
+                            i.flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(i)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                requireContext(),
+                                getString(R.string.failed_to_delete_user_data) + task.exception?.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.failed_to_delete_account) + task.exception?.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 }
+

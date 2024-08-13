@@ -19,6 +19,14 @@
     <string name="news">News</string>
     <string name="logout">Cierre de sesión</string>
 
+    <!--User Controller-->
+    <string name="delete_account">Eliminar cuenta</string>
+    <string name="are_you_sure_warning">¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer.</string>
+    <string name="success">Éxito.</string>
+    <string name="yes">Sí</string>
+    <string name="failed_to_delete_user_data">Error al eliminar los datos del usuario: </string>
+    <string name="failed_to_delete_account">Error al eliminar la cuenta: </string>
+
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Cantar por la Paz Mundial</string>
     <string name="chant_now">Escuchar</string>

@@ -19,6 +19,14 @@
     <string name="news">News</string>
     <string name="logout">Logout</string>
 
+    <!--User Controller-->
+    <string name="delete_account">Delete Account</string>
+    <string name="are_you_sure_warning">Are you sure you want to delete your account? This action cannot be undone.</string>
+    <string name="success">Success.</string>
+    <string name="yes">Yes</string>
+    <string name="failed_to_delete_user_data">Failed to delete user data: </string>
+    <string name="failed_to_delete_account">Failed to delete user account: </string>
+
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Chanting for World Peace</string>
     <string name="chant_now">Listen</string>

@@ -19,6 +19,14 @@
     <string name="news">News</string>
     <string name="logout">Uitloggen</string>
 
+    <!--User Controller-->
+    <string name="delete_account">Account verwijderen</string>
+    <string name="are_you_sure_warning">Weet u zeker dat u uw account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</string>
+    <string name="success">Succes.</string>
+    <string name="yes">Ja</string>
+    <string name="failed_to_delete_user_data">Kan gebruikersgegevens niet verwijderen: </string>
+    <string name="failed_to_delete_account">Kan account niet verwijderen: </string>
+
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Zingen voor Wereldvrede</string>
     <string name="chant_now">Luisteren</string>

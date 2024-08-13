@@ -19,6 +19,14 @@
     <string name="news">Neues</string>
     <string name="logout">Abmelden</string>
 
+    <!--User Controller-->
+    <string name="delete_account">Konto löschen</string>
+    <string name="are_you_sure_warning">Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="success">Erfolg.</string>
+    <string name="yes">Ja</string>
+    <string name="failed_to_delete_user_data">Benutzerdaten konnten nicht gelöscht werden: </string>
+    <string name="failed_to_delete_account">Konto konnte nicht gelöscht werden: </string>
+
     <!--Chant Now Controller-->
     <string name="chanting_for_world_peace">Singen für Weltfrieden</string>
     <string name="chant_now">Hören</string>
