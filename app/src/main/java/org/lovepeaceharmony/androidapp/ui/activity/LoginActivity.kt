@@ -73,17 +73,31 @@ class LoginActivity : BaseActivity() {
                 signInWithEmailAndPassword(email, password)
         }
 
-        /*tvResetPassword.setOnClickListener {
-            val email = emailContainer.editText?.text?.toString()
-            if (!email.isNullOrBlank()) {
-                requestPasswordReset(email)
-                }
+        tvResetPassword.setOnClickListener {
+            val email = emailContainer.editText?.text?.toString()?.trim {it <= ' '}
+            if (email?.isEmpty() == true) {
+                Toast.makeText(this@LoginActivity, "Please enter valid email address.", Toast.LENGTH_SHORT).show()
+            }
             else {
-                Toast.makeText(this, "Please enter your email.", Toast.LENGTH_SHORT).show()
+                if (email != null) {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    "Email sent successfully to reset your password.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                finish()
+                            }
+                            else {
+                                Toast.makeText(this@LoginActivity,task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                            }
+                        }
                 }
+            }
         }
 
-         */
 
         tvSignUp.setOnClickListener {
             this@LoginActivity.run {
