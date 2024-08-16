@@ -186,40 +186,39 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun signInWithGoogle() {
-        print("testing")
-//        if (Helper.isConnected(this@LoginActivity)) {
-//            isFromFb = false
-//            // Configure Google Sign In
-//            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build()
-//
-//            val result = object : BetterActivityResult.OnActivityResult<ActivityResult> {
-//                override fun onActivityResult(result: ActivityResult) {
-//                    if (result.resultCode == Activity.RESULT_OK) {
-//                        // There are no request codes
-//                        val data = result.data
-//                        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//                        try {
-//                            // Google Sign In was successful, authenticate with Firebase
-//                            val account = task.getResult(ApiException::class.java)
-//                            LPHLog.d("firebaseAuthWithGoogle: ${account.id}")
-//                            account.idToken?.let { firebaseAuthWithGoogle(it) }
-//                        } catch (e: ApiException) {
-//                            // Google Sign In failed, update UI appropriately
-//                            LPHLog.d("Google sign in failed $e")
-//                        }
-//                    }
-//                }
-//            }
-//            activityLauncher.launch(
-//                GoogleSignIn.getClient(this@LoginActivity, gso).signInIntent, result
-//            )
-//        } else Helper.showAlert(
-//            this@LoginActivity,
-//            this@LoginActivity.resources.getString(R.string.please_check_your_internet_connection)
-//        )
+        if (Helper.isConnected(this@LoginActivity)) {
+            isFromFb = false
+            // Configure Google Sign In
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            val result = object : BetterActivityResult.OnActivityResult<ActivityResult> {
+                override fun onActivityResult(result: ActivityResult) {
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        // There are no request codes
+                        val data = result.data
+                        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                        try {
+                            // Google Sign In was successful, authenticate with Firebase
+                            val account = task.getResult(ApiException::class.java)
+                            LPHLog.d("firebaseAuthWithGoogle: ${account.id}")
+                            account.idToken?.let { firebaseAuthWithGoogle(it) }
+                        } catch (e: ApiException) {
+                            // Google Sign In failed, update UI appropriately
+                            LPHLog.d("Google sign in failed $e")
+                        }
+                    }
+                }
+            }
+            activityLauncher.launch(
+                GoogleSignIn.getClient(this@LoginActivity, gso).signInIntent, result
+            )
+        } else Helper.showAlert(
+            this@LoginActivity,
+            this@LoginActivity.resources.getString(R.string.please_check_your_internet_connection)
+        )
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {

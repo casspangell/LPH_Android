@@ -99,59 +99,67 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         val database = FirebaseDatabase.getInstance()
 
-        user?.let {
-            val userId = it.uid
+        user?.let { firebaseUser ->
+            val userId = firebaseUser.uid
 
             // Try to delete user data from Realtime Database
-            database.getReference("users").child(userId)
+            database.getReference("love-peace-harmony").child(userId)
                 .removeValue()
                 .addOnCompleteListener { databaseTask ->
-                    // Attempt to delete user account regardless of database operation result
-                    it.delete().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.success),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    if (databaseTask.isSuccessful) {
+                        // User data was successfully deleted from the database
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.success),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                            // Redirect to LoginActivity after successful deletion
-                            val intent = Intent(requireContext(), LoginActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(
-                                requireContext(), "Fail 2",
-                                //getString(R.string.failed_to_delete_account) + task.exception?.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }.addOnFailureListener { databaseTask ->
-                    // If user data does not exist or there's an issue, still proceed with account deletion
-                    it.delete().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Toast.makeText(
-                                requireContext(),
-                                getString(R.string.success),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        // Proceed to delete the Firebase user account
+                        deleteFirebaseUserAccount(firebaseUser)
+                    } else {
+                        // Failed to delete user data, but still delete the user account
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.failed_to_delete_user_data) + databaseTask.exception?.message,
+                            Toast.LENGTH_LONG
+                        ).show()
 
-                            // Redirect to LoginActivity after successful deletion
-                            val intent = Intent(requireContext(), LoginActivity::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(
-                                requireContext(), "Fail1",
-                                //getString(R.string.failed_to_delete_user_data) + task.exception?.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        deleteFirebaseUserAccount(firebaseUser)
                     }
                 }
+                .addOnFailureListener { exception ->
+                    // If user data does not exist or there's an issue, still proceed with account deletion
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.failed_to_delete_user_data) + exception.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    deleteFirebaseUserAccount(firebaseUser)
+                }
+        }
+    }
+
+    private fun deleteFirebaseUserAccount(user: FirebaseUser) {
+        user.delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.success),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                // Redirect to LoginActivity after successful deletion
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.failed_to_delete_account) + task.exception?.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }

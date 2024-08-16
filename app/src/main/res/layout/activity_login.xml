@@ -153,14 +153,6 @@
                 app:elevation="2dp"
                 app:icon="@drawable/googleg_standard_color_18" />
 
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/fb_login_button"
-                android:layout_width="50dp"
-                android:layout_height="68dp"
-                android:background="@android:color/transparent"
-                android:paddingTop="25sp"
-                android:visibility="invisible"/>
-
         </LinearLayout>
     </FrameLayout>
 
@@ -215,5 +207,18 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/leftLine" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/fb_login_button"
+        android:layout_width="50dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="181dp"
+        android:layout_marginEnd="181dp"
+        android:background="@android:color/transparent"
+        android:paddingTop="25sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_reset_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
