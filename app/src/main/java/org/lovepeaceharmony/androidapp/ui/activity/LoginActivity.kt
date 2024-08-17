@@ -76,7 +76,7 @@ class LoginActivity : BaseActivity() {
         tvResetPassword.setOnClickListener {
             val email = emailContainer.editText?.text?.toString()?.trim {it <= ' '}
             if (email?.isEmpty() == true) {
-                Toast.makeText(this@LoginActivity, "Please enter valid email address.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginActivity, getString(R.string.please_provide_valid_email), Toast.LENGTH_SHORT).show()
             }
             else {
                 if (email != null) {
@@ -85,7 +85,7 @@ class LoginActivity : BaseActivity() {
                             if (task.isSuccessful) {
                                 Toast.makeText(
                                     this@LoginActivity,
-                                    "Email sent successfully to reset your password.",
+                                    getString(R.string.email_sent),
                                     Toast.LENGTH_LONG
                                 ).show()
                                 finish()
@@ -250,33 +250,10 @@ class LoginActivity : BaseActivity() {
         } ?: Log.d("Firebase", "Failed")
     }
 
-    /*
-    private fun requestPasswordReset(email: String) {
-        val url = "https://yourapi.com/request-reset-password"
-        val params = HashMap<String, String>()
-        params["email"] = email
-
-        val jsonObject = JSONObject(params as Map<*, *>)
-
-        val request = JsonObjectRequest(
-            Request.Method.POST, url, jsonObject,
-            Response.Listener { response ->
-                showAlertDialog("Password Reset", "An email has been sent to reset your password.")
-            },
-            Response.ErrorListener { error ->
-                showAlertDialog("Error", "Error: ${error.message}")
-            }
-        )
-
-        Volley.newRequestQueue(this).add(request)
-    }
-
-     */
-
     private fun showEmailSentDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Password Reset")
-            .setMessage("An email has been sent to reset your password.")
+            .setTitle(getString(R.string.reset_password))
+            .setMessage(getString(R.string.an_email_to_reset_your_password_has_been_sent))
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
             }

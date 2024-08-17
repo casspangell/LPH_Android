@@ -16,7 +16,7 @@
     <!--Navigation-->
     <string name="chant">Luisteren</string>
     <string name="about">Over</string>
-    <string name="news">News</string>
+    <string name="news">Nieuws</string>
     <string name="logout">Uitloggen</string>
 
     <!--User Controller-->
@@ -39,28 +39,28 @@
     <string name="repeat_turned_off">Herhalen uit</string>
     <string name="love_peace_harmony_in_many_languages">Liefde, Vrede en Harmonie in veel talen</string>
     <string name="expressions_of_love_peace_harmony">Uitingen van Liefde, Vrede en Harmonie</string>
-    <string name="set_reminders_to_chant">Set reminders to chant</string>
-    <string name="chant_any_time">Chant any time</string>
-    <string name="view_your_milestones">View your milestones</string>
-    <string name="turn_on_off_chants">Turn on / off chants</string>
+    <string name="set_reminders_to_chant">Stel herinneringen in om te zingen</string>
+    <string name="chant_any_time">Zing op elk moment</string>
+    <string name="view_your_milestones">Bekijk je mijlpalen</string>
+    <string name="turn_on_off_chants">Zangen aan / uit zetten</string>
     <string name="everyday">Elke dag</string>
     <string name="off">Uit</string>
-    <string name="sun">Sun</string>
-    <string name="mon">Mon</string>
-    <string name="tue">Tue</string>
-    <string name="wed">Wed</string>
-    <string name="thu">Thu</string>
-    <string name="fri">Fri</string>
-    <string name="sat">Sat</string>
-    <string name="use_the_switches_to_customize_your_chant">Use the switches to customize your chanting playlist.</string>
-    <string name="now_playing_colon">Now playing:</string>
+    <string name="sun">Zo</string>
+    <string name="mon">Ma</string>
+    <string name="tue">Di</string>
+    <string name="wed">Wo</string>
+    <string name="thu">Do</string>
+    <string name="fri">Vr</string>
+    <string name="sat">Za</string>
+    <string name="use_the_switches_to_customize_your_chant">Gebruik de schakelaars om je afspeellijst voor zangen aan te passen.</string>
+    <string name="now_playing_colon">Nu aan het afspelen:</string>
     <string name="mandarin_soul_language_and_english">Mandarin, Soul Language, and English</string>
     <string name="instrumental">Instrumental</string>
     <string name="hindi">Hindi</string>
     <string name="hindi_soul_language_english">Hindi, Soul Language, English</string>
     <string name="spanish">Spanish</string>
     <string name="mandarin_english_german">Mandarin, English, German</string>
-    <string name="fresh">French</string>
+    <string name="french">French</string>
     <string name="french_and_creole">French &amp; Creole</string>
     <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiian)</string>
     <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, English and Hawaiian</string>
@@ -68,15 +68,15 @@
 
     <!--Chant Reminder Screen-->
     <string name="no_reminder_added">Geen reminder toegevoegd</string>
-    <string name="repeat_off">Repeat - Off</string>
-    <string name="repeats">Repeats</string>
-    <string name="alarm_already_added_for_this_item">Alarm already added for this time!</string>
+    <string name="repeat_off">Herhalen - Uit</string>
+    <string name="repeats">Herhalingen</string>
+    <string name="alarm_already_added_for_this_item">Alarm al toegevoegd voor dit tijdstip!</string>
     <string name="repeat">Herhalen</string>
     <string name="default_">Default</string>
     <string name="edit_reminder">Reminder bewerken</string>
-    <string name="sound">Sound</string>
+    <string name="sound">Geluid</string>
     <string name="do_you_want_to_delete_the_alarm">Wil je het alarm verwijderen?</string>
-    <string name="maxium_number_of_reminders_reached">Maximum number of reminders reached</string>
+    <string name="maximum_number_of_reminders_reached">Maximumaantal herinneringen bereikt</string>
     <string name="cancel">Annuleren</string>
     <string name="save">Bewaren</string>
     <string name="done">Gereed</string>
@@ -97,45 +97,50 @@
     <string name="you_have_chanted_for_a_total_of">In totaal heb je gechant:</string>
     <string name="erase_milestones">Verwijder mijlpalen</string>
     <string name="do_you_want_to_reset_all_your_milestones">Wil je al je mijlpalen opnieuw instellen?</string>
-    <string name="milestone_data_deleted">Milestone Data Deleted</string>
-    <string name="days_straight">dagen aaneengesloten gechant</string>
-    <string name="days">Days</string>
-    <string name="longest_streak">Longest streak:</string>
+    <string name="milestone_data_deleted">Mijlpalen gegevens verwijderd</string>
+    <string name="days_straight">dagen achtereen</string>
+    <string name="days">Dagen</string>
+    <string name="longest_streak">Langste reeks:</string>
 
     <!--Login / Signup Screen-->
-    <string name="connect_with_google">Connect with Google</string>
-    <string name="connect_with_facebook">Connect with Facebook</string>
-    <string name="login">Login</string>
-    <string name="do_not_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="an_email_to_reset_your_password_has_been_sent">Er is een email verzonden om je wachtwoord opnieuw in te stellen.</string>
+    <string name="email_sent">Email verzonden</string>
+    <string name="please_provide_valid_email">Geef een geldig e-mailadres op.</string>
+    <string name="or_connect_using">Of verbindt via</string>
+    <string name="reset_password">Wachtwoord opnieuw instellen</string>
+    <string name="connect_with_google">Verbinden met Google</string>
+    <string name="connect_with_facebook">Verbinden met Facebook</string>
+    <string name="login">Inloggen</string>
+    <string name="do_not_have_an_account_sign_up">Heb je nog geen account? Meld je aan</string>
     <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="email_password_cant_be_empty">Email/password can\'t be empty</string>
-    <string name="please_check_your_internet_connection">Please check your internet connection</string>
-    <string name="create_an_account">Create an Account</string>
-    <string name="back">Back</string>
-    <string name="submit">Submit</string>
+    <string name="password">Wachtwoord</string>
+    <string name="confirm_password">Bevestig wachtwoord</string>
+    <string name="email_password_cant_be_empty">Email/wachtwoord mag niet leeg zijn</string>
+    <string name="please_check_your_internet_connection">Controleer je internetverbinding</string>
+    <string name="create_an_account">Een account aanmaken</string>
+    <string name="back">Terug</string>
+    <string name="submit">Verzenden</string>
 
     <!--Constants-->
-    <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>
-    <string name="something_went_wrong_please_try_again">Something went wrong, please try again</string>
-    <string name="please_enter_your_name">Please enter your name</string>
-    <string name="invalid_email_address">Invalid email address</string>
-    <string name="please_enter_your_password">Please enter your password</string>
-    <string name="password_needs_to_be_at_least_6_characters">Password needs to be at least 6 characters</string>
-    <string name="please_enter_confirmation_password">Please enter confirmation password</string>
-    <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="its_time_to_chant">It\'s time to chant!!!</string>
-    <string name="please_enable_your_song_and_play">Please enable your song &amp; play</string>
-    <string name="no_previous_song">No previous song</string>
-    <string name="no_next_song">No next song</string>
+    <string name="tap_anywhere_to_continue">Tik ergens om door te gaan</string>
+    <string name="something_went_wrong_please_try_again">Er is iets misgegaan, probeer het opnieuw</string>
+    <string name="please_enter_your_name">Voer je naam in</string>
+    <string name="invalid_email_address">Ongeldig e-mailadres</string>
+    <string name="please_enter_your_password">Voer je wachtwoord in</string>
+    <string name="password_needs_to_be_at_least_6_characters">Wachtwoord moet minimaal 6 tekens bevatten</string>
+    <string name="please_enter_confirmation_password">Voer het bevestigingswachtwoord in</string>
+    <string name="passwords_do_not_match">Wachtwoorden komen niet overeen</string>
+    <string name="its_time_to_chant">Het is tijd om te zingen!!!</string>
+    <string name="please_enable_your_song_and_play">Schakel je nummer in en speel af</string>
+    <string name="no_previous_song">Geen vorig nummer</string>
+    <string name="no_next_song">Geen volgend nummer</string>
 
     <!--About Controller-->
-    <string name="the_song">The Song</string>
-    <string name="the_movement">The Movement</string>
+    <string name="the_song">Het Nummer</string>
+    <string name="the_movement">De Beweging</string>
     <string name="master_sha">Master Sha</string>
-    <string name="visit_our_website">Visit Our Website</string>
-    <string name="donate_now">Donate Now</string>
+    <string name="visit_our_website">Bezoek Onze Website</string>
+    <string name="donate_now">Doneer Nu</string>
 
     <!--Not localized-->
     <string name="no_data">No data available.</string>

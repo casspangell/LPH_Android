@@ -60,7 +60,7 @@
     <string name="hindi_soul_language_english">Hindi, Seelensprache, Englisch</string>
     <string name="spanish">Spanisch</string>
     <string name="mandarin_english_german">Mandarin, Englisch, Deutsch</string>
-    <string name="fresh">Französisch</string>
+    <string name="french">Französisch</string>
     <string name="french_and_creole">Französisch &amp; Kreolisch</string>
     <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiianisch)</string>
     <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, Englisch und Hawaiianisch</string>
@@ -76,7 +76,7 @@
     <string name="edit_reminder">Erinnerung ändern</string>
     <string name="sound">Klang</string>
     <string name="do_you_want_to_delete_the_alarm">Wollen Sie den Alarm löschen?</string>
-    <string name="maxium_number_of_reminders_reached">Maximale Anzahl von Erinnerungen erreicht</string>
+    <string name="maximum_number_of_reminders_reached">Maximale Anzahl von Erinnerungen erreicht</string>
     <string name="cancel">Abbrechen</string>
     <string name="save">Speichern</string>
     <string name="done">Fertig</string>
@@ -115,6 +115,12 @@
     <string name="create_an_account">Account erstellen</string>
     <string name="back">zurück</string>
     <string name="submit">absenden</string>
+    <string name="an_email_to_reset_your_password_has_been_sent">Eine email zum Zurücksetzen Ihres Passworts wurde gesendet.</string>
+    <string name="email_sent">Email Gesendet</string>
+    <string name="please_provide_valid_email">Bitte geben Sie eine gültige email Adresse an.</string>
+    <string name="or_connect_using">Oder verbinden Sie sich mit</string>
+    <string name="reset_password">Passwort zurücksetzen</string>
+
 
     <!--Constants-->
     <string name="tap_anywhere_to_continue">Tippen sie an beliebiger Stelle um fortzufahren</string>

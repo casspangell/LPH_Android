@@ -16,7 +16,7 @@
     <!--Navigation-->
     <string name="chant">Écouter</string>
     <string name="about">À Propos De</string>
-    <string name="news">News</string>
+    <string name="news">Actualités</string>
     <string name="logout">Déconnexion</string>
 
     <!--User Controller-->
@@ -39,28 +39,28 @@
     <string name="repeat_turned_off">Répétition Désactivée</string>
     <string name="love_peace_harmony_in_many_languages">Amour Paix Harmonie dans de Nombreuses Langues</string>
     <string name="expressions_of_love_peace_harmony">Expressions d\'Amour Paix Harmonie</string>
-    <string name="set_reminders_to_chant">Set reminders to chant</string>
-    <string name="chant_any_time">Chant any time</string>
-    <string name="view_your_milestones">View your milestones</string>
-    <string name="turn_on_off_chants">Turn on / off chants</string>
+    <string name="set_reminders_to_chant">Configurer des rappels pour chanter</string>
+    <string name="chant_any_time">Chanter à tout moment</string>
+    <string name="view_your_milestones">Voir vos objectifs</string>
+    <string name="turn_on_off_chants">Activer / désactiver les chants</string>
     <string name="everyday">Tous les jours</string>
     <string name="off">Désactivé</string>
-    <string name="sun">Sun</string>
-    <string name="mon">Mon</string>
-    <string name="tue">Tue</string>
-    <string name="wed">Wed</string>
-    <string name="thu">Thu</string>
-    <string name="fri">Fri</string>
-    <string name="sat">Sat</string>
-    <string name="use_the_switches_to_customize_your_chant">Use the switches to customize your chanting playlist.</string>
-    <string name="now_playing_colon">Now playing:</string>
-    <string name="mandarin_soul_language_and_english">Mandarin, Soul Language, and English</string>
+    <string name="sun">Dim</string>
+    <string name="mon">Lun</string>
+    <string name="tue">Mar</string>
+    <string name="wed">Mer</string>
+    <string name="thu">Jeu</string>
+    <string name="fri">Ven</string>
+    <string name="sat">Sam</string>
+    <string name="use_the_switches_to_customize_your_chant">Utilisez les interrupteurs pour personnaliser votre liste de lecture de chants.</string>
+    <string name="now_playing_colon">En lecture :</string>
+    <string name="mandarin_soul_language_and_english">Mandarin, Soul Language, Englishs</string>
     <string name="instrumental">Instrumental</string>
     <string name="hindi">Hindi</string>
     <string name="hindi_soul_language_english">Hindi, Soul Language, English</string>
     <string name="spanish">Spanish</string>
     <string name="mandarin_english_german">Mandarin, English, German</string>
-    <string name="fresh">French</string>
+    <string name="french">French</string>
     <string name="french_and_creole">French &amp; Creole</string>
     <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiian)</string>
     <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, English and Hawaiian</string>
@@ -68,21 +68,21 @@
 
     <!--Chant Reminder Screen-->
     <string name="no_reminder_added">Aucun Rappel Ajouté</string>
-    <string name="repeat_off">Repeat - Off</string>
-    <string name="repeats">Repeats</string>
-    <string name="alarm_already_added_for_this_item">Alarm already added for this time!</string>
+    <string name="repeat_off">Répéter - Désactivé</string>
+    <string name="repeats">Répétitions</string>
+    <string name="alarm_already_added_for_this_item">Alarme déjà ajoutée pour cet horaire !</string>
     <string name="repeat">Répéter</string>
-    <string name="default_">Default</string>
+    <string name="default_">Par Défaut</string>
     <string name="edit_reminder">Modifier le Rappel</string>
-    <string name="sound">Sound</string>
-    <string name="do_you_want_to_delete_the_alarm">Do you want to delete the alarm?</string>
-    <string name="maxium_number_of_reminders_reached">Maximum number of reminders reached</string>
+    <string name="sound">Son</string>
+    <string name="do_you_want_to_delete_the_alarm">Voulez-vous supprimer l\'alarme ?</string>
+    <string name="maximum_number_of_reminders_reached">Nombre maximum de rappels atteint</string>
     <string name="cancel">Annuler</string>
     <string name="save">Sauvegarder</string>
     <string name="done">Fait</string>
-    <string name="ok">Ok</string>
+    <string name="ok">D\'accord</string>
     <string name="delete_reminder">Supprimer le rappel</string>
-    <string name="select_repeat">Sélectionnez Répéter</string>
+    <string name="select_repeat">Sélectionner Répéter</string>
     <string name="alert">Alerte</string>
     <string name="on">Activé</string>
     <string name="sunday">Dimanche</string>
@@ -97,45 +97,50 @@
     <string name="you_have_chanted_for_a_total_of">Vous avez chanté pour un total de</string>
     <string name="erase_milestones">Effacer les Objectifs</string>
     <string name="do_you_want_to_reset_all_your_milestones">Voulez-vous supprimer l\'alarme?</string>
-    <string name="milestone_data_deleted">Milestone Data Deleted</string>
+    <string name="milestone_data_deleted">Données des objectifs supprimées</string>
     <string name="days_straight">Jours d\'affilée</string>
     <string name="days">Jours</string>
-    <string name="longest_streak">Longest streak:</string>
+    <string name="longest_streak">Plus longue série:</string>
 
     <!--Login / Signup Screen-->
-    <string name="connect_with_google">Connect with Google</string>
-    <string name="connect_with_facebook">Connect with Facebook</string>
-    <string name="login">Login</string>
-    <string name="do_not_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="email_password_cant_be_empty">Email/password can\'t be empty</string>
-    <string name="please_check_your_internet_connection">Please check your internet connection</string>
-    <string name="create_an_account">Create an Account</string>
-    <string name="back">Back</string>
-    <string name="submit">Submit</string>
+    <string name="or_connect_using">Ou connectez-vous avec</string>
+    <string name="reset_password">Réinitialiser le mot de passe</string>
+    <string name="connect_with_google">Se connecter avec Google</string>
+    <string name="connect_with_facebook">Se connecter avec Facebook</string>
+    <string name="login">Connexion</string>
+    <string name="do_not_have_an_account_sign_up">Vous n\'avez pas de compte? Inscrivez-vous</string>
+    <string name="email">E-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="email_password_cant_be_empty">L\'email/le mot de passe ne peut pas être vide</string>
+    <string name="please_check_your_internet_connection">Veuillez vérifier votre connexion Internet</string>
+    <string name="create_an_account">Créer un compte</string>
+    <string name="back">Retour</string>
+    <string name="submit">Soumettre</string>
+    <string name="an_email_to_reset_your_password_has_been_sent">Un e-mail pour réinitialiser votre mot de passe a été envoyé.</string>
+    <string name="email_sent">E-mail envoyé</string>
+    <string name="please_provide_valid_email">Veuillez fournir un e-mail valide.</string>
 
     <!--Constants-->
-    <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>
-    <string name="something_went_wrong_please_try_again">Something went wrong, please try again</string>
-    <string name="please_enter_your_name">Please enter your name</string>
-    <string name="invalid_email_address">Invalid email address</string>
-    <string name="please_enter_your_password">Please enter your password</string>
-    <string name="password_needs_to_be_at_least_6_characters">Password needs to be at least 6 characters</string>
-    <string name="please_enter_confirmation_password">Please enter confirmation password</string>
-    <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="its_time_to_chant">It\'s time to chant!!!</string>
-    <string name="please_enable_your_song_and_play">Please enable your song &amp; play</string>
-    <string name="no_previous_song">No previous song</string>
-    <string name="no_next_song">No next song</string>
+    <string name="tap_anywhere_to_continue">Tapez n\'importe où pour continuer</string>
+    <string name="something_went_wrong_please_try_again">Un problème est survenu, veuillez réessayer</string>
+    <string name="please_enter_your_name">Veuillez entrer votre nom</string>
+    <string name="invalid_email_address">Adresse email invalide</string>
+    <string name="please_enter_your_password">Veuillez entrer votre mot de passe</string>
+    <string name="password_needs_to_be_at_least_6_characters">Le mot de passe doit contenir au moins 6 caractères</string>
+    <string name="please_enter_confirmation_password">Veuillez entrer le mot de passe de confirmation</string>
+    <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>
+    <string name="its_time_to_chant">Il est temps de chanter!!!</string>
+    <string name="please_enable_your_song_and_play">Veuillez activer votre chanson et lire</string>
+    <string name="no_previous_song">Pas de chanson précédente</string>
+    <string name="no_next_song">Pas de chanson suivante</string>
 
     <!--About Controller-->
-    <string name="the_song">The Song</string>
-    <string name="the_movement">The Movement</string>
+    <string name="the_song">La Chanson</string>
+    <string name="the_movement">Le Mouvement</string>
     <string name="master_sha">Master Sha</string>
-    <string name="visit_our_website">Visit Our Website</string>
-    <string name="donate_now">Donate Now</string>
+    <string name="visit_our_website">Visitez notre site web</string>
+    <string name="donate_now">Faites un don maintenant</string>
 
     <!--Not localized-->
     <string name="no_data">No data available.</string>

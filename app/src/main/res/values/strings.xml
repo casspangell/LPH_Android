@@ -60,7 +60,7 @@
     <string name="hindi_soul_language_english">Hindi, Soul Language, English</string>
     <string name="spanish">Spanish</string>
     <string name="mandarin_english_german">Mandarin, English, German</string>
-    <string name="fresh">French</string>
+    <string name="french">French</string>
     <string name="french_and_creole">French &amp; Creole</string>
     <string name="aloha_maluhai_lokahi">Aloha, Maluhai, Lokahi (LPH in Hawaiian)</string>
     <string name="lu_la_li_version_english_hawaiian">Lu La Li Version, English and Hawaiian</string>
@@ -76,11 +76,11 @@
     <string name="edit_reminder">Edit Reminder</string>
     <string name="sound">Sound</string>
     <string name="do_you_want_to_delete_the_alarm">Do you want to delete the alarm?</string>
-    <string name="maxium_number_of_reminders_reached">Maximum number of reminders reached</string>
+    <string name="maximum_number_of_reminders_reached">Maximum number of reminders reached</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="done">Done</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="delete_reminder">Delete Reminder</string>
     <string name="select_repeat">Select Repeat</string>
     <string name="alert">Alert</string>
@@ -103,6 +103,7 @@
     <string name="longest_streak">Longest streak:</string>
 
     <!--Login / Signup Screen-->
+
     <string name="connect_with_google">Connect with Google</string>
     <string name="connect_with_facebook">Connect with Facebook</string>
     <string name="login">Login</string>
@@ -115,6 +116,10 @@
     <string name="create_an_account">Create an Account</string>
     <string name="back">Back</string>
     <string name="submit">Submit</string>
+    <string name="an_email_to_reset_your_password_has_been_sent">An email to reset your password has been sent.</string>
+    <string name="email_sent">Email Sent</string>
+    <string name="please_provide_valid_email">Please provide valid email.</string>
+    <string name="or_connect_using">Or Connect Using</string>
     <string name="reset_password">Reset Password</string>
 
     <!--Constants-->

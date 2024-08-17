@@ -198,11 +198,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:text="Or connect using"
-
+        android:text="@string/or_connect_using"
         android:textColor="@android:color/darker_gray"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
