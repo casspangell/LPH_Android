@@ -8,7 +8,7 @@
 
 
     <!--Eric Jerome Account-->
-    <string name="facebook_app_id">372387683172262</string>
+    <string name="facebook_app_id">266698898791482</string>
     <string name="fb_login_protocol_scheme">fb372387683172262</string>
 
     <string name="default_time_template">HH:MM</string>
