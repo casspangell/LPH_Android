@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chant LPH</string>
+    <string name="app_name">Sing LPH</string>
     <string name="love_peace_harmony_messenger">Love Peace Harmony Messenger</string>
 
     <!--Naveen Account-->
@@ -14,7 +14,7 @@
     <string name="default_time_template">HH:MM</string>
 
     <!--Navigation-->
-    <string name="chant">Escuchar</string>
+    <string name="listen">Escuchar</string>
     <string name="about">Acerca de</string>
     <string name="news">Noticias</string>
     <string name="logout">Cierre de sesión</string>

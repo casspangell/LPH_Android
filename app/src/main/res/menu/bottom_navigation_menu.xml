@@ -4,7 +4,7 @@
         android:id="@+id/nav_chant"
         android:enabled="true"
         android:icon="@drawable/ic_play_button"
-        android:title="@string/chant" />
+        android:title="@string/listen" />
     <item
         android:id="@+id/nav_about"
         android:enabled="true"
