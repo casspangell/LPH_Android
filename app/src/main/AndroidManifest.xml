@@ -34,6 +34,7 @@
             android:value="e3cf13e42700399d77c9f0c5ce36cfd1d8ea3da2" />
 
         <!--Fb initialization start-->
+        <!--
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -54,7 +55,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
+        -->
         <!--Fb initialization end-->
 
         <activity

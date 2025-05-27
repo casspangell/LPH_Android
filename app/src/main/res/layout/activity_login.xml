@@ -81,7 +81,7 @@
         android:padding="@dimen/btn_padding"
         android:text="@string/reset_password"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/com_facebook_button_background_color"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
@@ -206,7 +206,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/leftLine" />
 
-    <com.facebook.login.widget.LoginButton
+    <Button
         android:id="@+id/fb_login_button"
         android:layout_width="50dp"
         android:layout_height="68dp"
@@ -215,6 +215,8 @@
         android:background="@android:color/transparent"
         android:paddingTop="25sp"
         android:visibility="invisible"
+        android:text="Facebook Login (Disabled)"
+        android:enabled="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_reset_password" />

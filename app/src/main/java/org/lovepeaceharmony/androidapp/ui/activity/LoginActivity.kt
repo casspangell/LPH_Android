@@ -9,15 +9,15 @@ import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.core.view.isVisible
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginResult
-import com.facebook.login.widget.LoginButton
+// import com.facebook.CallbackManager
+// import com.facebook.FacebookCallback
+// import com.facebook.FacebookException
+// import com.facebook.login.LoginResult
+// import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FacebookAuthProvider
+// import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -29,7 +29,6 @@ import org.lovepeaceharmony.androidapp.utility.BetterActivityResult
 import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
 
-
 /**
  * LoginActivity
  * Created by Naveen Kumar M on 06/12/17.
@@ -38,7 +37,7 @@ import org.lovepeaceharmony.androidapp.utility.LPHLog
 class LoginActivity : BaseActivity() {
 
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
-    private val callbackManager by lazy { CallbackManager.Factory.create() }
+    // private val callbackManager by lazy { CallbackManager.Factory.create() }
     private var isFromFb: Boolean = false
     private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
@@ -55,15 +54,15 @@ class LoginActivity : BaseActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (isFromFb) {
-            callbackManager.onActivityResult(requestCode, resultCode, data)
-        }
+        // if (isFromFb) {
+        //     callbackManager.onActivityResult(requestCode, resultCode, data)
+        // }
     }
 
     private fun initView() = with(binding) {
         header.bannerImage.isVisible = true
 
-        btnFacebook.setOnClickListener { signInWithFacebook() }
+        // btnFacebook.setOnClickListener { signInWithFacebook() }  // Temporarily disabled
         btnGoogle.setOnClickListener { signInWithGoogle() }
 
         btnLogin.setOnClickListener {
@@ -98,14 +97,11 @@ class LoginActivity : BaseActivity() {
             }
         }
 
-
         tvSignUp.setOnClickListener {
             this@LoginActivity.run {
                 startActivity(Intent(this, RegisterActivity::class.java))
             }
         }
-
-
     }
 
     private fun signInWithEmailAndPassword(email: String, password: String) {
@@ -125,7 +121,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-
+    /*
     private fun signInWithFacebook() {
         with(binding.fbLoginButton) {
             setPermissions("public_profile", "email", "user_friends")
@@ -184,6 +180,7 @@ class LoginActivity : BaseActivity() {
 
         invalidate()
     }
+    */
 
     private fun signInWithGoogle() {
         if (Helper.isConnected(this@LoginActivity)) {
@@ -238,8 +235,6 @@ class LoginActivity : BaseActivity() {
             }
     }
 
-
-
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
             Helper.setPlayList(this, "songs", ".mp3")
@@ -259,6 +254,4 @@ class LoginActivity : BaseActivity() {
             }
             .show()
     }
-
-
 }
