@@ -14,8 +14,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.telephony.PhoneStateListener
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -88,9 +86,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     private lateinit var mAudioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private lateinit var mPlaybackAttributes: AudioAttributes
-    private lateinit var phoneStateListener: PhoneStateListener
-    private lateinit var telephonyManager: TelephonyManager
-    private var isOnCall = false
     private var shuffledSongModelList: ArrayList<SongsModel>? = null
 
     /**
@@ -156,10 +151,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         super.onCreate(savedInstanceState)
         mAudioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         enabledSongModelList = SongsModel.getEnabledSongsMadelList(requireContext())
-        callStateListener()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             val mHandler = Handler()
             mPlaybackAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -189,14 +182,22 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         requireActivity().registerReceiver(
             mMessageReceiver,
-            IntentFilter(Constants.BROADCAST_RECEIVER_VOLUME)
+            IntentFilter(Constants.BROADCAST_RECEIVER_VOLUME),
+            Context.RECEIVER_NOT_EXPORTED
         )
-        if (!viewModel.isToolTipShown) requireContext().registerReceiver(
-            toolTipReceiver,
-            IntentFilter(Constants.BROADCAST_CHANT_NOW_ADAPTER)
-        )
+        if (!viewModel.isToolTipShown) {
+            requireContext().registerReceiver(
+                toolTipReceiver,
+                IntentFilter(Constants.BROADCAST_CHANT_NOW_ADAPTER),
+                Context.RECEIVER_NOT_EXPORTED
+            )
+        }
         val filter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
-        requireActivity().registerReceiver(mNoisyReceiver, filter)
+        requireActivity().registerReceiver(
+            mNoisyReceiver,
+            filter,
+            Context.RECEIVER_NOT_EXPORTED
+        )
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -206,6 +207,11 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         requireActivity().unregisterReceiver(mMessageReceiver)
         requireActivity().unregisterReceiver(mNoisyReceiver)
         requireActivity().unregisterReceiver(toolTipReceiver)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
     }
 
     private fun initView() {
@@ -340,7 +346,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
 
         btnPlay!!.setOnClickListener {
-            if (!Helper.checkExternalStoragePermission(context)) {
+            if (!Helper.checkExternalStoragePermission(requireContext())) {
                 Toast.makeText(
                     context,
                     resources.getString(R.string.enable_storage_permission),
@@ -348,7 +354,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 ).show()
             } else {
                 // check for already playing
-                if (mp != null && mp?.isPlaying == true && !isOnCall) {
+                if (mp != null && mp?.isPlaying == true) {
                     if (Helper.isLoggedInUser(requireContext())) {
                         minutes?.let { viewModel.updateMilestone(it) }
                         minutes = 0f
@@ -359,23 +365,20 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                         minuteHandler.removeCallbacks(minuteHandlerTask)
                     }
                     pausePlayer()
-                } else if (!isOnCall) {
+                } else {
                     // Resume song
                     if (mp != null) {
                         if (isSongPlay) {
                             LPHLog.d("ChantNow Resume Song")
                             timerStart()
                             playPlayer()
-//                            mp!!.start()
                             // Changing button image to pause button
                             btnPlay!!.setImageResource(R.drawable.ic_pause_button)
-                        } else if (!isOnCall) {
+                        } else {
                             playSong(currentSongIndex)
                         }
-
                     }
                 }
-
             }
         }
 
@@ -385,33 +388,29 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
          * */
         btnForward.setOnClickListener {
             // get current song position
-            if (!isOnCall) {
-
-                LPHLog.d("currentSongIndex Forward : " + currentSongIndex)
-                if (currentSongIndex < enabledSongModelList!!.size - 1) {
-                    playSong(currentSongIndex + 1)
+            if (currentSongIndex < enabledSongModelList!!.size - 1) {
+                playSong(currentSongIndex + 1)
 //                    currentSongIndex += 1
-                } else if (isRepeat) {
-                    currentSongIndex = 0
-                    playSong(currentSongIndex)
-                } else {
-                    Toast.makeText(
-                        context,
-                        context?.getString(R.string.no_next_song),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-                /*val currentPosition = mp!!.currentPosition
-                // check if seekForward time is lesser than song duration
-                if (currentPosition + seekForwardTime <= mp!!.duration) {
-                    // forward song
-                    mp!!.seekTo(currentPosition + seekForwardTime)
-                } else {
-                    // forward to end position
-                    mp!!.seekTo(mp!!.duration)
-                }*/
+            } else if (isRepeat) {
+                currentSongIndex = 0
+                playSong(currentSongIndex)
+            } else {
+                Toast.makeText(
+                    context,
+                    context?.getString(R.string.no_next_song),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
+            /*val currentPosition = mp!!.currentPosition
+            // check if seekForward time is lesser than song duration
+            if (currentPosition + seekForwardTime <= mp!!.duration) {
+                // forward song
+                mp!!.seekTo(currentPosition + seekForwardTime)
+            } else {
+                // forward to end position
+                mp!!.seekTo(mp!!.duration)
+            }*/
         }
 
         /*
@@ -420,42 +419,37 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
          * */
         btnBackward.setOnClickListener {
             // get current song position
-            if (!isOnCall) {
-                LPHLog.d("currentSongIndex Backward : " + currentSongIndex)
-
-                if (currentSongIndex > 0) {
-                    playSong(currentSongIndex - 1)
+            if (currentSongIndex > 0) {
+                playSong(currentSongIndex - 1)
 //                    currentSongIndex -= 1
-                } else if (isShuffle && isRepeat) {
-                    currentSongIndex = (shuffledSongModelList!!.size - 1)
-                    playSong(currentSongIndex)
-                } else if (isRepeat) {
-                    currentSongIndex = (enabledSongModelList!!.size - 1)
-                    playSong(currentSongIndex)
-                } else {
-                    Toast.makeText(
-                        context,
-                        context?.getString(R.string.no_previous_song),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            } else if (isShuffle && isRepeat) {
+                currentSongIndex = (shuffledSongModelList!!.size - 1)
+                playSong(currentSongIndex)
+            } else if (isRepeat) {
+                currentSongIndex = (enabledSongModelList!!.size - 1)
+                playSong(currentSongIndex)
+            } else {
+                Toast.makeText(
+                    context,
+                    context?.getString(R.string.no_previous_song),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
-                LPHLog.d("currentSongIndex Backward : " + currentSongIndex)
-                /*val currentPosition = mp!!.currentPosition
-                // check if seekBackward time is greater than 0 sec
-                if (currentPosition - seekBackwardTime >= 0) {
-                    // forward song
-                    mp!!.seekTo(currentPosition - seekBackwardTime)
-                    val progress = Helper.getProgressPercentage(mp?.currentPosition!!.toLong(), mp?.duration!!.toLong())
-                    //Log.d("Progress", ""+progress);
-                    songProgressBar!!.progress = progress
-                }*/
-            }/*else {
-                // backward to starting position
-                mp!!.seekTo(0)
+            LPHLog.d("currentSongIndex Backward : " + currentSongIndex)
+            /*val currentPosition = mp!!.currentPosition
+            // check if seekBackward time is greater than 0 sec
+            if (currentPosition - seekBackwardTime >= 0) {
+                // forward song
+                mp!!.seekTo(currentPosition - seekBackwardTime)
+                val progress = Helper.getProgressPercentage(mp?.currentPosition!!.toLong(), mp?.duration!!.toLong())
+                //Log.d("Progress", ""+progress);
+                songProgressBar!!.progress = progress
             }*/
-
-        }
+        }/*else {
+            // backward to starting position
+            mp!!.seekTo(0)
+        }*/
 
         /*
          * Button Click event for Repeat button
@@ -915,19 +909,10 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 LPHLog.d("ChantNow AUDIOFOCUS_GAIN")
                 if (mp != null) {
                     LPHLog.d("ChantNow Mp is not null")
-//                    val progress = volumeSeekBar?.progress
-//                    LPHLog.d("ChantNow volume : " + progress)
-//                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress!!, 0)
-//                    mp!!.setVolume(progress.toFloat(), progress.toFloat())
-
-                    if (isOnCall) {
-                        isOnCall = false
-                        playPlayer()
-                    }
+                    playPlayer()
                 } else {
                     LPHLog.d("ChantNow Mp is null")
                 }
-//                pausePlayer()
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 LPHLog.d("ChantNow AUDIOFOCUS_LOSS")
@@ -940,15 +925,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     )
                 } else
                     mAudioManager.abandonAudioFocus(this)
-                /*if(mp != null && mp!!.isPlaying) {
-                    mp!!.seekTo(0)
-                    mp!!.stop()
-                    btnPlay!!.setImageResource(R.drawable.ic_play_button)
-                    val progress = Helper.getProgressPercentage(mp?.currentPosition!!.toLong(), mp?.duration!!.toLong())
-                    //Log.d("Progress", ""+progress);
-                    songProgressBar!!.progress = progress
-//                    unRegisterThread()
-                }*/
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 LPHLog.d("ChantNow AUDIOFOCUS_LOSS_TRANSIENT")
@@ -956,50 +932,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             }
             else -> {
                 LPHLog.d("ChantNow AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK")
-                /* if(mp != null && mp!!.isPlaying){
-                     mp!!.setVolume(0.1f, 0.1f)
-                 }*/
-//                pausePlayer()
             }
         }
-    }
-
-    //Handle incoming phone calls
-    private fun callStateListener() {
-        // Get the telephony manager
-        telephonyManager =
-            requireContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        //Starting listening for PhoneState changes
-
-        phoneStateListener = object : PhoneStateListener() {
-            override fun onCallStateChanged(state: Int, incomingNumber: String?) {
-                when (state) {
-                    TelephonyManager.CALL_STATE_OFFHOOK, TelephonyManager.CALL_STATE_RINGING -> {
-                        if (mp != null) {
-                            try {
-                                if (mp!!.isPlaying) {
-                                    isOnCall = true
-                                    LPHLog.d("ChantNow incoming call pause")
-                                    pausePlayer()
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    TelephonyManager.CALL_STATE_IDLE -> {
-                        if (isOnCall) {
-                            LPHLog.d("ChantNow incoming call resume")
-                            playPlayer()
-                        }
-                    }
-                }
-            }
-        }
-
-        // Register the listener with the telephony manager
-        // Listen for changes to the device call state.
-        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
     }
 
     private fun timerStart() {

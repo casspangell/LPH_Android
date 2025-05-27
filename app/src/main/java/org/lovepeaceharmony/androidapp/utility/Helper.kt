@@ -113,18 +113,11 @@ object Helper {
         return repeatText
     }
 
-    fun checkExternalStoragePermission(context: Context?): Boolean {
-        return if (context != null) {
-            Build.VERSION.SDK_INT < 23 || (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_PHONE_STATE
-            ) == PackageManager.PERMISSION_GRANTED)
-        } else {
-            false
-        }
+    fun checkExternalStoragePermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     fun convertFromDpToPixel(context: Context, dp: Float): Float {

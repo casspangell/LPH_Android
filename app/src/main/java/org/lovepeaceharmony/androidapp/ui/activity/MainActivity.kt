@@ -72,10 +72,16 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.userPreferences.observe(this) { state ->
             if (state is DataState.Success) registerReceiver(
-                toolTipReceiver, IntentFilter(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT)
+                toolTipReceiver, 
+                IntentFilter(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT),
+                Context.RECEIVER_NOT_EXPORTED
             )
         }
-        registerReceiver(clearService, IntentFilter(Constants.BROADCAST_CLEAR_THREAD))
+        registerReceiver(
+            clearService, 
+            IntentFilter(Constants.BROADCAST_CLEAR_THREAD),
+            Context.RECEIVER_NOT_EXPORTED
+        )
         startService(Intent(this, ThreadClearService::class.java))
     }
 
@@ -149,9 +155,6 @@ class MainActivity : AppCompatActivity() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_PHONE_STATE
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             val snackBar = Snackbar.make(
@@ -180,7 +183,6 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (PermissionUtil.verifyPermissions(grantResults)) {
-
             val snackBar = Snackbar.make(
                 mainLayout!!,
                 this.getString(R.string.permission_granted),
@@ -190,16 +192,12 @@ class MainActivity : AppCompatActivity() {
             val snackBarView = snackBar.view
             snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.top_bar_orange))
             snackBar.show()
-
         } else {
             var showRationale = false
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
                     this,
                     Manifest.permission.READ_EXTERNAL_STORAGE
-                ) && ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.READ_PHONE_STATE
                 )
             }
             if (!showRationale) {
@@ -221,7 +219,6 @@ class MainActivity : AppCompatActivity() {
                 requestStoragePermission(mainLayout)
             }
         }
-
     }
 
     override fun onDestroy() {
@@ -233,8 +230,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val PERMISSIONS_STORAGE =
-            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE)
+        private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     private class UpdateDeviceTokenAsync(

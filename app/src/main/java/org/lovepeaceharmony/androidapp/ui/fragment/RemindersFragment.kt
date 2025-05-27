@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
+import android.os.Build
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.fragment.app.Fragment
@@ -101,8 +102,18 @@ class RemindersFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>, Rem
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if (activity != null)
-            requireActivity().registerReceiver(mReminderBroadCast, IntentFilter(Constants.BROADCAST_REMINDERS))
+        if (activity != null) {
+            val intentFilter = IntentFilter(Constants.BROADCAST_REMINDERS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requireActivity().registerReceiver(
+                    mReminderBroadCast,
+                    intentFilter,
+                    Context.RECEIVER_NOT_EXPORTED
+                )
+            } else {
+                requireActivity().registerReceiver(mReminderBroadCast, intentFilter)
+            }
+        }
     }
 
     override fun onDetach() {
