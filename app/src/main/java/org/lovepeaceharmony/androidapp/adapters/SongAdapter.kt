@@ -50,35 +50,54 @@ class SongsAdapter(
         fun bind(cursor: Cursor) = with(binding) {
             val songsModel = SongsModel.getValueFromCursor(cursor)
             tvTitle.text = songsModel.songTitle
+            
+            // Store the current song model in the view's tag
+            root.tag = songsModel
+            
             with(toggleEnabled) {
-                if (cursor.position == 0 && songsModel.isToolTip) doOnPreDraw {
-                    TapTarget.forView(
-                        it,
-                        it.context.getString(R.string.use_the_switches_to_customize_your_chant),
-                        it.context.getString(R.string.tap_anywhere_to_continue)
-                    ).init(activity, R.color.tool_tip_color2) {
-                        SongsModel.updateIsToolTip(it.context, 0, false)
-                        onSongRefresh.onRefresh()
-                        it.context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
+                // Remove any existing listener to prevent duplicate callbacks
+                setOnCheckedChangeListener(null)
+                
+                // Set the initial state
+                isChecked = songsModel.isChecked
+                
+                // Show tooltip for first item if needed
+                if (cursor.position == 0 && songsModel.isToolTip) {
+                    doOnPreDraw {
+                        TapTarget.forView(
+                            it,
+                            it.context.getString(R.string.use_the_switches_to_customize_your_chant),
+                            it.context.getString(R.string.tap_anywhere_to_continue)
+                        ).init(activity, R.color.tool_tip_color2) {
+                            SongsModel.updateIsToolTip(it.context, 0, false)
+                            onSongRefresh.onRefresh()
+                            it.context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
+                        }
                     }
                 }
-                isChecked = songsModel.isChecked
-                tag = songsModel
-                setOnCheckedChangeListener { compoundButton, isChecked ->
+                
+                // Set up the toggle listener
+                setOnCheckedChangeListener { _, isChecked ->
                     LPHLog.d("onCheckedChanged : $isChecked")
-                    val songsModel1 = compoundButton.tag as SongsModel
-                    SongsModel.updateIsEnabled(context, songsModel1.songTitle, isChecked)
+                    // Get the current song model from the view's tag
+                    val currentSongModel = root.tag as SongsModel
+                    
+                    // Update the database
+                    SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
+                    
+                    // Update the model's state
+                    currentSongModel.isChecked = isChecked
+                    
+                    // Notify listeners
                     onSongRefresh.onRefresh()
-                    onSongRefresh.onDisableSong(songsModel1.songTitle, isChecked, songsModel1)
+                    onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
                 }
             }
 
-            with(root) {
-                tag = songsModel
-                setOnClickListener { view ->
-                    val songsModel1 = view.tag as SongsModel
-                    onSongRefresh.onItemClick(songsModel1.songTitle, songsModel.id)
-                }
+            // Set up click listener for the entire row
+            root.setOnClickListener {
+                val currentSongModel = it.tag as SongsModel
+                onSongRefresh.onItemClick(currentSongModel.songTitle, currentSongModel.id)
             }
         }
     }
