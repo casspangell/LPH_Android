@@ -63,7 +63,7 @@ class LoginActivity : BaseActivity() {
         header.bannerImage.isVisible = true
 
         // btnFacebook.setOnClickListener { signInWithFacebook() }  // Temporarily disabled
-        btnGoogle.setOnClickListener { signInWithGoogle() }
+//        btnGoogle.setOnClickListener { signInWithGoogle() }
 
         btnLogin.setOnClickListener {
             val email = emailContainer.editText?.text?.toString()

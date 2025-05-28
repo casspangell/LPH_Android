@@ -3,7 +3,8 @@ package org.lovepeaceharmony.androidapp.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.util.Patterns
+import android.view.View
 import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -48,16 +49,52 @@ class RegisterActivity : BaseActivity() {
         btnLogin.setOnClickListener {
             val email = emailContainer.editText?.text?.toString()
             val password = passwordContainer.editText?.text?.toString()
-            if (!email.isNullOrBlank() && !password.isNullOrBlank())
-                registerWithEmailAndPassword(email, password)
-        }
+            val confirmPassword = confirmPasswordContainer.editText?.text?.toString()
 
+            // Clear any previous error messages
+            errorMessage.visibility = View.GONE
+            errorMessage.text = ""
+
+            when {
+                email.isNullOrBlank() -> {
+                    showError(getString(R.string.error_email_required))
+                }
+                !isValidEmail(email) -> {
+                    showError(getString(R.string.error_invalid_email))
+                }
+                password.isNullOrBlank() -> {
+                    showError(getString(R.string.error_password_required))
+                }
+                confirmPassword.isNullOrBlank() -> {
+                    showError(getString(R.string.error_confirm_password_required))
+                }
+                password != confirmPassword -> {
+                    showError(getString(R.string.error_passwords_dont_match))
+                }
+                else -> {
+                    registerWithEmailAndPassword(email, password)
+                }
+            }
+        }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun showError(message: String) {
+        binding.errorMessage.apply {
+            text = message
+            visibility = View.VISIBLE
+        }
     }
 
     private fun registerWithEmailAndPassword(email: String, password: String) {
+        binding.progressBar.isVisible = true
         firebaseAuth.createUserWithEmailAndPassword(
             email, password
         ).addOnCompleteListener(this@RegisterActivity) { task ->
+            binding.progressBar.isVisible = false
             if (task.isSuccessful) {
                 // Sign in success, update UI with the signed-in user's information
                 LPHLog.d("signInWithEmail:success")
@@ -66,6 +103,21 @@ class RegisterActivity : BaseActivity() {
             } else {
                 // If sign in fails, display a message to the user.
                 LPHLog.d("signInWithEmail:failure ${task.exception}")
+                val errorMessage = when {
+                    task.exception?.message?.contains("email address is already in use") == true -> {
+                        getString(R.string.error_email_already_in_use)
+                    }
+                    task.exception?.message?.contains("badly formatted") == true -> {
+                        getString(R.string.error_invalid_email)
+                    }
+                    task.exception?.message?.contains("password is invalid") == true -> {
+                        getString(R.string.error_invalid_password)
+                    }
+                    else -> {
+                        getString(R.string.error_registration_failed)
+                    }
+                }
+                showError(errorMessage)
                 updateUI(null)
             }
         }
@@ -79,6 +131,6 @@ class RegisterActivity : BaseActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
-        } ?: Log.d("Firebase", "Failed")
+        }
     }
 }

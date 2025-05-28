@@ -6,10 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -97,31 +101,19 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationMenu.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_chant -> {
-
                     true
                 }
                 R.id.nav_about -> {
-
                     true
                 }
                 R.id.nav_news -> {
-
                     true
                 }
                 R.id.nav_logout -> {
-
                     true
                 }
                 else -> false
             }
-        }
-    }
-
-
-    private fun checkPermission() {
-
-        if (!Helper.checkExternalStoragePermission(this)) {
-            requestStoragePermission(findViewById(R.id.lay_home_activity_parent))
         }
     }
 
@@ -135,89 +127,15 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity.getString(R.string.tap_anywhere_to_continue)
             ).init(this@MainActivity, R.color.tool_tip_color3) {
                 viewModel.isToolTipShown = true
-                checkPermission()
             }
         }
     }
-
 
     private val clearService = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             LPHLog.d("Thread clear Broadcast")
 //            chantFragment?.unRegisterPlayer()
 
-        }
-    }
-
-
-    private fun requestStoragePermission(mainLayout: View?) {
-        this.mainLayout = mainLayout
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            val snackBar = Snackbar.make(
-                mainLayout!!,
-                this.getString(R.string.enable_storage_permission),
-                Snackbar.LENGTH_INDEFINITE
-            )
-            snackBar.setActionTextColor(ContextCompat.getColor(this, android.R.color.white))
-            val snackBarView = snackBar.view
-            snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.top_bar_orange))
-            snackBar.setAction(this.getString(R.string.ok)) {
-                ActivityCompat.requestPermissions(
-                    this@MainActivity,
-                    PERMISSIONS_STORAGE,
-                    0
-                )
-            }
-            snackBar.show()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (PermissionUtil.verifyPermissions(grantResults)) {
-            val snackBar = Snackbar.make(
-                mainLayout!!,
-                this.getString(R.string.permission_granted),
-                Snackbar.LENGTH_SHORT
-            )
-            snackBar.setActionTextColor(ContextCompat.getColor(this, android.R.color.white))
-            val snackBarView = snackBar.view
-            snackBarView.setBackgroundColor(ContextCompat.getColor(this, R.color.top_bar_orange))
-            snackBar.show()
-        } else {
-            var showRationale = false
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            }
-            if (!showRationale) {
-                val snackBar = Snackbar.make(
-                    mainLayout!!,
-                    this.getString(R.string.enable_storage_permission),
-                    Snackbar.LENGTH_SHORT
-                )
-                snackBar.setActionTextColor(ContextCompat.getColor(this, android.R.color.white))
-                val snackBarView = snackBar.view
-                snackBarView.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.top_bar_orange
-                    )
-                )
-                snackBar.show()
-            } else {
-                requestStoragePermission(mainLayout)
-            }
         }
     }
 

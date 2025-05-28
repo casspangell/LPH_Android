@@ -29,8 +29,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="absout3@yopmail.com" />
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -51,8 +50,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Testing@123" />
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,7 +84,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/tv_sign_up"
         android:layout_width="match_parent"
@@ -98,64 +95,9 @@
         android:text="@string/do_not_have_an_account_sign_up"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/or_connect_using_text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <!-- FrameLayout to stack the Facebook buttons -->
-            <FrameLayout
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginEnd="12dp">
-
-
-                <Button
-                    android:id="@+id/btn_facebook"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/connect_with_facebook"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="@dimen/btn_padding"
-                    app:backgroundTint="@android:color/holo_blue_light"
-                    app:icon="@drawable/ic_facebook_logo"
-                    app:iconPadding="0dp"
-                    android:enabled="true"/>
-
-<!--                 Facebook Material Button -->
-            </FrameLayout>
-
-            <!-- Google Material Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_google"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="12dp"
-                android:contentDescription="@string/connect_with_google"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:backgroundTint="@color/google_btn_color"
-                app:elevation="2dp"
-                app:icon="@drawable/googleg_standard_color_18" />
-
-        </LinearLayout>
-    </FrameLayout>
-
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar"
@@ -167,58 +109,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/leftLine"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="6dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-        app:layout_constraintEnd_toStartOf="@+id/or_connect_using_text"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/rightLine"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="6dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/or_connect_using_text" />
-
-    <TextView
-        android:id="@+id/or_connect_using_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="@string/or_connect_using"
-        android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/leftLine" />
-
-    <Button
-        android:id="@+id/fb_login_button"
-        android:layout_width="50dp"
-        android:layout_height="68dp"
-        android:layout_marginStart="181dp"
-        android:layout_marginEnd="181dp"
-        android:background="@android:color/transparent"
-        android:paddingTop="25sp"
-        android:visibility="invisible"
-        android:text="Facebook Login (Disabled)"
-        android:enabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_reset_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

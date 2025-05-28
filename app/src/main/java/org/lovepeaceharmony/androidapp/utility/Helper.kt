@@ -556,10 +556,8 @@ object Helper {
     }
 
     fun setPlayList(context: Context, path: String, extension: String) {
-
         try {
             val files = context.assets.list(path) ?: return
-
             val filesWithExtension = ArrayList<String>()
 
             var i = 0
@@ -573,24 +571,20 @@ object Helper {
                         songsModel.id = i
                         songsModel.songTitle = songTitle
                         songsModel.songPath = "songs/$file"
-                        songsModel.isChecked = true
+                        // Only enable mandarin_soul_language_and_english by default
+                        songsModel.isChecked = songTitle == "mandarin_soul_language_and_english"
                         songsModel.isToolTip = false
                         SongsModel.insertSong(context, songsModel)
                         i++
                     }
                     song.put("songTitle", file)
-
-                    song.put("songPath", "songs/" + file)
-                    // Adding each song to SongList
+                    song.put("songPath", "songs/$file")
                     filesWithExtension.add(file)
                 }
             }
-
-            //			return filesWithExtension.toArray(new String[filesWithExtension.size()]);
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     private fun getFileName(fileName: String): String {

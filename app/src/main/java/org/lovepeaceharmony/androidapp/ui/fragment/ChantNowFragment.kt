@@ -1,19 +1,23 @@
 package org.lovepeaceharmony.androidapp.ui.fragment
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.database.Cursor
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +26,8 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -346,37 +352,29 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
 
         btnPlay!!.setOnClickListener {
-            if (!Helper.checkExternalStoragePermission(requireContext())) {
-                Toast.makeText(
-                    context,
-                    resources.getString(R.string.enable_storage_permission),
-                    Toast.LENGTH_SHORT
-                ).show()
+            // check for already playing
+            if (mp != null && mp?.isPlaying == true) {
+                if (Helper.isLoggedInUser(requireContext())) {
+                    minutes?.let { viewModel.updateMilestone(it) }
+                    minutes = 0f
+                    updatingMinutes = 0f
+                }
+                if (countDownTimer != null) {
+                    countDownTimer?.cancel()
+                    minuteHandler.removeCallbacks(minuteHandlerTask)
+                }
+                pausePlayer()
             } else {
-                // check for already playing
-                if (mp != null && mp?.isPlaying == true) {
-                    if (Helper.isLoggedInUser(requireContext())) {
-                        minutes?.let { viewModel.updateMilestone(it) }
-                        minutes = 0f
-                        updatingMinutes = 0f
-                    }
-                    if (countDownTimer != null) {
-                        countDownTimer?.cancel()
-                        minuteHandler.removeCallbacks(minuteHandlerTask)
-                    }
-                    pausePlayer()
-                } else {
-                    // Resume song
-                    if (mp != null) {
-                        if (isSongPlay) {
-                            LPHLog.d("ChantNow Resume Song")
-                            timerStart()
-                            playPlayer()
-                            // Changing button image to pause button
-                            btnPlay!!.setImageResource(R.drawable.ic_pause_button)
-                        } else {
-                            playSong(currentSongIndex)
-                        }
+                // Resume song
+                if (mp != null) {
+                    if (isSongPlay) {
+                        LPHLog.d("ChantNow Resume Song")
+                        timerStart()
+                        playPlayer()
+                        // Changing button image to pause button
+                        btnPlay!!.setImageResource(R.drawable.ic_pause_button)
+                    } else {
+                        playSong(currentSongIndex)
                     }
                 }
             }
@@ -869,6 +867,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         fun newInstance(): ChantNowFragment {
             return ChantNowFragment()
         }
+
+        private const val STORAGE_PERMISSION_REQUEST_CODE = 1001
     }
 
     private fun pausePlayer() {
@@ -977,6 +977,58 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     private val mDelayedStopRunnable = Runnable {
         // Need to pause mediaplayer
         LPHLog.d("Need to stop media player")
+    }
+
+    private fun showStoragePermissionDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.permission_required)
+            .setMessage(R.string.storage_permission_settings_explanation)
+            .setPositiveButton(R.string.open_settings) { _, _ ->
+                openAppSettings()
+            }
+            .setNegativeButton(R.string.try_again) { dialog, _ ->
+                dialog.dismiss()
+                requestStoragePermission()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", requireContext().packageName, null)
+        }
+        startActivity(intent)
+    }
+
+    private fun requestStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_MEDIA_AUDIO),
+                STORAGE_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                STORAGE_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, R.string.permission_granted, Toast.LENGTH_SHORT).show()
+                // Proceed with playing audio
+            } else {
+                showStoragePermissionDialog()
+            }
+        }
     }
 
 }
