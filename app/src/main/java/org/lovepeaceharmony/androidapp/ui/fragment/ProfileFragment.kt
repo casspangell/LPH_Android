@@ -89,6 +89,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
             .setTitle(getString(R.string.delete_account))
             .setMessage(getString(R.string.are_you_sure_warning))
             .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                binding.progressBar.isVisible = true
                 deleteUserAccount()
             }
             .setNegativeButton(getString(R.string.cancel), null)
@@ -137,12 +138,27 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
                     deleteFirebaseUserAccount(firebaseUser)
                 }
+        } ?: run {
+            binding.progressBar.isVisible = false
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.failed_to_delete_account) + "User not found",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     private fun deleteFirebaseUserAccount(user: FirebaseUser) {
         user.delete().addOnCompleteListener { task ->
+            binding.progressBar.isVisible = false
             if (task.isSuccessful) {
+                // Clear local data
+                Helper.clearAllDbValues(requireContext())
+                requireContext().getSharedPreferences(
+                    Constants.SHARED_PREF_NAME,
+                    Context.MODE_PRIVATE
+                ).edit().clear().apply()
+
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.success),
