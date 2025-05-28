@@ -79,18 +79,19 @@ class LoginActivity : BaseActivity() {
             }
             else {
                 if (email != null) {
+                    binding.progressBar.isVisible = true
                     FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                         .addOnCompleteListener { task ->
+                            binding.progressBar.isVisible = false
                             if (task.isSuccessful) {
-                                Toast.makeText(
-                                    this@LoginActivity,
-                                    getString(R.string.email_sent),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                finish()
+                                AlertDialog.Builder(this@LoginActivity)
+                                    .setTitle(getString(R.string.success))
+                                    .setMessage(getString(R.string.password_reset_email_sent))
+                                    .setPositiveButton(getString(R.string.ok), null)
+                                    .show()
                             }
                             else {
-                                Toast.makeText(this@LoginActivity,task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@LoginActivity, task.exception?.message ?: getString(R.string.failed_to_send_reset_email), Toast.LENGTH_LONG).show()
                             }
                         }
                 }
