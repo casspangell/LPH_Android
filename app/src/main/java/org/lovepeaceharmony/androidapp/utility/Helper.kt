@@ -796,5 +796,9 @@ object Helper {
         }
     }
 
+    fun isUserLoggedIn(context: Context): Boolean {
+        val prefs = context.getSharedPreferences("org.lovepeaceharmony.androidapp.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE)
+        return prefs.getBoolean("is_logged_in", false)
+    }
 
 }

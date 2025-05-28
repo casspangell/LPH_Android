@@ -43,4 +43,10 @@
     <color name="love">#523075</color>
     <color name="peace">#489B8F</color>
     <color name="harmony">#90BA55</color>
+
+    <!-- Splash Screen Colors -->
+    <color name="splash_gradient_start">#FFFFFF</color>
+    <color name="splash_gradient_end">#FFFFFF</color>
+    <color name="splash_text_color">#0049ac</color>
+    <color name="splash_loading_track">#0049ac</color>
 </resources>
