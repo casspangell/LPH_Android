@@ -15,6 +15,10 @@ import org.lovepeaceharmony.androidapp.model.SongsModel
 import org.lovepeaceharmony.androidapp.utility.Constants
 import org.lovepeaceharmony.androidapp.utility.LPHLog
 import org.lovepeaceharmony.androidapp.utility.init
+import android.view.View
+import android.widget.TextView
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 
 /**
  * SongsAdapter
@@ -24,15 +28,18 @@ class SongsAdapter(
     private val activity: FragmentActivity,
     private val context: Context,
     private val onSongRefresh: OnSongRefresh
-) : CursorRecyclerViewAdapter<SongsAdapter.SongViewHolder>(null) {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SongViewHolder(
-        SongsRowBinding.inflate(LayoutInflater.from(context), parent, false),
-        activity, onSongRefresh
-    )
+    companion object {
+        const val TYPE_HEADER = 0
+        const val TYPE_SONG = 1
+    }
 
-    override fun onBindViewHolder(viewHolder: SongViewHolder, cursor: Cursor?) {
-        cursor?.let { viewHolder.bind(it) }
+    private var items: List<ListItem> = emptyList()
+
+    sealed class ListItem {
+        data class Header(val title: String, val backgroundColor: Int) : ListItem()
+        data class Song(val songModel: SongsModel, val position: Int) : ListItem()
     }
 
     interface OnSongRefresh {
@@ -41,30 +48,61 @@ class SongsAdapter(
         fun onDisableSong(songTitle: String, isChecked: Boolean, songsModel: SongsModel)
     }
 
+    override fun getItemCount(): Int = items.size
+
+    override fun getItemViewType(position: Int): Int {
+        return when (items[position]) {
+            is ListItem.Header -> TYPE_HEADER
+            is ListItem.Song -> TYPE_SONG
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_HEADER -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_section_header, parent, false)
+                HeaderViewHolder(view)
+            }
+            TYPE_SONG -> {
+                val binding = SongsRowBinding.inflate(LayoutInflater.from(context), parent, false)
+                SongViewHolder(binding, activity, onSongRefresh, context)
+            }
+            else -> throw IllegalArgumentException("Invalid view type: $viewType")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (val item = items[position]) {
+            is ListItem.Header -> (holder as HeaderViewHolder).bind(item)
+            is ListItem.Song -> (holder as SongViewHolder).bind(item.songModel, item.position)
+        }
+    }
+
+    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val titleTextView: TextView = itemView.findViewById(R.id.headerTitle)
+        private val headerContainer: LinearLayout = itemView.findViewById(R.id.headerContainer)
+        fun bind(header: ListItem.Header) {
+            titleTextView.text = header.title
+            headerContainer.setBackgroundColor(header.backgroundColor)
+        }
+    }
+
     class SongViewHolder(
         private val binding: SongsRowBinding,
         private val activity: FragmentActivity,
         private val onSongRefresh: OnSongRefresh,
+        private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(cursor: Cursor) = with(binding) {
-            val songsModel = SongsModel.getValueFromCursor(cursor)
+        fun bind(songsModel: SongsModel, position: Int) = with(binding) {
             tvTitle.text = songsModel.getDisplayName()
-            
-            // Store the current song model in the view's tag
             root.tag = songsModel
-            
             with(toggleEnabled) {
-                // Remove any existing listener to prevent duplicate callbacks
                 setOnCheckedChangeListener(null)
-                
-                // Set the initial state
                 isChecked = songsModel.isChecked
-                
-                // Show tooltip for first item if needed
                 val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
-                if (cursor.position == 0 && songsModel.isToolTip && !hasSeenIntro) {
+                if (position == 0 && songsModel.isToolTip && !hasSeenIntro) {
                     doOnPreDraw {
                         TapTarget.forView(
                             it,
@@ -78,56 +116,64 @@ class SongsAdapter(
                         }
                     }
                 }
-                
-                // Set up the toggle listener
                 setOnCheckedChangeListener { _, isChecked ->
                     LPHLog.d("onCheckedChanged : $isChecked")
-                    // Get the current song model from the view's tag
                     val currentSongModel = root.tag as SongsModel
-                    
-                    // Try to update the database
                     val updateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
-                    
-                    // If update was successful, update the model and notify listeners
                     if (updateSuccessful) {
-                        // Update the model's state
                         currentSongModel.isChecked = isChecked
-                        
-                        // Notify listeners
                         onSongRefresh.onRefresh()
                         onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
                     } else {
-                        // If update failed (trying to disable last song), revert the toggle
-                        setOnCheckedChangeListener(null)  // Remove listener temporarily
-                        toggleEnabled.isChecked = true  // Set the state using the toggle button reference
-                        setOnCheckedChangeListener { _, newIsChecked ->  // Restore listener
-                            // Try to update the database
+                        setOnCheckedChangeListener(null)
+                        toggleEnabled.isChecked = true
+                        setOnCheckedChangeListener { _, newIsChecked ->
                             val newUpdateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, newIsChecked)
-                            
-                            // If update was successful, update the model and notify listeners
                             if (newUpdateSuccessful) {
-                                // Update the model's state
                                 currentSongModel.isChecked = newIsChecked
-                                
-                                // Notify listeners
                                 onSongRefresh.onRefresh()
                                 onSongRefresh.onDisableSong(currentSongModel.songTitle, newIsChecked, currentSongModel)
                             } else {
-                                // If update failed again, revert the toggle
                                 setOnCheckedChangeListener(null)
-                                toggleEnabled.isChecked = true  // Set the state using the toggle button reference
-                                setOnCheckedChangeListener { _, _ -> }  // Empty listener to prevent recursion
+                                toggleEnabled.isChecked = true
+                                setOnCheckedChangeListener { _, _ -> }
                             }
                         }
                     }
                 }
             }
-
-            // Set up click listener for the entire row
             root.setOnClickListener {
                 val currentSongModel = it.tag as SongsModel
                 onSongRefresh.onItemClick(currentSongModel.songTitle, currentSongModel.id)
             }
         }
+    }
+
+    fun updateData(songs: List<SongsModel>) {
+        items = createListWithHeaders(songs)
+        notifyDataSetChanged()
+    }
+
+    private fun createListWithHeaders(songs: List<SongsModel>): List<ListItem> {
+        val result = mutableListOf<ListItem>()
+        // Section 1
+        result.add(ListItem.Header(
+            "Love Peace Harmony in Many Languages",
+            ContextCompat.getColor(context, R.color.header_blue)
+        ))
+        // Add first section songs (indices 0-6)
+        songs.take(7).forEachIndexed { index, song ->
+            result.add(ListItem.Song(song, index))
+        }
+        // Section 2
+        result.add(ListItem.Header(
+            "Expressions of Love Peace Harmony",
+            ContextCompat.getColor(context, R.color.header_green)
+        ))
+        // Add second section songs (indices 7+)
+        songs.drop(7).forEachIndexed { index, song ->
+            result.add(ListItem.Song(song, index + 7))
+        }
+        return result
     }
 }

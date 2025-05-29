@@ -846,14 +846,20 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor?) {
         if (loader.id == Constants.URL_SONG_LOADER) {
             if (cursor != null) {
-                songsAdapter?.swapCursor(cursor)
-                songsAdapter?.notifyDataSetChanged()
+                val songsList = ArrayList<SongsModel>()
+                if (cursor.moveToFirst()) {
+                    do {
+                        val song = SongsModel.getValueFromCursor(cursor)
+                        songsList.add(song)
+                    } while (cursor.moveToNext())
+                }
+                songsAdapter?.updateData(songsList)
             }
         }
     }
 
     override fun onLoaderReset(loader: Loader<Cursor>) {
-        songsAdapter!!.swapCursor(null)
+        songsAdapter?.updateData(emptyList())
     }
 
     companion object {

@@ -49,4 +49,7 @@
     <color name="splash_gradient_end">#FFFFFF</color>
     <color name="splash_text_color">#0049ac</color>
     <color name="splash_loading_track">#0049ac</color>
+
+    <color name="header_blue">#1d4aac</color>
+    <color name="header_green">#8fc05d</color>
 </resources>
