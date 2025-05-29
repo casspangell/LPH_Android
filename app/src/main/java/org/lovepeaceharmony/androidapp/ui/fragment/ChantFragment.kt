@@ -1,5 +1,6 @@
 package org.lovepeaceharmony.androidapp.ui.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -54,13 +55,22 @@ class ChantFragment : Fragment(R.layout.fragment_chant) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentChantBinding.bind(view)
         initView()
+        
+        // Check if this is first launch
+        val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
+        
         viewModel.userPreferences.observe(viewLifecycleOwner) { state ->
-            if (state is DataState.Success && state.data.toolTipShown.not()) TapTarget.forView(
-                binding.tabLayout,
-                resources.getString(R.string.chant_any_time),
-                resources.getString(R.string.tap_anywhere_to_continue)
-            ).init(requireActivity(), R.color.tool_tip_color1) {
-                context?.sendBroadcast(Intent(Constants.BROADCAST_CHANT_NOW_ADAPTER))
+            if (state is DataState.Success && state.data.toolTipShown.not() && !hasSeenIntro) {
+                TapTarget.forView(
+                    binding.tabLayout,
+                    resources.getString(R.string.chant_any_time),
+                    resources.getString(R.string.tap_anywhere_to_continue)
+                ).init(requireActivity(), R.color.tool_tip_color1) {
+                    // Save that user has seen the intro
+                    sharedPrefs.edit().putBoolean("has_seen_intro", true).apply()
+                    context?.sendBroadcast(Intent(Constants.BROADCAST_CHANT_NOW_ADAPTER))
+                }
             }
         }
         LPHLog.d("ChantFragment : InitView called  $currentTabState")

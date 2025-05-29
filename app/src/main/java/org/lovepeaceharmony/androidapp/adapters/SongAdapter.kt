@@ -62,16 +62,19 @@ class SongsAdapter(
                 isChecked = songsModel.isChecked
                 
                 // Show tooltip for first item if needed
-                if (cursor.position == 0 && songsModel.isToolTip) {
+                val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
+                if (cursor.position == 0 && songsModel.isToolTip && !hasSeenIntro) {
                     doOnPreDraw {
                         TapTarget.forView(
                             it,
-                            it.context.getString(R.string.use_the_switches_to_customize_your_chant),
-                            it.context.getString(R.string.tap_anywhere_to_continue)
+                            context.getString(R.string.use_the_switches_to_customize_your_chant),
+                            context.getString(R.string.tap_anywhere_to_continue)
                         ).init(activity, R.color.tool_tip_color2) {
-                            SongsModel.updateIsToolTip(it.context, 0, false)
+                            SongsModel.updateIsToolTip(context, 0, false)
+                            sharedPrefs.edit().putBoolean("has_seen_intro", true).apply()
                             onSongRefresh.onRefresh()
-                            it.context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
+                            context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
                         }
                     }
                 }
