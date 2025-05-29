@@ -48,20 +48,6 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="tabTextAppearance">@style/AppTabTextAppearance</item>
         <item name="tabSelectedTextColor">@android:color/white</item>
-
-    </style>
-
-    <style name="AppTabLayoutNews" parent="Widget.Design.TabLayout">
-        <item name="tabMaxWidth">264dp</item>
-        <item name="tabIndicatorColor">@android:color/transparent</item>
-        <item name="tabIndicatorHeight">0dp</item>
-        <item name="tabPaddingStart">6dp</item>
-        <item name="tabPaddingEnd">6dp</item>
-        <item name="android:background">@drawable/tab_selector_news</item>
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
-        <item name="tabTextAppearance">@style/AppTabTextAppearance</item>
-        <item name="tabSelectedTextColor">@android:color/white</item>
-
     </style>
 
     <!--<style name="Theme_Dialog" parent="android:Theme.Holo.Dialog">

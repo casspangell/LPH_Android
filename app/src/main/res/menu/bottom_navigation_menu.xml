@@ -11,11 +11,6 @@
         android:icon="@drawable/ic_error_black_24dp"
         android:title="@string/about" />
     <item
-        android:id="@+id/nav_news"
-        android:enabled="true"
-        android:icon="@drawable/ic_news_icon"
-        android:title="@string/news" />
-    <item
         android:id="@+id/nav_logout"
         android:enabled="true"
         android:icon="@drawable/ic_person"

@@ -106,9 +106,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_about -> {
                     true
                 }
-                R.id.nav_news -> {
-                    true
-                }
                 R.id.nav_logout -> {
                     true
                 }
@@ -196,13 +193,11 @@ class MainActivity : AppCompatActivity() {
      * Called on first creation and when restoring state.
      */
     private fun setupBottomNavigationBar() {
-
         // Setup the bottom navigation view with a list of navigation graphs
         currentNavController = binding.bottomNavigationMenu.setupWithNavController(
             navGraphIds = listOf(
                 R.navigation.nav_chant,
                 R.navigation.nav_about,
-                R.navigation.nav_news,
                 R.navigation.nav_logout
             ),
             fragmentManager = supportFragmentManager,
