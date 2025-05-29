@@ -1,5 +1,6 @@
 package org.lovepeaceharmony.androidapp.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -115,5 +116,32 @@ class MainViewModel @Inject constructor(
         } ?: 0
 
         return timePassedHours in 24..48
+    }
+
+    // --- Chant Time Sync ---
+    fun syncChantTimeToFirebase(context: Context) {
+        val localTotal = TimeTracker.getTotalSeconds(context)
+        viewModelScope.launch {
+            Firebase.totalSeconds.collect { totalSecondsState ->
+                if (totalSecondsState is DataState.Success) {
+                    if (localTotal > totalSecondsState.data) {
+                        Firebase.updateTotalSeconds(localTotal).collect {}
+                    }
+                }
+            }
+        }
+    }
+
+    fun fetchAndMergeChantTimeFromFirebase(context: Context) {
+        viewModelScope.launch {
+            Firebase.totalSeconds.collect { totalSecondsState ->
+                if (totalSecondsState is DataState.Success) {
+                    val localTotal = TimeTracker.getTotalSeconds(context)
+                    if (totalSecondsState.data > localTotal) {
+                        TimeTracker.setTotalSeconds(context, totalSecondsState.data)
+                    }
+                }
+            }
+        }
     }
 }

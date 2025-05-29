@@ -44,6 +44,7 @@ import org.lovepeaceharmony.androidapp.model.SongsModel
 import org.lovepeaceharmony.androidapp.utility.Constants
 import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
+import org.lovepeaceharmony.androidapp.utility.TimeTracker
 import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -93,6 +94,22 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     private lateinit var mFocusRequest: AudioFocusRequest
     private lateinit var mPlaybackAttributes: AudioAttributes
     private var shuffledSongModelList: ArrayList<SongsModel>? = null
+
+    // Time tracking
+    private var sessionStartTime: Long = 0L
+    private var isSessionActive: Boolean = false
+    private var sessionAccumulated: Long = 0L // seconds
+
+    private val chantTimeHandler = Handler()
+    private val chantTimeRunnable = object : Runnable {
+        override fun run() {
+            if (isSessionActive) {
+                // Optionally, update UI via a callback or LiveData
+                // For now, just keep running
+                chantTimeHandler.postDelayed(this, 1000)
+            }
+        }
+    }
 
     /**
      * Background Runnable thread
@@ -285,11 +302,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                             mp!!.seekTo(0)
                             mp!!.stop()
                             btnPlay!!.setImageResource(R.drawable.ic_play_button)
-                            Toast.makeText(
-                                context,
-                                resources.getString(R.string.please_enable_your_song_and_play),
-                                Toast.LENGTH_SHORT
-                            ).show()
                             currentSongIndex = 0
                             isSongPlay = false
                         }
@@ -889,6 +901,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         if (mp != null && successfullyRetrievedAudioFocus()) {
             mp?.start()
             btnPlay!!.setImageResource(R.drawable.ic_pause_button)
+            onAudioStart()
         }
     }
 
@@ -1034,6 +1047,42 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             } else {
                 showStoragePermissionDialog()
             }
+        }
+    }
+
+    private fun onAudioStart() {
+        if (!isSessionActive) {
+            sessionStartTime = System.currentTimeMillis()
+            isSessionActive = true
+            chantTimeHandler.post(chantTimeRunnable)
+        }
+    }
+
+    private fun onAudioPauseOrStop() {
+        if (isSessionActive) {
+            val sessionSeconds = ((System.currentTimeMillis() - sessionStartTime) / 1000)
+            TimeTracker.addSessionSeconds(requireContext(), sessionSeconds)
+            sessionAccumulated += sessionSeconds
+            isSessionActive = false
+            chantTimeHandler.removeCallbacks(chantTimeRunnable)
+            // Sync to Firebase
+            viewModel.updateMilestone(sessionAccumulated / 60f) // updateMilestone expects minutes
+            viewModel.syncChantTimeToFirebase(requireContext())
+            sessionAccumulated = 0L
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (mp != null && mp!!.isPlaying) {
+            onAudioStart()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (mp != null && mp!!.isPlaying) {
+            onAudioPauseOrStop()
         }
     }
 

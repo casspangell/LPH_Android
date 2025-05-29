@@ -120,6 +120,10 @@ class ChantFragment : Fragment(R.layout.fragment_chant) {
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
+                // Refresh milestones when Milestones tab is selected (index 2)
+                if (tab.position == 2) {
+                    milestonesFragment?.refreshMilestones()
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {

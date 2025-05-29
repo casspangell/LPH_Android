@@ -828,4 +828,11 @@ object Helper {
         return prefs.getBoolean("is_logged_in", false)
     }
 
+    fun formatSecondsToHMS(totalSeconds: Long): String {
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
 }
