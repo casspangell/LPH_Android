@@ -93,10 +93,19 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private fun updateVideoSize() {
         if (videoWidth == 0 || videoHeight == 0) return
 
-        val screenWidth = resources.displayMetrics.widthPixels
-        val screenHeight = resources.displayMetrics.heightPixels
+        val display = windowManager.defaultDisplay
+        val realSize = android.graphics.Point()
+        display.getRealSize(realSize)
+        
+        // Get the actual screen dimensions regardless of orientation
+        val screenWidth = realSize.x
+        val screenHeight = realSize.y
         val videoRatio = videoWidth.toFloat() / videoHeight.toFloat()
-        val isLandscape = resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+        
+        // Get the current rotation
+        val rotation = display.rotation
+        val isLandscape = rotation == android.view.Surface.ROTATION_90 || 
+                         rotation == android.view.Surface.ROTATION_270
 
         val layoutParams = surfaceView.layoutParams
         if (isLandscape) {
@@ -159,7 +168,10 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        updateVideoSize()
+        // Add a small delay to ensure smooth transition
+        surfaceView.post {
+            updateVideoSize()
+        }
     }
 
     override fun onPause() {
