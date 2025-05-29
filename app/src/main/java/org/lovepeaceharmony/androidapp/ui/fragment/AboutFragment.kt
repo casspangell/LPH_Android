@@ -9,8 +9,11 @@ import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.adapters.PageAdapter
+import org.lovepeaceharmony.androidapp.ui.activity.WebViewActivity
 import java.util.*
 
 /**
@@ -41,19 +44,21 @@ class AboutFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Set up Donate button
+        view.findViewById<TextView>(R.id.tv_donate_now).setOnClickListener {
+            launchWebView("https://www.lovepeaceharmony.org/donate")
+        }
+
+        // Set up Website button
+        view.findViewById<TextView>(R.id.tv_view_website).setOnClickListener {
+            launchWebView("https://www.lovepeaceharmony.org")
+        }
+    }
 
     private fun initView(view: View) {
-
-        view.findViewById<View>(R.id.tv_view_website).setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://lovepeaceharmony.org/"))
-            startActivity(browserIntent)
-        }
-
-        view.findViewById<View>(R.id.tv_donate_now).setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://lovepeaceharmony.org/donate/"))
-            startActivity(browserIntent)
-        }
-
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         tabLayout.addTab(tabLayout.newTab().setText(context!!.resources.getText(R.string.the_song)))
         tabLayout.addTab(tabLayout.newTab().setText(context!!.resources.getText(R.string.the_movement)))
@@ -92,6 +97,13 @@ class AboutFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun launchWebView(url: String) {
+        val intent = Intent(requireContext(), WebViewActivity::class.java).apply {
+            putExtra("url", url)
+        }
+        startActivity(intent)
     }
 
     companion object {

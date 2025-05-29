@@ -54,6 +54,9 @@
             android:name=".ui.activity.LocalVideoPlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".ui.activity.WebViewActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <provider
             android:name=".db.ContentProviderDb"
