@@ -57,7 +57,8 @@ object AlarmScheduler {
             intent1.putExtra(Constants.BUNDLE_TONE_URI, alarmModel.uriString)
             intent1.putExtra(Constants.BUNDLE_ALARM_ID, alarmModel.id)
             intent1.putExtra(Constants.BUNDLE_IS_ALARM_ONCE, repeat == 8)
-            val pendingIntent = PendingIntent.getBroadcast(context, pendingIntentId, intent1, PendingIntent.FLAG_UPDATE_CURRENT)
+            val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            val pendingIntent = PendingIntent.getBroadcast(context, pendingIntentId, intent1, flags)
             val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
             LPHLog.d("Repeat : " + repeat)
             when {
@@ -113,7 +114,8 @@ object AlarmScheduler {
                 PackageManager.DONT_KILL_APP);*/
 
         val intent1 = Intent(context, cls)
-        val pendingIntent = PendingIntent.getBroadcast(context, pendingIntentId, intent1, PendingIntent.FLAG_UPDATE_CURRENT)
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = PendingIntent.getBroadcast(context, pendingIntentId, intent1, flags)
         val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pendingIntent)
         pendingIntent.cancel()
@@ -139,7 +141,8 @@ object AlarmScheduler {
         stackBuilder.addParentStack(cls)
         stackBuilder.addNextIntent(notificationIntent)
 
-        val pendingIntent = stackBuilder.getPendingIntent(pendingIntentId, PendingIntent.FLAG_UPDATE_CURRENT)
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = stackBuilder.getPendingIntent(pendingIntentId, flags)
 
         val channelId = "LPH_CHANNEL_" + pendingIntent!!
         val builder = NotificationCompat.Builder(context, channelId)
