@@ -49,7 +49,7 @@ class SongsAdapter(
 
         fun bind(cursor: Cursor) = with(binding) {
             val songsModel = SongsModel.getValueFromCursor(cursor)
-            tvTitle.text = songsModel.songTitle
+            tvTitle.text = songsModel.getDisplayName()
             
             // Store the current song model in the view's tag
             root.tag = songsModel
@@ -82,15 +82,41 @@ class SongsAdapter(
                     // Get the current song model from the view's tag
                     val currentSongModel = root.tag as SongsModel
                     
-                    // Update the database
-                    SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
+                    // Try to update the database
+                    val updateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
                     
-                    // Update the model's state
-                    currentSongModel.isChecked = isChecked
-                    
-                    // Notify listeners
-                    onSongRefresh.onRefresh()
-                    onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
+                    // If update was successful, update the model and notify listeners
+                    if (updateSuccessful) {
+                        // Update the model's state
+                        currentSongModel.isChecked = isChecked
+                        
+                        // Notify listeners
+                        onSongRefresh.onRefresh()
+                        onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
+                    } else {
+                        // If update failed (trying to disable last song), revert the toggle
+                        setOnCheckedChangeListener(null)  // Remove listener temporarily
+                        toggleEnabled.isChecked = true  // Set the state using the toggle button reference
+                        setOnCheckedChangeListener { _, newIsChecked ->  // Restore listener
+                            // Try to update the database
+                            val newUpdateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, newIsChecked)
+                            
+                            // If update was successful, update the model and notify listeners
+                            if (newUpdateSuccessful) {
+                                // Update the model's state
+                                currentSongModel.isChecked = newIsChecked
+                                
+                                // Notify listeners
+                                onSongRefresh.onRefresh()
+                                onSongRefresh.onDisableSong(currentSongModel.songTitle, newIsChecked, currentSongModel)
+                            } else {
+                                // If update failed again, revert the toggle
+                                setOnCheckedChangeListener(null)
+                                toggleEnabled.isChecked = true  // Set the state using the toggle button reference
+                                setOnCheckedChangeListener { _, _ -> }  // Empty listener to prevent recursion
+                            }
+                        }
+                    }
                 }
             }
 

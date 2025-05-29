@@ -194,4 +194,8 @@
     <string name="password_reset_email_sent">A password reset email has been sent to your email address. Please check your inbox and follow the instructions to reset your password.</string>
     <string name="failed_to_send_reset_email">Failed to send reset email. Please try again.</string>
 
+    <!-- Song Selection Messages -->
+    <string name="at_least_one_song_must_be_selected">At least one song must be selected</string>
+    <string name="default_song_enabled">Default song has been enabled</string>
+
 </resources>

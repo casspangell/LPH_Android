@@ -21,7 +21,6 @@ private fun tapTargetListener(onTargetDismissed: () -> Unit) = object : TapTarge
     }
 
     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-        LPHLog.d("Tool Tip : You dismissed me :(")
         onTargetDismissed.invoke()
     }
 }

@@ -316,7 +316,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             mp = MediaPlayer()
             if (enabledSongModelList!!.size > 0) {
                 val songName =
-                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].getDisplayName()
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
             }
@@ -327,12 +327,12 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
             if (isSongPlay && shuffledSongModelList != null && isShuffle && shuffledSongModelList!!.size > 0) {
                 val songName =
-                    resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
+                    resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].getDisplayName()
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
             } else if (isSongPlay && enabledSongModelList != null && enabledSongModelList!!.size > 0) {
                 val songName =
-                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+                    resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].getDisplayName()
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
             } else {
@@ -544,14 +544,14 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     private fun setDefaultSongTitle() {
         if (shuffledSongModelList != null && isShuffle && shuffledSongModelList!!.size > 0) {
             val songName =
-                resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].songTitle
+                resources.getString(R.string.now_playing) + " " + shuffledSongModelList!![currentSongIndex].getDisplayName()
             tvNowPlaying!!.text = songName
             tvNowPlaying!!.visibility = View.VISIBLE
         } else if (isShuffle && shuffledSongModelList!!.size == 0) {
             tvNowPlaying!!.visibility = View.GONE
         } else if (enabledSongModelList!!.size > 0) {
             val songName =
-                resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].songTitle
+                resources.getString(R.string.now_playing) + " " + enabledSongModelList!![currentSongIndex].getDisplayName()
             tvNowPlaying!!.text = songName
             tvNowPlaying!!.visibility = View.VISIBLE
         } else if (enabledSongModelList!!.size == 0) {
@@ -646,7 +646,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 timerStart()
 
                 val songName =
-                    resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].songTitle
+                    resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
 

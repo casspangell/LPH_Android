@@ -19,7 +19,12 @@ class LPHApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         LPHLog.d("LPHApplication OnCreate")
+        
+        // Initialize song list
         Helper.setPlayList(this, "songs", ".mp3")
+        
+        // Set default song selection for new users
+        Helper.setDefaultSongSelection(this)
     }
 
 }

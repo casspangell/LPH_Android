@@ -46,9 +46,36 @@ import java.util.*
 
 object Helper {
 
+    private const val PREF_NAME = "LPH_PREFS"
+    private const val KEY_FIRST_RUN = "is_first_run"
+    private const val DEFAULT_FIRST_SONG = "mandarin_soul_language_and_english"
+
     private var mProgressDialog: ProgressDialog? = null
     const val MINUTE_INTERVAL: Long = 1000 * 60 * 1 //1 minutes
 
+    fun isFirstRun(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getBoolean(KEY_FIRST_RUN, true)
+    }
+
+    fun markFirstRunComplete(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putBoolean(KEY_FIRST_RUN, false).apply()
+    }
+
+    fun setDefaultSongSelection(context: Context) {
+        if (isFirstRun(context)) {
+            // Get all songs
+            val songsList = SongsModel.getSongsModelList(context)
+            songsList?.forEach { song ->
+                // Set first song to enabled, all others to disabled
+                val isEnabled = song.songTitle == DEFAULT_FIRST_SONG
+                SongsModel.updateIsEnabled(context, song.songTitle, isEnabled)
+            }
+            // Mark first run as complete
+            markFirstRunComplete(context)
+        }
+    }
 
     /**
      * to show alert
@@ -571,8 +598,8 @@ object Helper {
                         songsModel.id = i
                         songsModel.songTitle = songTitle
                         songsModel.songPath = "songs/$file"
-                        // Only enable mandarin_soul_language_and_english by default
-                        songsModel.isChecked = songTitle == "mandarin_soul_language_and_english"
+                        // Only set default checked state for new songs
+                        songsModel.isChecked = songTitle == DEFAULT_FIRST_SONG && isFirstRun(context)
                         songsModel.isToolTip = false
                         SongsModel.insertSong(context, songsModel)
                         i++
