@@ -10,10 +10,26 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:id="@+id/youtube_fragment"
+            android:id="@+id/videoContainer"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:visibility="visible" />
+            android:layout_height="200dp">
+
+            <ImageView
+                android:id="@+id/videoCoverImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:text="▶"
+                android:textSize="24sp"
+                android:textColor="@android:color/white"
+                android:background="@drawable/circle_background" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tv_content"
