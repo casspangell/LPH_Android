@@ -134,3 +134,22 @@ fun Firebase.reset() = callbackFlow {
     }
     awaitClose()
 }
+
+@ExperimentalCoroutinesApi
+fun Firebase.resetAllMilestoneData(
+    onComplete: (Boolean, String?) -> Unit
+) {
+    val dbRef = db ?: run {
+        onComplete(false, "User not authenticated")
+        return
+    }
+    dbRef.removeValue()
+        .addOnSuccessListener {
+            Log.d("FirebaseReset", "All milestone data deleted from Firebase.")
+            onComplete(true, null)
+        }
+        .addOnFailureListener { e ->
+            Log.e("FirebaseReset", "Failed to delete milestone data: ${e.message}")
+            onComplete(false, e.message)
+        }
+}

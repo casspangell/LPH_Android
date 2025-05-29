@@ -7,7 +7,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.firebase.ktx.Firebase
@@ -19,9 +21,11 @@ import org.lovepeaceharmony.androidapp.utility.ConfirmationAlertCallback
 import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.TimeTracker
 import org.lovepeaceharmony.androidapp.utility.reset
+import org.lovepeaceharmony.androidapp.utility.updateTotalSeconds
 import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import org.lovepeaceharmony.androidapp.utility.resetAllMilestoneData
 
 /**
  * A simple [Fragment] subclass.
@@ -113,25 +117,32 @@ class MilestonesFragment : Fragment(R.layout.fragment_milestones) {
         binding.tvMinutes.text = "$formatted"
     }
 
+    @ExperimentalCoroutinesApi
     private fun resetMilestones() {
         if (Helper.isConnected(requireContext())) {
-            Firebase.reset()
+            Log.d("MilestonesFragment", "Attempting to reset all Firebase milestone data...")
+            Firebase.resetAllMilestoneData { success, error ->
+                if (success) {
+                    Log.d("MilestonesFragment", "Firebase milestone data deleted successfully.")
+                    TimeTracker.setTotalSeconds(requireContext(), 0L)
+                    Helper.clearLocalMilestoneData(requireContext())
+                    updateChantTimeDisplay()
+                    binding.tvLongestStreakCount.text = "0"
+                    binding.tvCurrentStreakCount.text = "0"
+                    Toast.makeText(requireContext(), R.string.milestone_data_deleted, Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("MilestonesFragment", "Failed to delete Firebase milestone data: $error")
+                    Toast.makeText(requireContext(), "Failed to delete milestone data: $error", Toast.LENGTH_LONG).show()
+                }
+            }
         } else {
             Helper.showConfirmationAlertTwoButton(
                 requireContext(),
                 resources.getString(R.string.please_check_your_internet_connection),
                 object : ConfirmationAlertCallback {
-                    override fun onPositiveButtonClick() {
-                        resetMilestones()
-                    }
-
-                    override fun onNegativeButtonClick() {
-
-                    }
-
-                    override fun onNeutralButtonClick() {
-
-                    }
+                    override fun onPositiveButtonClick() { resetMilestones() }
+                    override fun onNegativeButtonClick() {}
+                    override fun onNeutralButtonClick() {}
                 })
         }
     }

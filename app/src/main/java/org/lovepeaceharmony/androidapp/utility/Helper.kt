@@ -835,4 +835,15 @@ object Helper {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    fun clearLocalMilestoneData(context: Context) {
+        val prefs = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit()
+            .putInt(Constants.SHARED_PREF_MILESTONE_MINUTES, 0)
+            .putInt(Constants.SHARED_PREF_MILESTONE_DAYS, 0)
+            .putInt(Constants.SHARED_PREF_MILESTONE_INVITE_COUNT, 0)
+            .putFloat(Constants.SHARED_PREF_PENDING_MINUTES, 0f)
+            .putString(Constants.SHARED_PREF_PENDING_DATE, "")
+            .apply()
+    }
+
 }
