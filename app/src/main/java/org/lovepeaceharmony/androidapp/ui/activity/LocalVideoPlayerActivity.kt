@@ -21,6 +21,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var surfaceView: SurfaceView
     private lateinit var controlsLayout: LinearLayout
     private lateinit var playPauseButton: ImageButton
+    private lateinit var exitButton: ImageButton
     private lateinit var seekBar: SeekBar
     private lateinit var timeText: TextView
     private var mediaPlayer: MediaPlayer? = null
@@ -39,6 +40,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         surfaceView = findViewById(R.id.surfaceView)
         controlsLayout = findViewById(R.id.controlsLayout)
         playPauseButton = findViewById(R.id.playPauseButton)
+        exitButton = findViewById(R.id.exitButton)
         seekBar = findViewById(R.id.seekBar)
         timeText = findViewById(R.id.timeText)
 
@@ -53,6 +55,10 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
             } else {
                 playVideo()
             }
+        }
+
+        exitButton.setOnClickListener {
+            finish()
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
