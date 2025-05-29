@@ -13,7 +13,7 @@
     <!--<color name="colorAccent">#FF4081</color>
     <color name="colorAccent">#68328c</color>-->
     <color name="colorAccent">#0049ac</color>
-    <!--<color name="loading_color">#662D91</color>-->
+    <color name="lph_harmony">#90BA55</color>
     <color name="loading_color">#0049ac</color>
 
     <color name="bottom_bar_bg">#F8F8F8</color>
