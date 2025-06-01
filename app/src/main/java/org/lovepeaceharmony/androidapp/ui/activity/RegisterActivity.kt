@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import org.lovepeaceharmony.androidapp.R
+import org.lovepeaceharmony.androidapp.auth.AuthPrefs
 import org.lovepeaceharmony.androidapp.databinding.ActivityRegisterBinding
 import org.lovepeaceharmony.androidapp.ui.base.BaseActivity
 import org.lovepeaceharmony.androidapp.utility.Constants
@@ -96,12 +97,10 @@ class RegisterActivity : BaseActivity() {
         ).addOnCompleteListener(this@RegisterActivity) { task ->
             binding.progressBar.isVisible = false
             if (task.isSuccessful) {
-                // Sign in success, update UI with the signed-in user's information
                 LPHLog.d("signInWithEmail:success")
                 val user = firebaseAuth.currentUser
                 updateUI(user)
             } else {
-                // If sign in fails, display a message to the user.
                 LPHLog.d("signInWithEmail:failure ${task.exception}")
                 val errorMessage = when {
                     task.exception?.message?.contains("email address is already in use") == true -> {
@@ -125,12 +124,24 @@ class RegisterActivity : BaseActivity() {
 
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
-            Helper.setPlayList(this, "songs", ".mp3")
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra(Constants.BUNDLE_IS_FROM_PROFILE, false)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+            // Save auth data for auto-login
+            user.getIdToken(true).addOnSuccessListener { tokenResult ->
+                AuthPrefs.saveAuthData(
+                    context = this,
+                    token = tokenResult.token ?: "",
+                    userId = user.uid
+                )
+                
+                // Initialize app data
+                Helper.setPlayList(this, "songs", ".mp3")
+                
+                // Navigate to main activity
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(Constants.BUNDLE_IS_FROM_PROFILE, false)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
         }
     }
 }

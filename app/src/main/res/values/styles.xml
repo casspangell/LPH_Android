@@ -11,6 +11,10 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <style name="OpenSansRegularTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">@font/open_sans_regular</item>

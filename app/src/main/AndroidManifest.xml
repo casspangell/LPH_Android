@@ -32,15 +32,21 @@
             android:value="e3cf13e42700399d77c9f0c5ce36cfd1d8ea3da2" />
 
         <activity
-            android:name=".ui.activity.MainActivity"
-            android:configChanges="keyboard|orientation"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:name=".ui.activity.SplashActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activity.MainActivity"
+            android:configChanges="keyboard|orientation"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+
         <activity
             android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait" />
@@ -62,7 +68,6 @@
             android:name=".db.ContentProviderDb"
             android:authorities="org.lovepeaceharmony.androidapp.db.contentProviderAuthorities"
             android:exported="false" />
-
 
         <receiver android:name=".utility.AlarmReceiver" />
 

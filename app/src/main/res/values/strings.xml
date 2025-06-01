@@ -18,12 +18,14 @@
     <string name="about">About</string>
     <string name="news">News</string>
     <string name="logout">Logout</string>
+    <string name="logout_confirmation">Are you sure you want to logout?</string>
 
     <!--User Controller-->
     <string name="delete_account">Delete Account</string>
     <string name="are_you_sure_warning">Are you sure you want to delete your account? This action cannot be undone.</string>
     <string name="success">Success.</string>
     <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="failed_to_delete_user_data">Failed to delete user data: </string>
     <string name="failed_to_delete_account">Failed to delete user account: </string>
 

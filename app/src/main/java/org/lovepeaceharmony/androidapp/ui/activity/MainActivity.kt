@@ -21,11 +21,13 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.getkeepsafe.taptargetview.TapTarget
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.json.JSONException
 import org.lovepeaceharmony.androidapp.R
+import org.lovepeaceharmony.androidapp.auth.AuthPrefs
 import org.lovepeaceharmony.androidapp.databinding.ActivityMainBinding
 import org.lovepeaceharmony.androidapp.repo.DataState
 import org.lovepeaceharmony.androidapp.ui.fragment.ChantFragment
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private var currentNavController: LiveData<NavController>? = null
     private var isFromProfile: Boolean = false
     private var mainLayout: View? = null
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     private var chantFragment: ChantFragment? = null
 
@@ -107,11 +110,35 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_logout -> {
+                    showLogoutConfirmation()
                     true
                 }
                 else -> false
             }
         }
+    }
+
+    private fun showLogoutConfirmation() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.logout)
+            .setMessage(R.string.logout_confirmation)
+            .setPositiveButton(R.string.yes) { _, _ -> logout() }
+            .setNegativeButton(R.string.no, null)
+            .show()
+    }
+
+    private fun logout() {
+        // Clear auth data
+        AuthPrefs.clear(this)
+        
+        // Sign out from Firebase
+        firebaseAuth.signOut()
+        
+        // Navigate to login
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private val toolTipReceiver = object : BroadcastReceiver() {
