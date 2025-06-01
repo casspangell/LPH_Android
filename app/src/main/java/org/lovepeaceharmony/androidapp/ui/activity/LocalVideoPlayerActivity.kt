@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
 import java.util.concurrent.TimeUnit
@@ -29,6 +30,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private var currentPosition = 0
     private var videoWidth = 0
     private var videoHeight = 0
+    private var currentQuality = "high"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +94,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(current.toLong()) % 60
         val totalMinutes = TimeUnit.MILLISECONDS.toMinutes(duration.toLong())
         val totalSeconds = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) % 60
-        timeText.text = String.format("%02d:%02d / %02d:%02d", 
+        timeText.text = getString(R.string.time_format, 
             currentMinutes, currentSeconds, totalMinutes, totalSeconds)
     }
 
@@ -205,5 +207,36 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         mediaPlayer?.release()
         mediaPlayer = null
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun showQualityDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.select_quality))
+        val qualities = arrayOf(getString(R.string.quality_high), getString(R.string.quality_medium), getString(R.string.quality_low))
+        builder.setItems(qualities) { dialog, which ->
+            when (which) {
+                0 -> {
+                    currentQuality = "high"
+                    playVideo()
+                }
+                1 -> {
+                    currentQuality = "medium"
+                    playVideo()
+                }
+                2 -> {
+                    currentQuality = "low"
+                    playVideo()
+                }
+            }
+        }
+        builder.show()
+    }
+
+    private fun showErrorDialog(message: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.error))
+        builder.setMessage(message)
+        builder.setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss() }
+        builder.show()
     }
 } 

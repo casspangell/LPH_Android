@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="?android:selectableItemBackground"
-                android:contentDescription="@string/repeat"
+                android:contentDescription="@string/cd_repeat"
                 android:src="@drawable/ic_chevron_right_black_24dp"
                 app:tint="#666666" />
 
@@ -144,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:contentDescription="@string/repeat"
+                android:contentDescription="@string/cd_ringtone"
                 android:src="@drawable/ic_chevron_right_black_24dp"
                 app:tint="#666666" />
 

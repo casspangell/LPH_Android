@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="fitXY"
-            android:contentDescription="@string/about"/>
+            android:contentDescription="@string/cd_movement_image"/>
 
         <TextView
             android:id="@+id/tv_content"

@@ -44,7 +44,7 @@ class MessageBox(private val context: Context, private val title: String, privat
         val alert = AlertDialog.Builder(context)
         alert.setTitle(title)
         alert.setMessage(message)
-        alert.setPositiveButton("OK", null)
+        alert.setPositiveButton(context.getString(R.string.ok), null)
         alert.show()
     }
 
@@ -53,11 +53,10 @@ class MessageBox(private val context: Context, private val title: String, privat
         alert.setTitle(title)
         alert.setMessage(message)
         alert.setCancelable(false)
-        alert.setNegativeButton("Close", action)
-        alert.setPositiveButton("Retry", action)
+        alert.setNegativeButton(context.getString(R.string.close), action)
+        alert.setPositiveButton(context.getString(R.string.retry), action)
 
         val alertDialog = alert.create()
         alertDialog.show()
-
     }
 }

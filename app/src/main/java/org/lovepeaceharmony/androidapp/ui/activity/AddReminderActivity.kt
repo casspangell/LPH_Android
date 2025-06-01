@@ -114,9 +114,9 @@ class AddReminderActivity : AppCompatActivity() {
                 val times = tvTime.text.toString().split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
                 var hr = Integer.parseInt(times[0])
                 val mm = Integer.parseInt(times[1])
-                if (tvAMPM.text.toString() == "PM" && hr != 12) {
+                if (tvAMPM.text.toString() == context!!.getString(R.string.pm) && hr != 12) {
                     hr += 12
-                } else if (tvAMPM.text.toString() == "AM" && hr == 12) {
+                } else if (tvAMPM.text.toString() == context!!.getString(R.string.am) && hr == 12) {
                     hr = 0
                 }
                 c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), hr, mm)
@@ -128,15 +128,15 @@ class AddReminderActivity : AppCompatActivity() {
             val timePickerDialog = TimePickerDialog(context!!, TimePickerDialog.OnTimeSetListener { timePicker, hourOfDay, minute ->
                 val amPm: String
                 amPm = if (hourOfDay >= 12) {
-                    "PM"
+                    context!!.getString(R.string.pm)
                 } else {
-                    "AM"
+                    context!!.getString(R.string.am)
                 }
                 tvAMPM.text = amPm
                 try {
                     val c2 = Calendar.getInstance()
                     c2.set(c2.get(Calendar.YEAR), c2.get(Calendar.MONTH), c2.get(Calendar.DATE), hourOfDay, minute)
-                    val mTimeFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+                    val mTimeFormat = SimpleDateFormat(context!!.getString(R.string.time_format_12h), Locale.getDefault())
                     tvTime.text = mTimeFormat.format(c2.time)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -152,7 +152,6 @@ class AddReminderActivity : AppCompatActivity() {
                     repeatList = list
                     val repeatText = getRepeatText(repeatList)
                     tvRepeatText.text = repeatText
-
                 }
             }, repeatList!!)
             repeatDialog.isCancelable = true
@@ -188,9 +187,9 @@ class AddReminderActivity : AppCompatActivity() {
                     val times = tvTime.text.toString().split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
                     var hour = Integer.parseInt(times[0])
                     val minute = Integer.parseInt(times[1])
-                    if (tvAMPM.text.toString() == "PM" && hour != 12) {
+                    if (tvAMPM.text.toString() == context!!.getString(R.string.pm) && hour != 12) {
                         hour += 12
-                    } else if (tvAMPM.text.toString() == "AM" && hour == 12) {
+                    } else if (tvAMPM.text.toString() == context!!.getString(R.string.am) && hour == 12) {
                         hour = 0
                     }
                     alarmModel!!.hour = hour
@@ -200,10 +199,13 @@ class AddReminderActivity : AppCompatActivity() {
                     alarmModel.uriString = currentToneUri!!.toString()
                     val repeatInts = ArrayList<Int>()
                     val pendingIntentInts = ArrayList<Int>()
-                    for (repeat1 in repeatList) {
-                        repeatInts.add(repeat1.id)
-                        pendingIntentInts.add(repeat1.alarmId)
-                    }
+                    val repeat = repeatList!![0]
+                    repeatInts.add(repeat.id)
+                    val r = Random()
+                    val low = 10000
+                    val high = 99999
+                    val pendingIntentId = r.nextInt(high - low) + low
+                    pendingIntentInts.add(pendingIntentId)
                     alarmModel.repeats = repeatInts
                     alarmModel.pendingIntentIds = pendingIntentInts
 
@@ -227,9 +229,9 @@ class AddReminderActivity : AppCompatActivity() {
                     val times = tvTime.text.toString().split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
                     var hour = Integer.parseInt(times[0])
                     val minute = Integer.parseInt(times[1])
-                    if (tvAMPM.text.toString() == "PM" && hour != 12) {
+                    if (tvAMPM.text.toString() == context!!.getString(R.string.pm) && hour != 12) {
                         hour += 12
-                    } else if (tvAMPM.text.toString() == "AM" && hour == 12) {
+                    } else if (tvAMPM.text.toString() == context!!.getString(R.string.am) && hour == 12) {
                         hour = 0
                     }
 
@@ -253,9 +255,6 @@ class AddReminderActivity : AppCompatActivity() {
                     val high = 99999
                     val pendingIntentId = r.nextInt(high - low) + low
                     pendingIntentInts.add(pendingIntentId)
-                    /*for(int i = 0; i < 7; i++) {
-
-                        }*/
                     alarmModel.repeats = repeatInts
                     alarmModel.pendingIntentIds = pendingIntentInts
 
@@ -276,9 +275,9 @@ class AddReminderActivity : AppCompatActivity() {
                     val times = tvTime.text.toString().split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
                     var hour = Integer.parseInt(times[0])
                     val minute = Integer.parseInt(times[1])
-                    if (tvAMPM.text.toString() == "PM" && hour != 12) {
+                    if (tvAMPM.text.toString() == context!!.getString(R.string.pm) && hour != 12) {
                         hour += 12
-                    } else if (tvAMPM.text.toString() == "AM" && hour == 12) {
+                    } else if (tvAMPM.text.toString() == context!!.getString(R.string.am) && hour == 12) {
                         hour = 0
                     }
 
@@ -320,20 +319,17 @@ class AddReminderActivity : AppCompatActivity() {
                 currentToneUri = RingtoneManager.getActualDefaultRingtoneUri(context!!, RingtoneManager.TYPE_NOTIFICATION)
             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone")
+            intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context!!.getString(R.string.select_tone))
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentToneUri)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
             intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
             startActivityForResult(intent, Constants.REQUEST_CODE_TONE_PICKER)
         }
-
-
     }
 
     interface OnRepeatSelect {
         fun updateList(repeatList: List<Repeat>)
     }
-
 
     private fun generateList(): MutableList<Repeat> {
         val repeatList = ArrayList<Repeat>()
@@ -397,7 +393,6 @@ class AddReminderActivity : AppCompatActivity() {
         return repeatList
     }
 
-
     private fun getSavedRepeats(savedAlarmModel: AlarmModel): List<Repeat> {
         val repeatList = generateList()
         var repeat: Repeat?
@@ -432,20 +427,12 @@ class AddReminderActivity : AppCompatActivity() {
     }
 
     private fun getRepeatText(repeatList: List<Repeat>?): String {
-
         val stringBuilder = StringBuilder()
 
         if (repeatList!![0].isChecked) {
             stringBuilder.append(repeatList[0].shortName)
         } else {
             val selectedRepeatedList = getSelectedRepeatedList(repeatList)
-            /*for(int i = 1; i < repeatList.size(); i++){
-             Repeat repeat = repeatList.get(i);
-             if(repeat.isChecked)
-                 selectedRepeatedList.add(new Repeat(repeat));
-
-         }*/
-
             for (i in selectedRepeatedList.indices) {
                 val repeat = selectedRepeatedList[i]
                 if (repeat.isChecked) {
@@ -460,16 +447,7 @@ class AddReminderActivity : AppCompatActivity() {
         return stringBuilder.toString()
     }
 
-
     private fun getSelectedRepeatedList(repeatList: List<Repeat>?): List<Repeat> {
-        /*val selectedRepeatedList = ArrayList<Repeat>()
-        for (i in 1 until repeatList!!.size) {
-            val repeat = repeatList[i]
-            if (repeat.isChecked)
-                selectedRepeatedList.add(Repeat(repeat))
-
-        }*/
-
         val selectedRepeatedList = (1 until repeatList!!.size)
                 .asSequence()
                 .map { repeatList[it] }
