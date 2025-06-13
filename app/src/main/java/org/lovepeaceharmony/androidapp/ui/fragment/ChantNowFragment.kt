@@ -36,6 +36,8 @@ import androidx.loader.content.Loader
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.lovepeaceharmony.androidapp.R
@@ -234,7 +236,10 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("ChantNowFragment", "onViewCreated called")
         initView()
+        Log.d("ChantNowFragment", "Calling checkFirestoreMP3s")
+        checkFirestoreMP3s()
     }
 
     private fun initView() {
@@ -1083,6 +1088,47 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         super.onPause()
         if (mp != null && mp!!.isPlaying) {
             onAudioPauseOrStop()
+        }
+    }
+
+    private fun checkFirestoreMP3s() {
+        Log.d("ChantNowFragment", "Starting Firebase Storage MP3 check")
+        LPHLog.d("Starting Firebase Storage MP3 check")
+        
+        try {
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs")
+            
+            Log.d("ChantNowFragment", "Got Storage reference")
+            
+            storageRef.listAll()
+                .addOnSuccessListener { listResult ->
+                    Log.d("ChantNowFragment", "Successfully got files from Storage")
+                    LPHLog.d("Found ${listResult.items.size} MP3s in Storage")
+                    
+                    if (listResult.items.isEmpty()) {
+                        Log.d("ChantNowFragment", "No MP3s found in Storage")
+                        return@addOnSuccessListener
+                    }
+                    
+                    for (item in listResult.items) {
+                        Log.d("ChantNowFragment", "MP3 found - Name: ${item.name}, Path: ${item.path}")
+                        LPHLog.d("MP3 found - Name: ${item.name}, Path: ${item.path}")
+                        
+                        // Get download URL for each file
+                        item.downloadUrl.addOnSuccessListener { uri ->
+                            Log.d("ChantNowFragment", "Download URL for ${item.name}: ${uri.toString()}")
+                            LPHLog.d("Download URL for ${item.name}: ${uri.toString()}")
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ChantNowFragment", "Error getting MP3s from Storage", e)
+                    LPHLog.e("Error getting MP3s from Storage: ${e.message}")
+                }
+        } catch (e: Exception) {
+            Log.e("ChantNowFragment", "Exception in checkFirestoreMP3s", e)
+            LPHLog.e("Exception in checkFirestoreMP3s: ${e.message}")
         }
     }
 
