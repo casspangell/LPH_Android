@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -37,7 +38,6 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private var videoWidth = 0
     private var videoHeight = 0
     private lateinit var loadingSpinner: ProgressBar
-    private lateinit var volumeSeekBar: SeekBar
     private lateinit var audioManager: AudioManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,18 +53,9 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         exitButton = findViewById(R.id.exitButton)
         seekBar = findViewById(R.id.seekBar)
         timeText = findViewById(R.id.timeText)
-        volumeSeekBar = findViewById(R.id.volumeSeekBar)
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        volumeSeekBar.max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        volumeSeekBar.progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        volumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-        // Add a loading spinner overlay (add to layout if not present)
+
+        // Add a loading spinner overlay
         loadingSpinner = ProgressBar(this)
         val params = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -93,14 +84,44 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    mediaPlayer?.seekTo(progress)
-                    updateTimeText(progress)
+                if (fromUser && mediaPlayer != null) {
+                    val duration = mediaPlayer?.duration ?: 0
+                    val position = (progress * duration) / 100
+                    mediaPlayer?.seekTo(position)
+                    updateTimeText(position)
                 }
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Pause video while scrubbing
+                if (isPlaying) {
+                    mediaPlayer?.pause()
+                }
+            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                // Resume video if it was playing
+                if (isPlaying) {
+                    mediaPlayer?.start()
+                }
+            }
         })
+
+        // Add periodic updates to seekbar
+        val handler = android.os.Handler()
+        val updateSeekBar = object : Runnable {
+            override fun run() {
+                if (mediaPlayer != null && isPlaying) {
+                    val currentPosition = mediaPlayer?.currentPosition ?: 0
+                    val duration = mediaPlayer?.duration ?: 0
+                    if (duration > 0) {
+                        val progress = (currentPosition * 100) / duration
+                        seekBar.progress = progress
+                        updateTimeText(currentPosition)
+                    }
+                }
+                handler.postDelayed(this, 1000) // Update every second
+            }
+        }
+        handler.post(updateSeekBar)
     }
 
     private fun playVideo() {
@@ -133,23 +154,19 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         val realSize = android.graphics.Point()
         display.getRealSize(realSize)
         
-        // Get the actual screen dimensions regardless of orientation
         val screenWidth = realSize.x
         val screenHeight = realSize.y
         val videoRatio = videoWidth.toFloat() / videoHeight.toFloat()
         
-        // Get the current rotation
         val rotation = display.rotation
         val isLandscape = rotation == android.view.Surface.ROTATION_90 || 
                          rotation == android.view.Surface.ROTATION_270
 
         val layoutParams = surfaceView.layoutParams
         if (isLandscape) {
-            // In landscape: fill height and maintain aspect ratio
             layoutParams.height = screenHeight
             layoutParams.width = (screenHeight * videoRatio).toInt()
         } else {
-            // In portrait: fill width and maintain aspect ratio
             layoutParams.width = screenWidth
             layoutParams.height = (screenWidth / videoRatio).toInt()
         }
@@ -178,7 +195,13 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 videoHeight = it.videoHeight
                 updateVideoSize()
                 seekBar.max = it.duration
-                it.setVolume(1.0f, 1.0f)
+                
+                // Set initial volume based on system volume
+                val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                val volumeLevel = currentVolume.toFloat() / maxVolume.toFloat()
+                it.setVolume(volumeLevel, volumeLevel)
+                
                 playVideo()
                 loadingSpinner.visibility = View.GONE
             }
@@ -217,7 +240,6 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Add a small delay to ensure smooth transition
         surfaceView.post {
             updateVideoSize()
         }
@@ -256,4 +278,4 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
         return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
-} 
+}
