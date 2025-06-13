@@ -385,8 +385,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
 
         btnPlay!!.setOnClickListener {
-            // check for already playing
-            if (mp != null && mp?.isPlaying == true) {
+            if (mp != null && mp!!.isPlaying) {
+                // Pause logic
                 if (Helper.isLoggedInUser(requireContext())) {
                     minutes?.let { viewModel.updateMilestone(it) }
                     minutes = 0f
@@ -398,8 +398,13 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 }
                 pausePlayer()
             } else {
-                // Always play the first enabled song
-                if (mp != null) {
+                // Resume if paused
+                if (mp != null && isSongPlay) {
+                    mp!!.start()
+                    btnPlay!!.setImageResource(R.drawable.ic_pause_button)
+                    timerStart()
+                } else if (mp != null) {
+                    // Start first enabled song
                     playSong(0)
                 }
             }
