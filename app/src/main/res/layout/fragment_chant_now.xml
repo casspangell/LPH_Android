@@ -53,7 +53,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/play"
+            android:contentDescription="@string/cd_play_button"
             android:src="@drawable/ic_play_button"/>
 
         <ImageView
@@ -65,7 +65,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/forward"
+            android:contentDescription="@string/cd_forward_button"
             android:src="@drawable/ic_forward_button"/>
 
         <ImageView
@@ -76,7 +76,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/repeat"
+            android:contentDescription="@string/cd_repeat_button"
             android:src="@drawable/ic_repeat_button" />
     </LinearLayout>
 

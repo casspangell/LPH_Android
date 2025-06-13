@@ -20,6 +20,7 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
 import java.util.concurrent.TimeUnit
@@ -39,6 +40,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private lateinit var loadingSpinner: ProgressBar
     private lateinit var volumeSeekBar: SeekBar
     private lateinit var audioManager: AudioManager
+    private var currentQuality = "high"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,7 +124,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         val currentSeconds = TimeUnit.MILLISECONDS.toSeconds(current.toLong()) % 60
         val totalMinutes = TimeUnit.MILLISECONDS.toMinutes(duration.toLong())
         val totalSeconds = TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) % 60
-        timeText.text = String.format("%02d:%02d / %02d:%02d", 
+        timeText.text = getString(R.string.time_format, 
             currentMinutes, currentSeconds, totalMinutes, totalSeconds)
     }
 

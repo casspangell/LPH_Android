@@ -27,6 +27,7 @@
         android:background="@drawable/circle_mask"
         android:scaleType="centerCrop"
         android:src="@drawable/healing_ball"
+        android:contentDescription="@string/cd_profile_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

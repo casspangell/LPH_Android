@@ -200,4 +200,86 @@
     <string name="at_least_one_song_must_be_selected">At least one song must be selected</string>
     <string name="default_song_enabled">Default song has been enabled</string>
 
+    <!-- Play Button -->
+    <string name="play_button">▶</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_play_button">Play button</string>
+    <string name="cd_forward_button">Forward button</string>
+    <string name="cd_repeat_button">Repeat button</string>
+    <string name="cd_chevron_right">Navigate right</string>
+    <string name="cd_ringtone">Select ringtone</string>
+    <string name="cd_repeat">Select repeat</string>
+    <string name="cd_movement_image">Movement image</string>
+    <string name="cd_profile_image">Profile image</string>
+    <string name="cd_calendar">Calendar</string>
+    <string name="cd_streak">Streak</string>
+
+    <!-- Dialog Buttons -->
+    <string name="close">Close</string>
+    <string name="retry">Retry</string>
+
+    <!-- Time Format -->
+    <string name="time_format">%02d:%02d / %02d:%02d</string>
+    <string name="time_format_12h">hh:mm</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+
+    <!-- Movement Content -->
+    <string name="movement_content"><![CDATA[<B>Love Peace Harmony Foundation</B> was founded in 2006 and formally registered in the United States as a nonprofit in 2008. The mission of Love Peace Harmony Foundation is to offer assistance and support to various local and global humanitarian efforts. We strive to initiate and support projects that create happy, healthy, and peaceful families and communities. On a philosophical level, the Foundation's mission is to serve all humanity and to make others happier and healthier. The goal is to raise the consciousness of humanity by chanting the Divine Soul Song <i>Love, Peace and Harmony</i> to uplift the frequency and vibration of Mother Earth and to improve humanity's health and happiness by teaching of self-healing techniques.<br><br>Some of our numerous initiatives have included working with the Tarayana Foundation in Bhutan, a remote kingdom in the Himalayas. We are helping to support access to education, health care, and proper nutrition and creating a pilot project there that we hope will be replicated in many other areas of the world.<br><br>In Toronto, Canada, we have supported low-income families so they could send their children to the Harbourfront Centre summer camp to experience the many benefits of enjoying a variety of activities with their peers and engaging actively with the environment.<br><br>We have also contributed to the nonprofit WandAid to help families in earthquake damaged zones in Nepal. We are very honored to help support communities impacted by natural disasters, political crises, and other disadvantages.<br><br>Love Peace Harmony Foundation has numerous additional ongoing projects and is actively expanding efforts worldwide to help people live happier and healthier lives.<br><br>The Divine Soul Song <i>Love, Peace and Harmony</i> has been credited with many deeply transformative experiences by the people who have experienced it, lowering crime rates, incidences of physical abuse, and improving the health for women in low income homes in Mumbai, as well as increasing children's intelligence and school performance. Chanting <i>Love, Peace and Harmony</i> for children in the slums of Mumbai (Dharavi, Asia's largest slum) also resulted in greater emotional balance, happiness and other emotional benefits.<br>]]></string>
+
+    <!-- Master Sha Content -->
+    <string name="master_sha_content"><![CDATA[<B>Dr. and Master Zhi Gang Sha</B> is a world-renowned healer, Tao Grandmaster, philanthropist, humanitarian, and creator of Tao Calligraphy. He is the founder of Soul Mind Body Medicine™ and an eleven-time <i>New York Times</i> bestselling author of 24 books. An M.D. in China and a doctor of traditional Chinese medicine in China and Canada, Master Sha is the founder of Tao Academy™ and Love Peace Harmony Foundation™, which is dedicated to helping families worldwide create happier and healthier lives. <br><br>A grandmaster of many ancient disciplines, including tai chi, qigong, kung fu, feng shui, and the I <i>Ching</i>, Master Sha was named Qigong Master of the Year at the Fifth World Congress on Qigong. In 2006, he was honored with the prestigious Martin Luther King, Jr. Commemorative Commission Award for his humanitarian efforts, and in 2016 Master Sha received rare and prestigious appointments as Shu Fa Jia (National Chinese Calligrapher Master) and Yan Jiu Yuan (Honorable Researcher Professor), the highest titles a Chinese calligrapher can receive, by the State Ethnic of Academy of Painting in China. <br><br>Master Sha was named Honorary Member of the Club of Budapest Foundation, an organization dedicated to resolving the social, political, economic, and ecological challenges of the twenty-first century. Officially launching in 2015, Master Sha has been invited to become one of the Founding Signatories of the Fuji Declaration, whose mission is to create lasting peace on Earth. Master Sha is a member of Rotary E-Club of World Peace and is a founding signatory of the Conscious Business Declaration, which aims to define a new standard for business in the twenty-first century that will increase economic prosperity while healing the environment and improving humanity's well-being. In 2016, Master Sha received a Commendation from Los Angeles County for his humanitarian efforts both locally and worldwide, and a Commendation from the Hawaii Senate as a selfless humanitarian who celebrates the power of the human spirit as he travels the world tirelessly to create a Love Peace Harmony World Family. In 2017, he received the International Tara Award from Ven. Mae Chee Sansanee Sthirasuta of Sathira-Dhammasathan, for being a person who acts like a Boddhisattva, doing good for society. He continues to deliver free webcasts, teleconferences, and events that attract viewers and listeners from around the world.<br>]]></string>
+
+    <!-- Ringtone -->
+    <string name="select_tone">Select Tone</string>
+
+    <!-- Error Messages -->
+    <string name="error_must_be_signed_in">Must be signed in</string>
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_video_player">Error: what=%1$d, extra=%2$d</string>
+    <string name="error_setting_up_video">Error setting up video: %1$s</string>
+
+    <!-- Time and Date Formats -->
+    <string name="time_format_12h">hh:mm</string>
+    <string name="date_format">dd/MM/yyyy</string>
+    <string name="date_time_format">dd/MM/yyyy hh:mm a</string>
+
+    <!-- AM/PM -->
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+
+    <!-- Dialog Buttons -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Video Quality -->
+    <string name="select_quality">Select Quality</string>
+    <string name="quality_high">High</string>
+    <string name="quality_medium">Medium</string>
+    <string name="quality_low">Low</string>
+
+    <!-- Error Messages -->
+    <string name="error">Error</string>
+    <string name="network_error">Network error occurred</string>
+    <string name="server_error">Server error occurred</string>
+    <string name="unknown_error">An unknown error occurred</string>
+    <string name="permission_error">Permission denied</string>
+    <string name="storage_error">Storage error occurred</string>
+    <string name="notification_error">Notification error occurred</string>
+
+    <!-- Alarm Related -->
+    <string name="alarm_id">alarm_id</string>
+    <string name="alarm_hour">alarm_hour</string>
+    <string name="alarm_minute">alarm_minute</string>
+    <string name="alarm_uri">alarm_uri</string>
+    <string name="select_tone">Select Tone</string>
+    <string name="please_select_time">Please select time</string>
+    <string name="default_time_template">00:00</string>
+    <string name="once">Once</string>
+    <string name="everyday">Everyday</string>
+    <string name="off">Off</string>
+
 </resources>
