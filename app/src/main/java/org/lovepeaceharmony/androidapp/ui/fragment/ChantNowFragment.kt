@@ -385,7 +385,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
 
         btnPlay!!.setOnClickListener {
-            Toast.makeText(requireContext(), "Play button clicked", Toast.LENGTH_SHORT).show()
             // check for already playing
             if (mp != null && mp?.isPlaying == true) {
                 if (Helper.isLoggedInUser(requireContext())) {

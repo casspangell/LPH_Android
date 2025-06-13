@@ -19,6 +19,10 @@ import android.view.View
 import android.widget.TextView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import org.lovepeaceharmony.androidapp.utility.MP3DownloadManager
+import com.google.firebase.storage.FirebaseStorage
+import android.widget.Toast
+import java.io.File
 
 /**
  * SongsAdapter
@@ -97,6 +101,29 @@ class SongsAdapter(
         fun bind(songsModel: SongsModel, position: Int) = with(binding) {
             tvTitle.text = songsModel.getDisplayName()
             root.tag = songsModel
+            val displayName = songsModel.getDisplayName()
+            val songFileName = MP3DownloadManager(context).getFileName(displayName)
+            val localFile = File(context.filesDir, "songs/$songFileName")
+
+            fun checkAndDownloadIfNeeded() {
+                if (songFileName == null) return
+                if (!localFile.exists()) {
+                    val downloadingToast = Toast.makeText(context, "Downloading $displayName", Toast.LENGTH_SHORT)
+                    downloadingToast.show()
+                    val storage = FirebaseStorage.getInstance()
+                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
+                    storageRef.getFile(localFile)
+                        .addOnSuccessListener {
+                            downloadingToast.cancel()
+                            Toast.makeText(context, "Download complete", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            downloadingToast.cancel()
+                            Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                }
+            }
+
             with(toggleEnabled) {
                 setOnCheckedChangeListener(null)
                 isChecked = songsModel.isChecked
@@ -124,6 +151,7 @@ class SongsAdapter(
                         currentSongModel.isChecked = isChecked
                         onSongRefresh.onRefresh()
                         onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
+                        checkAndDownloadIfNeeded()
                     } else {
                         setOnCheckedChangeListener(null)
                         toggleEnabled.isChecked = true
@@ -133,6 +161,7 @@ class SongsAdapter(
                                 currentSongModel.isChecked = newIsChecked
                                 onSongRefresh.onRefresh()
                                 onSongRefresh.onDisableSong(currentSongModel.songTitle, newIsChecked, currentSongModel)
+                                checkAndDownloadIfNeeded()
                             } else {
                                 setOnCheckedChangeListener(null)
                                 toggleEnabled.isChecked = true
@@ -144,6 +173,7 @@ class SongsAdapter(
             }
             root.setOnClickListener {
                 val currentSongModel = it.tag as SongsModel
+                checkAndDownloadIfNeeded()
                 onSongRefresh.onItemClick(currentSongModel.songTitle, currentSongModel.id)
             }
         }
