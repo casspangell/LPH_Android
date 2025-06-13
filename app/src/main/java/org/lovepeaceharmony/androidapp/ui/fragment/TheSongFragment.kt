@@ -42,34 +42,14 @@ class TheSongFragment : Fragment(R.layout.fragment_the_song) {
         val coverImageView = view.findViewById<ImageView>(R.id.videoCoverImageView)
         val playButton = view.findViewById<Button>(R.id.playButton)
 
-        if (ImageCache.coverBitmap != null) {
-            coverImageView.setImageBitmap(ImageCache.coverBitmap)
-        } else {
-            // Show placeholder while loading
+        try {
+            val assetManager = requireContext().assets
+            val inputStream = assetManager.open("video/cover_image.png")
+            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+            inputStream.close()
+            coverImageView.setImageBitmap(bitmap)
+        } catch (e: Exception) {
             coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-            Log.d("CoverImageDebug", "Attempting to load cover image from: $firebaseCoverImageUrl")
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val input = URL(firebaseCoverImageUrl).openStream()
-                    val bitmap = BitmapFactory.decodeStream(input)
-                    input.close()
-                    withContext(Dispatchers.Main) {
-                        if (bitmap != null) {
-                            Log.d("CoverImageDebug", "Successfully loaded cover image bitmap")
-                            coverImageView.setImageBitmap(bitmap)
-                            ImageCache.coverBitmap = bitmap
-                        } else {
-                            Log.e("CoverImageDebug", "BitmapFactory.decodeStream returned null")
-                            coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("CoverImageDebug", "Exception loading cover image: ${e.message}", e)
-                    withContext(Dispatchers.Main) {
-                        coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-                    }
-                }
-            }
         }
 
         playButton.setOnClickListener {

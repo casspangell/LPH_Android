@@ -20,16 +20,16 @@ class MP3DownloadManager(private val context: Context) {
 
     // Mapping between display names and file names
     private val displayToFileNameMap: Map<String, String> = mapOf(
-        "Mandarin Soul Language and English" to "01_Mandarin_Soul_Language_English.mp3",
-        "Instrumental" to "02_Instrumental.mp3",
-        "Hindi Soul Language English" to "04_Hindi_Soul_Language_English.mp3",
-        "Spanish" to "05_Spanish.mp3",
-        "Mandarin English German" to "06_Mandarin_English_German.mp3",
-        "French" to "07_French.mp3",
-        "French Antillean Creole" to "08_French_Antillean_Creole.mp3",
-        "Aloha Maluhai Lokahi LPH In Hawaiian" to "09_Hawaiian.mp3",
-        "Lu La Li Version English and Hawaiian" to "10_Lu_La_Li_Version_English_and_Hawaiian.mp3",
-        "Love Peace Harmony In English" to "11_Love_Peace_Harmony_in_English.mp3"
+        "Mandarin Soul Language and English" to "Mandarin_Soul_Language_English.mp3",
+        "Instrumental" to "Instrumental.mp3",
+        "Hindi Soul Language English" to "Hindi_Soul_Language_English.mp3",
+        "Spanish" to "Spanish.mp3",
+        "Mandarin English German" to "Mandarin_English_German.mp3",
+        "French" to "French.mp3",
+        "French Antillean Creole" to "French_Antillean_Creole.mp3",
+        "Aloha Maluhai Lokahi LPH In Hawaiian" to "Aloha_Maluhai_Lokahi_LPH_In_Hawaiian.mp3",
+        "Lu La Li Version English and Hawaiian" to "Lu_La_Li_Version_English_and_Hawaiian.mp3",
+        "Love Peace Harmony In English" to "Love_Peace_Harmony_in_English.mp3"
     )
 
     init {

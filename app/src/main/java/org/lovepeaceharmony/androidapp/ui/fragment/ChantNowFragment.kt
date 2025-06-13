@@ -259,6 +259,12 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
         // Download video on app load
         downloadVideoFromFirebase()
+
+        // Update the UI to show all possible songs
+        updateSongListUI()
+
+        // Download only enabled songs on app load
+        downloadEnabledSongsOnAppLoad()
     }
 
     private fun initView() {
@@ -1218,6 +1224,32 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             .addOnFailureListener { e ->
                 Log.e("ChantNowFragment", "Video download failed: ${e.message}")
             }
+    }
+
+    private fun updateSongListUI() {
+        // Implementation of updateSongListUI method
+    }
+
+    private fun downloadEnabledSongsOnAppLoad() {
+        val enabledSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getEnabledSongsMadelList(requireContext()) ?: return
+        val mp3Manager = org.lovepeaceharmony.androidapp.utility.MP3DownloadManager(requireContext())
+        enabledSongs.forEach { song ->
+            val fileName = mp3Manager.getFileName(song.getDisplayName())
+            if (fileName != null) {
+                val localFile = File(requireContext().filesDir, "songs/$fileName")
+                if (!localFile.exists()) {
+                    val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
+                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$fileName")
+                    storageRef.getFile(localFile)
+                        .addOnSuccessListener {
+                            Log.d("ChantNowFragment", "Downloaded $fileName")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("ChantNowFragment", "Failed to download $fileName: ${e.message}")
+                        }
+                }
+            }
+        }
     }
 
 }
