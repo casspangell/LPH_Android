@@ -56,7 +56,7 @@ class ContentProviderDb : ContentProvider() {
     }
 
     companion object {
-        private val AUTHORITY = "org.lovepeaceharmony.androidapp.db.contentProviderAuthorities"
+        private val AUTHORITY = "org.lovepeaceharmony.android.app.db.contentProviderAuthorities"
         val CONTENT_URI = Uri.parse("content://" + AUTHORITY)!!
 
         fun getPath(uri: Uri?): String? {

@@ -10,42 +10,37 @@ import org.lovepeaceharmony.androidapp.BuildConfig
  */
 
 object LPHLog {
-    private val LOG_TAG = "LovePeaceHarmony"
+    private const val LOG_TAG = "LPH"
 
     fun e(message: String) {
-        Log.e(LOG_TAG, message)
+        // Logging disabled
     }
 
     fun e(tag: String, message: String) {
-        Log.e(tag, message)
+        // Logging disabled
     }
 
-
     fun d(message: String) {
-        if (BuildConfig.DEBUG)
-            Log.d(LOG_TAG, message)
+        // Logging disabled
     }
 
     fun d(`object`: Any, message: String) {
-        if (BuildConfig.DEBUG)
-            Log.d(LOG_TAG, `object`.javaClass.simpleName + ": " + message)
+        // Logging disabled
     }
 
     fun d(tag: String, message: String) {
-        if (BuildConfig.DEBUG)
-            Log.d(tag, message)
+        // Logging disabled
     }
 
     fun v(tag: String, message: String) {
-        if (BuildConfig.DEBUG)
-            Log.v(tag, message)
+        // Logging disabled
     }
 
     fun w(message: String) {
-        Log.w(LOG_TAG, message)
+        // Logging disabled
     }
 
     fun i(message: String) {
-        Log.d(LOG_TAG, message)
+        // Logging disabled
     }
 }

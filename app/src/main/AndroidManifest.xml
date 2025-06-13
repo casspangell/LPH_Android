@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.lovepeaceharmony.androidapp">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -66,7 +65,7 @@
 
         <provider
             android:name=".db.ContentProviderDb"
-            android:authorities="org.lovepeaceharmony.androidapp.db.contentProviderAuthorities"
+            android:authorities="org.lovepeaceharmony.android.app.db.contentProviderAuthorities"
             android:exported="false" />
 
         <receiver android:name=".utility.AlarmReceiver" />

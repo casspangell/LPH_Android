@@ -1,7 +1,11 @@
 package org.lovepeaceharmony.androidapp.ui.activity
 
 import android.content.pm.ActivityInfo
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceHolder
@@ -9,10 +13,13 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
 import java.util.concurrent.TimeUnit
@@ -29,6 +36,9 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private var currentPosition = 0
     private var videoWidth = 0
     private var videoHeight = 0
+    private lateinit var loadingSpinner: ProgressBar
+    private lateinit var volumeSeekBar: SeekBar
+    private lateinit var audioManager: AudioManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +53,26 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         exitButton = findViewById(R.id.exitButton)
         seekBar = findViewById(R.id.seekBar)
         timeText = findViewById(R.id.timeText)
+        volumeSeekBar = findViewById(R.id.volumeSeekBar)
+        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        volumeSeekBar.max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        volumeSeekBar.progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        volumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+        // Add a loading spinner overlay (add to layout if not present)
+        loadingSpinner = ProgressBar(this)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.gravity = android.view.Gravity.CENTER
+        (findViewById<FrameLayout>(android.R.id.content)).addView(loadingSpinner, params)
+        loadingSpinner.visibility = View.GONE
 
         surfaceView.holder.addCallback(this)
         setupControls()
@@ -127,38 +157,51 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
+        val videoUrl = intent.getStringExtra("video_url")
+        if (videoUrl.isNullOrEmpty()) {
+            Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, R.string.please_check_your_internet_connection, Toast.LENGTH_LONG).show()
+            finish()
+            return
+        }
+        loadingSpinner.visibility = View.VISIBLE
         try {
-            val videoPath = intent.getStringExtra("video_asset_path")
-            if (videoPath != null) {
-                val afd = assets.openFd(videoPath)
-                val newMediaPlayer = MediaPlayer()
-                newMediaPlayer.apply {
-                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                    setDisplay(holder)
-                    setOnPreparedListener {
-                        this@LocalVideoPlayerActivity.videoWidth = videoWidth
-                        this@LocalVideoPlayerActivity.videoHeight = videoHeight
-                        updateVideoSize()
-                        seekBar.max = duration
-                        playVideo()
-                    }
-                    setOnCompletionListener {
-                        this@LocalVideoPlayerActivity.isPlaying = false
-                        playPauseButton.setImageResource(android.R.drawable.ic_media_play)
-                        seekBar.progress = 0
-                        updateTimeText(0)
-                    }
-                    setOnErrorListener { _, what, extra ->
-                        Log.e("VideoPlayer", "Error: what=$what, extra=$extra")
-                        true
-                    }
-                    prepareAsync()
-                }
-                mediaPlayer = newMediaPlayer
-                afd.close()
+            val newMediaPlayer = MediaPlayer()
+            newMediaPlayer.setDataSource(this, Uri.parse(videoUrl))
+            newMediaPlayer.setDisplay(holder)
+            newMediaPlayer.setOnPreparedListener {
+                videoWidth = it.videoWidth
+                videoHeight = it.videoHeight
+                updateVideoSize()
+                seekBar.max = it.duration
+                it.setVolume(1.0f, 1.0f)
+                playVideo()
+                loadingSpinner.visibility = View.GONE
             }
+            newMediaPlayer.setOnBufferingUpdateListener { _, percent ->
+                // Optionally update spinner or buffer UI
+            }
+            newMediaPlayer.setOnCompletionListener {
+                isPlaying = false
+                playPauseButton.setImageResource(android.R.drawable.ic_media_play)
+                seekBar.progress = 0
+                updateTimeText(0)
+            }
+            newMediaPlayer.setOnErrorListener { _, what, extra ->
+                loadingSpinner.visibility = View.GONE
+                Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
+                finish()
+                true
+            }
+            newMediaPlayer.prepareAsync()
+            mediaPlayer = newMediaPlayer
         } catch (e: Exception) {
-            Log.e("VideoPlayer", "Error setting up video: ${e.message}")
+            loadingSpinner.visibility = View.GONE
+            Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
             finish()
         }
     }
@@ -205,5 +248,12 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         mediaPlayer?.release()
         mediaPlayer = null
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 } 

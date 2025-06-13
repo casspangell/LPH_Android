@@ -6,12 +6,16 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'dagger.hilt.android.plugin'
 
+def keystorePropertiesFile = rootProject.file("app/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     namespace 'org.lovepeaceharmony.androidapp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "org.lovepeaceharmony.androidapp"
+        applicationId "org.lovepeaceharmony.android.app"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -20,10 +24,21 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -60,11 +75,11 @@ dependencies {
 
     // Core Android libraries
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
+//    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
     implementation 'androidx.browser:browser:1.7.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.fragment:fragment-ktx:1.6.2'
@@ -115,4 +130,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 }
