@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
@@ -48,6 +49,7 @@ import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
 import org.lovepeaceharmony.androidapp.utility.TimeTracker
 import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -240,6 +242,20 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         initView()
         Log.d("ChantNowFragment", "Calling checkFirestoreMP3s")
         checkFirestoreMP3s()
+
+        // Log all song names in internal storage
+        val songsDir = File(requireContext().filesDir, "songs")
+        if (songsDir.exists()) {
+            val songFiles = songsDir.listFiles()
+            if (songFiles != null && songFiles.isNotEmpty()) {
+                val songNames = songFiles.map { it.name }
+                Log.d("ChantNowFragment", "Songs in internal storage: $songNames")
+            } else {
+                Log.d("ChantNowFragment", "No songs found in internal storage.")
+            }
+        } else {
+            Log.d("ChantNowFragment", "Songs directory does not exist.")
+        }
     }
 
     private fun initView() {
@@ -369,6 +385,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
 
         btnPlay!!.setOnClickListener {
+            Toast.makeText(requireContext(), "Play button clicked", Toast.LENGTH_SHORT).show()
             // check for already playing
             if (mp != null && mp?.isPlaying == true) {
                 if (Helper.isLoggedInUser(requireContext())) {
@@ -382,17 +399,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 }
                 pausePlayer()
             } else {
-                // Resume song
+                // Always play the first enabled song
                 if (mp != null) {
-                    if (isSongPlay) {
-                        LPHLog.d("ChantNow Resume Song")
-                        timerStart()
-                        playPlayer()
-                        // Changing button image to pause button
-                        btnPlay!!.setImageResource(R.drawable.ic_pause_button)
-                    } else {
-                        playSong(currentSongIndex)
-                    }
+                    playSong(0)
                 }
             }
         }
@@ -637,9 +646,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     }
 
     private fun playSong(songIndex: Int) {
-        // Play song
         try {
-
             var songPlayList = enabledSongModelList
             if (isShuffle) {
                 songPlayList = shuffledSongModelList
@@ -648,34 +655,61 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 currentSongIndex = songIndex
                 isSongPlay = true
                 mp!!.reset()
-                Log.d("SONG PATH : ", songPlayList[songIndex].songPath)
-                val descriptor = requireContext().assets.openFd(songPlayList[songIndex].songPath)
-                val start = descriptor.startOffset
-                val end = descriptor.length
 
-                mp!!.setDataSource(descriptor.fileDescriptor, start, end)
-                descriptor.close()
-                //			mp.setDataSource(songsList.get(songIndex).get("songPath"));
-                mp!!.prepare()
-                playPlayer()
-//                mp!!.start()
+                val displayName = songPlayList[songIndex].getDisplayName()
+                val songFileName = org.lovepeaceharmony.androidapp.utility.MP3DownloadManager(requireContext()).getFileName(displayName)
+                if (songFileName == null) {
+                    Toast.makeText(requireContext(), "Filename mapping not found for $displayName", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val localFile = File(requireContext().filesDir, "songs/$songFileName")
+                val loadingSpinner = rootView!!.findViewById<ProgressBar>(R.id.loadingSpinner)
 
-                timerStart()
+                // Log the filename being checked
+                Log.d("ChantNowFragment", "Checking for file: ${localFile.absolutePath}")
 
-                val songName =
-                    resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
-                tvNowPlaying!!.text = songName
-                tvNowPlaying!!.visibility = View.VISIBLE
+                if (localFile.exists()) {
+                    mp!!.setDataSource(localFile.absolutePath)
+                    mp!!.prepare()
+                    playPlayer()
+                    timerStart()
 
-                // Changing Button Image to pause image
-                btnPlay!!.setImageResource(R.drawable.ic_pause_button)
+                    val songName =
+                        resources.getString(R.string.now_playing) + " " + displayName
+                    tvNowPlaying!!.text = songName
+                    tvNowPlaying!!.visibility = View.VISIBLE
 
-                // set Progress bar values
-                songProgressBar!!.progress = 0
-                songProgressBar!!.max = 100
+                    btnPlay!!.setImageResource(R.drawable.ic_pause_button)
+                    songProgressBar!!.progress = 0
+                    songProgressBar!!.max = 100
+                    updateProgressBar()
+                } else {
+                    // Show spinner and toast
+                    loadingSpinner.visibility = View.VISIBLE
+                    val downloadingToast = Toast.makeText(
+                        requireContext(),
+                        "Downloading $displayName",
+                        Toast.LENGTH_SHORT
+                    )
+                    downloadingToast.show()
 
-                // Updating progress bar
-                updateProgressBar()
+                    // Download from Firebase Storage
+                    val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
+                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
+                    storageRef.getFile(localFile)
+                        .addOnSuccessListener {
+                            loadingSpinner.visibility = View.GONE
+                            downloadingToast.cancel()
+                            Toast.makeText(requireContext(), "Download complete", Toast.LENGTH_SHORT).show()
+                            // Play the song after download
+                            playSong(songIndex)
+                        }
+                        .addOnFailureListener { e ->
+                            loadingSpinner.visibility = View.GONE
+                            downloadingToast.cancel()
+                            Toast.makeText(requireContext(), "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                }
             } else {
                 Toast.makeText(
                     context,
@@ -683,14 +717,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     private fun playSongByTitle(songTitle: String) {
@@ -1101,6 +1130,11 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             
             Log.d("ChantNowFragment", "Got Storage reference")
             
+            // Log the internal storage path
+            val songsDir = File(requireContext().filesDir, "songs")
+            Log.d("ChantNowFragment", "Internal storage path: ${songsDir.absolutePath}")
+            LPHLog.d("Internal storage path: ${songsDir.absolutePath}")
+            
             storageRef.listAll()
                 .addOnSuccessListener { listResult ->
                     Log.d("ChantNowFragment", "Successfully got files from Storage")
@@ -1112,13 +1146,20 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     }
                     
                     for (item in listResult.items) {
-                        Log.d("ChantNowFragment", "MP3 found - Name: ${item.name}, Path: ${item.path}")
-                        LPHLog.d("MP3 found - Name: ${item.name}, Path: ${item.path}")
+                        Log.d("ChantNowFragment", "Checking MP3: ${item.name}")
                         
-                        // Get download URL for each file
-                        item.downloadUrl.addOnSuccessListener { uri ->
-                            Log.d("ChantNowFragment", "Download URL for ${item.name}: ${uri.toString()}")
-                            LPHLog.d("Download URL for ${item.name}: ${uri.toString()}")
+                        // Check if file exists in internal storage
+                        if (!songsDir.exists()) {
+                            songsDir.mkdirs()
+                            Log.d("ChantNowFragment", "Created songs directory at: ${songsDir.absolutePath}")
+                        }
+                        
+                        val localFile = File(songsDir, item.name)
+                        if (!localFile.exists()) {
+                            Log.d("ChantNowFragment", "File ${item.name} not found in internal storage, downloading...")
+                            downloadFile(item, localFile)
+                        } else {
+                            Log.d("ChantNowFragment", "File ${item.name} already exists at: ${localFile.absolutePath}")
                         }
                     }
                 }
@@ -1130,6 +1171,26 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             Log.e("ChantNowFragment", "Exception in checkFirestoreMP3s", e)
             LPHLog.e("Exception in checkFirestoreMP3s: ${e.message}")
         }
+    }
+
+    private fun downloadFile(storageRef: StorageReference, localFile: File) {
+        val fileName = storageRef.name
+        Log.d("ChantNowFragment", "Starting download for $fileName")
+        
+        storageRef.getFile(localFile)
+            .addOnSuccessListener {
+                Log.d("ChantNowFragment", "Download completed for $fileName")
+                LPHLog.d("Download completed for $fileName")
+            }
+            .addOnFailureListener { e ->
+                Log.e("ChantNowFragment", "Download failed for $fileName", e)
+                LPHLog.e("Download failed for $fileName: ${e.message}")
+            }
+            .addOnProgressListener { taskSnapshot ->
+                val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                Log.d("ChantNowFragment", "Download progress for $fileName: $progress%")
+                LPHLog.d("Download progress for $fileName: $progress%")
+            }
     }
 
 }
