@@ -23,6 +23,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
@@ -174,51 +175,44 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        val videoUrl = intent.getStringExtra("video_url")
-        if (videoUrl.isNullOrEmpty()) {
-            Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
-            finish()
-            return
-        }
-        if (!isNetworkAvailable()) {
-            Toast.makeText(this, R.string.please_check_your_internet_connection, Toast.LENGTH_LONG).show()
-            finish()
-            return
+        // Try to use local file if it exists
+        val localVideoFile = File(filesDir, "video/how_to_change_the_world.mp4")
+        val videoUri: Uri = if (localVideoFile.exists()) {
+            Log.d("LocalVideoPlayerActivity", "Using local video file: ${localVideoFile.absolutePath}")
+            Uri.fromFile(localVideoFile)
+        } else {
+            val videoUrl = intent.getStringExtra("video_url")
+            if (videoUrl.isNullOrEmpty()) {
+                Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
+                finish()
+                return
+            }
+            Log.d("LocalVideoPlayerActivity", "Using remote video URL: $videoUrl")
+            Uri.parse(videoUrl)
         }
         loadingSpinner.visibility = View.VISIBLE
         try {
             val newMediaPlayer = MediaPlayer()
-            newMediaPlayer.setDataSource(this, Uri.parse(videoUrl))
+            newMediaPlayer.setDataSource(this, videoUri)
             newMediaPlayer.setDisplay(holder)
             newMediaPlayer.setOnPreparedListener {
                 videoWidth = it.videoWidth
                 videoHeight = it.videoHeight
                 updateVideoSize()
                 seekBar.max = it.duration
-                
-                // Set initial volume based on system volume
                 val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                 val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
                 val volumeLevel = currentVolume.toFloat() / maxVolume.toFloat()
                 it.setVolume(volumeLevel, volumeLevel)
-                
                 playVideo()
                 loadingSpinner.visibility = View.GONE
             }
-            newMediaPlayer.setOnBufferingUpdateListener { _, percent ->
-                // Optionally update spinner or buffer UI
-            }
+            newMediaPlayer.setOnBufferingUpdateListener { _, percent -> }
             newMediaPlayer.setOnCompletionListener {
                 isPlaying = false
                 playPauseButton.setImageResource(android.R.drawable.ic_media_play)
                 seekBar.progress = 0
                 updateTimeText(0)
-            }
-            newMediaPlayer.setOnErrorListener { _, what, extra ->
-                loadingSpinner.visibility = View.GONE
-                Toast.makeText(this, R.string.something_went_wrong_please_try_again, Toast.LENGTH_LONG).show()
-                finish()
-                true
             }
             newMediaPlayer.prepareAsync()
             mediaPlayer = newMediaPlayer

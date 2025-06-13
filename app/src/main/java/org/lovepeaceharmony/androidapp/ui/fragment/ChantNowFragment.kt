@@ -256,6 +256,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         } else {
             Log.d("ChantNowFragment", "Songs directory does not exist.")
         }
+
+        // Download video on app load
+        downloadVideoFromFirebase()
     }
 
     private fun initView() {
@@ -1194,6 +1197,26 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
                 Log.d("ChantNowFragment", "Download progress for $fileName: $progress%")
                 LPHLog.d("Download progress for $fileName: $progress%")
+            }
+    }
+
+    private fun downloadVideoFromFirebase() {
+        val videoDir = File(requireContext().filesDir, "video")
+        if (!videoDir.exists()) videoDir.mkdirs()
+        val videoFile = File(videoDir, "how_to_change_the_world.mp4")
+        if (videoFile.exists()) {
+            Log.d("ChantNowFragment", "Video already exists at: ${videoFile.absolutePath}")
+            return
+        }
+        val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
+        val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Video/how_to_change_the_world.mp4")
+        Log.d("ChantNowFragment", "Starting video download...")
+        storageRef.getFile(videoFile)
+            .addOnSuccessListener {
+                Log.d("ChantNowFragment", "Video download complete: ${videoFile.absolutePath}")
+            }
+            .addOnFailureListener { e ->
+                Log.e("ChantNowFragment", "Video download failed: ${e.message}")
             }
     }
 
