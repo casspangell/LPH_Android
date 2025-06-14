@@ -240,8 +240,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         super.onViewCreated(view, savedInstanceState)
         Log.d("ChantNowFragment", "onViewCreated called")
         initView()
-        Log.d("ChantNowFragment", "Calling checkFirestoreMP3s")
-        checkFirestoreMP3s()
 
         // Log all song names in internal storage
         val songsDir = File(requireContext().filesDir, "songs")
@@ -262,9 +260,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
         // Update the UI to show all possible songs
         updateSongListUI()
-
-        // Download only enabled songs on app load
-        downloadEnabledSongsOnAppLoad()
     }
 
     private fun initView() {
@@ -1133,77 +1128,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         }
     }
 
-    private fun checkFirestoreMP3s() {
-        Log.d("ChantNowFragment", "Starting Firebase Storage MP3 check")
-        LPHLog.d("Starting Firebase Storage MP3 check")
-        
-        try {
-            val storage = FirebaseStorage.getInstance()
-            val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs")
-            
-            Log.d("ChantNowFragment", "Got Storage reference")
-            
-            // Log the internal storage path
-            val songsDir = File(requireContext().filesDir, "songs")
-            Log.d("ChantNowFragment", "Internal storage path: ${songsDir.absolutePath}")
-            LPHLog.d("Internal storage path: ${songsDir.absolutePath}")
-            
-            storageRef.listAll()
-                .addOnSuccessListener { listResult ->
-                    Log.d("ChantNowFragment", "Successfully got files from Storage")
-                    LPHLog.d("Found ${listResult.items.size} MP3s in Storage")
-                    
-                    if (listResult.items.isEmpty()) {
-                        Log.d("ChantNowFragment", "No MP3s found in Storage")
-                        return@addOnSuccessListener
-                    }
-                    
-                    for (item in listResult.items) {
-                        Log.d("ChantNowFragment", "Checking MP3: ${item.name}")
-                        
-                        // Check if file exists in internal storage
-                        if (!songsDir.exists()) {
-                            songsDir.mkdirs()
-                            Log.d("ChantNowFragment", "Created songs directory at: ${songsDir.absolutePath}")
-                        }
-                        
-                        val localFile = File(songsDir, item.name)
-                        if (!localFile.exists()) {
-                            Log.d("ChantNowFragment", "File ${item.name} not found in internal storage, downloading...")
-                            downloadFile(item, localFile)
-                        } else {
-                            Log.d("ChantNowFragment", "File ${item.name} already exists at: ${localFile.absolutePath}")
-                        }
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("ChantNowFragment", "Error getting MP3s from Storage", e)
-                    LPHLog.e("Error getting MP3s from Storage: ${e.message}")
-                }
-        } catch (e: Exception) {
-            Log.e("ChantNowFragment", "Exception in checkFirestoreMP3s", e)
-            LPHLog.e("Exception in checkFirestoreMP3s: ${e.message}")
-        }
-    }
-
-    private fun downloadFile(storageRef: StorageReference, localFile: File) {
-        val fileName = storageRef.name
-        Log.d("ChantNowFragment", "Starting download for $fileName")
-        
-        storageRef.getFile(localFile)
-            .addOnSuccessListener {
-                Log.d("ChantNowFragment", "Download completed for $fileName")
-                LPHLog.d("Download completed for $fileName")
-            }
-            .addOnFailureListener { e ->
-                Log.e("ChantNowFragment", "Download failed for $fileName", e)
-                LPHLog.e("Download failed for $fileName: ${e.message}")
-            }
-            .addOnProgressListener { taskSnapshot ->
-                val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
-                Log.d("ChantNowFragment", "Download progress for $fileName: $progress%")
-                LPHLog.d("Download progress for $fileName: $progress%")
-            }
+    private fun updateSongListUI() {
+        // Implementation of updateSongListUI method
     }
 
     private fun downloadVideoFromFirebase() {
@@ -1224,32 +1150,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             .addOnFailureListener { e ->
                 Log.e("ChantNowFragment", "Video download failed: ${e.message}")
             }
-    }
-
-    private fun updateSongListUI() {
-        // Implementation of updateSongListUI method
-    }
-
-    private fun downloadEnabledSongsOnAppLoad() {
-        val enabledSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getEnabledSongsMadelList(requireContext()) ?: return
-        val mp3Manager = org.lovepeaceharmony.androidapp.utility.MP3DownloadManager(requireContext())
-        enabledSongs.forEach { song ->
-            val fileName = mp3Manager.getFileName(song.getDisplayName())
-            if (fileName != null) {
-                val localFile = File(requireContext().filesDir, "songs/$fileName")
-                if (!localFile.exists()) {
-                    val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
-                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$fileName")
-                    storageRef.getFile(localFile)
-                        .addOnSuccessListener {
-                            Log.d("ChantNowFragment", "Downloaded $fileName")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("ChantNowFragment", "Failed to download $fileName: ${e.message}")
-                        }
-                }
-            }
-        }
     }
 
 }

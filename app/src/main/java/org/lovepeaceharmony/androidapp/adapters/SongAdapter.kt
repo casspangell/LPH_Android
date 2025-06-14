@@ -100,33 +100,30 @@ class SongsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(songsModel: SongsModel, position: Int) = with(binding) {
             tvTitle.text = songsModel.getDisplayName()
-            root.tag = songsModel
+            binding.root.tag = songsModel
+            
+            // Check if song is downloaded
             val displayName = songsModel.getDisplayName()
             val songFileName = MP3DownloadManager(context).getFileName(displayName)
-            val localFile = File(context.filesDir, "songs/$songFileName")
+            val isDownloaded = if (songFileName != null) {
+                File(context.filesDir, "songs/$songFileName").exists()
+            } else false
 
-            fun checkAndDownloadIfNeeded() {
-                if (songFileName == null) return
-                if (!localFile.exists()) {
-                    val downloadingToast = Toast.makeText(context, "Downloading $displayName", Toast.LENGTH_SHORT)
-                    downloadingToast.show()
-                    val storage = FirebaseStorage.getInstance()
-                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
-                    storageRef.getFile(localFile)
-                        .addOnSuccessListener {
-                            downloadingToast.cancel()
-                            Toast.makeText(context, "Download complete", Toast.LENGTH_SHORT).show()
-                        }
-                        .addOnFailureListener { e ->
-                            downloadingToast.cancel()
-                            Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
-                }
+            // Set colors based on download status
+            if (isDownloaded) {
+                binding.root.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
+                tvTitle.setTextColor(ContextCompat.getColor(context, android.R.color.black))
+            } else {
+                binding.root.setBackgroundColor(ContextCompat.getColor(context, R.color.light_grey))
+                tvTitle.setTextColor(ContextCompat.getColor(context, R.color.grey_text))
             }
-
+            
             with(toggleEnabled) {
                 setOnCheckedChangeListener(null)
-                isChecked = songsModel.isChecked
+                // Only allow toggle if song is downloaded
+                isEnabled = isDownloaded
+                isChecked = isDownloaded && songsModel.isChecked
+                
                 val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
                 if (position == 0 && songsModel.isToolTip && !hasSeenIntro) {
@@ -144,14 +141,15 @@ class SongsAdapter(
                     }
                 }
                 setOnCheckedChangeListener { _, isChecked ->
+                    if (!isEnabled) return@setOnCheckedChangeListener
+                    
                     LPHLog.d("onCheckedChanged : $isChecked")
-                    val currentSongModel = root.tag as SongsModel
+                    val currentSongModel = binding.root.tag as SongsModel
                     val updateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
                     if (updateSuccessful) {
                         currentSongModel.isChecked = isChecked
                         onSongRefresh.onRefresh()
                         onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
-                        checkAndDownloadIfNeeded()
                     } else {
                         setOnCheckedChangeListener(null)
                         toggleEnabled.isChecked = true
@@ -161,7 +159,6 @@ class SongsAdapter(
                                 currentSongModel.isChecked = newIsChecked
                                 onSongRefresh.onRefresh()
                                 onSongRefresh.onDisableSong(currentSongModel.songTitle, newIsChecked, currentSongModel)
-                                checkAndDownloadIfNeeded()
                             } else {
                                 setOnCheckedChangeListener(null)
                                 toggleEnabled.isChecked = true
@@ -171,10 +168,51 @@ class SongsAdapter(
                     }
                 }
             }
-            root.setOnClickListener {
+            binding.root.setOnClickListener {
                 val currentSongModel = it.tag as SongsModel
-                checkAndDownloadIfNeeded()
-                onSongRefresh.onItemClick(currentSongModel.songTitle, currentSongModel.id)
+                if (!isDownloaded) {
+                    Toast.makeText(
+                        context,
+                        "Please wait for the song to download",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+                if (currentSongModel.isChecked) {
+                    onSongRefresh.onItemClick(currentSongModel.songTitle, currentSongModel.id)
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.please_enable_your_song_and_play),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        private fun checkAndDownloadIfNeeded() {
+            val songsModel = binding.root.tag as SongsModel
+            val displayName = songsModel.getDisplayName()
+            val songFileName = MP3DownloadManager(context).getFileName(displayName)
+            if (songFileName == null) return
+            
+            val localFile = File(context.filesDir, "songs/$songFileName")
+            if (!localFile.exists()) {
+                val downloadingToast = Toast.makeText(context, "Downloading $displayName", Toast.LENGTH_SHORT)
+                downloadingToast.show()
+                val storage = FirebaseStorage.getInstance()
+                val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
+                storageRef.getFile(localFile)
+                    .addOnSuccessListener {
+                        downloadingToast.cancel()
+                        Toast.makeText(context, "Download complete", Toast.LENGTH_SHORT).show()
+                        // Refresh the adapter to update colors and toggle state
+                        onSongRefresh.onRefresh()
+                    }
+                    .addOnFailureListener { e ->
+                        downloadingToast.cancel()
+                        Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
             }
         }
     }

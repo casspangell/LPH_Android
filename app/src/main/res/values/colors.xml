@@ -52,4 +52,6 @@
 
     <color name="header_blue">#1d4aac</color>
     <color name="header_green">#8fc05d</color>
+    <color name="light_grey">#F5F5F5</color>
+    <color name="grey_text">#757575</color>
 </resources>
