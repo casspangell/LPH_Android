@@ -23,6 +23,9 @@ import org.lovepeaceharmony.androidapp.utility.MP3DownloadManager
 import com.google.firebase.storage.FirebaseStorage
 import android.widget.Toast
 import java.io.File
+import kotlinx.coroutines.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * SongsAdapter
@@ -40,7 +43,9 @@ class SongsAdapter(
     }
 
     private var items: List<ListItem> = emptyList()
-    private val downloadingSet: MutableSet<String> = mutableSetOf() // Track downloading songs
+
+    private val downloadingSet = mutableSetOf<String>()
+    private val adapterScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     sealed class ListItem {
         data class Header(val title: String, val backgroundColor: Int) : ListItem()
@@ -71,12 +76,7 @@ class SongsAdapter(
             }
             TYPE_SONG -> {
                 val binding = SongsRowBinding.inflate(LayoutInflater.from(context), parent, false)
-                SongViewHolder(binding, activity, onSongRefresh, context, downloadingSet) { fileName ->
-                    val index = items.indexOfFirst {
-                        it is ListItem.Song && MP3DownloadManager(context).getFileName((it as ListItem.Song).songModel.getDisplayName()) == fileName
-                    }
-                    if (index != -1) notifyItemChanged(index)
-                }
+                SongViewHolder(binding, activity, onSongRefresh, context, downloadingSet, adapterScope)
             }
             else -> throw IllegalArgumentException("Invalid view type: $viewType")
         }
@@ -104,95 +104,57 @@ class SongsAdapter(
         private val onSongRefresh: OnSongRefresh,
         private val context: Context,
         private val downloadingSet: MutableSet<String>,
-        private val notifyRowChanged: (String) -> Unit
+        private val adapterScope: CoroutineScope
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(songsModel: SongsModel, position: Int) = with(binding) {
-            tvTitle.text = songsModel.getDisplayName()
+            // Map file name back to display name for correct title
+            val mp3Manager = MP3DownloadManager(context)
+            val displayName = mp3Manager.displayToFileNameMap.entries.find { it.value == songsModel.songTitle }?.key ?: songsModel.getDisplayName()
+            tvTitle.text = displayName
             binding.root.tag = songsModel
-            
-            // Check if song is downloaded
-            val displayName = songsModel.getDisplayName()
             val songFileName = MP3DownloadManager(context).getFileName(displayName)
-            val isDownloaded = if (songFileName == "01_Mandarin_Soul_Language_English.mp3") {
-                true
-            } else if (songFileName != null) {
-                File(context.filesDir, "songs/$songFileName").exists()
-            } else false
+            val isDownloaded = songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
+                (songFileName != null && File(context.filesDir, "songs/$songFileName").exists())
+            val isDownloading = downloadingSet.contains(displayName)
 
-            // Show/hide download progress indicator
-            if (songFileName != null && downloadingSet.contains(songFileName)) {
-                downloadProgress.visibility = View.VISIBLE
-            } else {
-                downloadProgress.visibility = View.GONE
-            }
+            // UI state
+            downloadProgress?.visibility = if (isDownloading) View.VISIBLE else View.GONE
+            toggleEnabled.isEnabled = !isDownloading
+            toggleEnabled.isChecked = songsModel.isChecked && isDownloaded
 
-            // Set colors based on download status
-            if (songFileName == "01_Mandarin_Soul_Language_English.mp3" || isDownloaded) {
-                binding.root.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
-                tvTitle.setTextColor(ContextCompat.getColor(context, android.R.color.black))
-            } else {
-                binding.root.setBackgroundColor(ContextCompat.getColor(context, R.color.light_grey))
-                tvTitle.setTextColor(ContextCompat.getColor(context, R.color.grey_text))
-            }
-            
-            with(toggleEnabled) {
-                setOnCheckedChangeListener(null)
-                isEnabled = true // Always enabled, regardless of download state
-                isChecked = songsModel.isChecked
-                
-                val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
-                if (position == 0 && songsModel.isToolTip && !hasSeenIntro) {
-                    doOnPreDraw {
-                        TapTarget.forView(
-                            it,
-                            context.getString(R.string.use_the_switches_to_customize_your_chant),
-                            context.getString(R.string.tap_anywhere_to_continue)
-                        ).init(activity, R.color.tool_tip_color2) {
-                            SongsModel.updateIsToolTip(context, 0, false)
-                            sharedPrefs.edit().putBoolean("has_seen_intro", true).apply()
-                            onSongRefresh.onRefresh()
-                            context.sendBroadcast(Intent(Constants.BROADCAST_MAIN_BOTTOM_LAYOUT))
+            toggleEnabled.setOnCheckedChangeListener(null)
+            toggleEnabled.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    if (!isDownloaded && !isDownloading) {
+                        // Start download
+                        downloadingSet.add(displayName)
+                        downloadProgress?.visibility = View.VISIBLE
+                        toggleEnabled.isEnabled = false
+                        adapterScope.launch {
+                            val success = downloadSong(displayName)
+                            downloadingSet.remove(displayName)
+                            downloadProgress?.visibility = View.GONE
+                            toggleEnabled.isEnabled = true
+                            if (success) {
+                                toggleEnabled.isChecked = true
+                                org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", true)
+                                songsModel.isChecked = true
+                                onSongRefresh.onRefresh()
+                            } else {
+                                toggleEnabled.isChecked = false
+                                Toast.makeText(context, "Download failed", Toast.LENGTH_LONG).show()
+                            }
                         }
+                    } else if (isDownloaded) {
+                        org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", true)
+                        songsModel.isChecked = true
+                        onSongRefresh.onRefresh()
                     }
-                }
-                setOnCheckedChangeListener { _, isChecked ->
-                    val currentSongModel = binding.root.tag as SongsModel
-                    val displayName = currentSongModel.getDisplayName()
-                    val songFileName = MP3DownloadManager(context).getFileName(displayName)
-                    val isDownloaded = songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
-                        (songFileName != null && File(context.filesDir, "songs/$songFileName").exists())
-
-                    if (isChecked && !isDownloaded) {
-                        // Not downloaded, revert toggle
-                        toggleEnabled.isChecked = false
-                        // Start download and show indicator
-                        if (songFileName != null) {
-                            downloadingSet.add(songFileName)
-                            notifyRowChanged(songFileName)
-                            val localFile = File(context.filesDir, "songs/$songFileName")
-                            val storage = FirebaseStorage.getInstance()
-                            val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
-                            storageRef.getFile(localFile)
-                                .addOnSuccessListener {
-                                    downloadingSet.remove(songFileName)
-                                    notifyRowChanged(songFileName)
-                                    // Optionally, auto-enable after download
-                                    toggleEnabled.isChecked = true
-                                }
-                                .addOnFailureListener { _ ->
-                                    downloadingSet.remove(songFileName)
-                                    notifyRowChanged(songFileName)
-                                }
-                        }
-                        return@setOnCheckedChangeListener
-                    }
-
-                    org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
-                    currentSongModel.isChecked = isChecked
+                } else {
+                    org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", false)
+                    songsModel.isChecked = false
                     onSongRefresh.onRefresh()
-                    onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
-                    // After disabling, if no songs are enabled, re-enable 01 automatically
+                    // Fallback logic for 01
                     val updatedSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(context) ?: emptyList()
                     val anyEnabled = updatedSongs.any { it.isChecked }
                     if (!anyEnabled) {
@@ -223,29 +185,19 @@ class SongsAdapter(
             }
         }
 
-        private fun checkAndDownloadIfNeeded() {
-            val songsModel = binding.root.tag as SongsModel
-            val displayName = songsModel.getDisplayName()
-            val songFileName = MP3DownloadManager(context).getFileName(displayName)
-            if (songFileName == null) return
-            
-            val localFile = File(context.filesDir, "songs/$songFileName")
-            if (!localFile.exists()) {
-                val downloadingToast = Toast.makeText(context, "Downloading $displayName", Toast.LENGTH_SHORT)
-                downloadingToast.show()
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
-                storageRef.getFile(localFile)
-                    .addOnSuccessListener {
-                        downloadingToast.cancel()
-                        Toast.makeText(context, "Download complete", Toast.LENGTH_SHORT).show()
-                        // Refresh the adapter to update colors and toggle state
-                        onSongRefresh.onRefresh()
-                    }
-                    .addOnFailureListener { e ->
-                        downloadingToast.cancel()
-                        Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+        private suspend fun downloadSong(displayName: String): Boolean = withContext(Dispatchers.IO) {
+            try {
+                val mp3Manager = MP3DownloadManager(context)
+                val firebaseRef = mp3Manager.getFirebaseReference(displayName) ?: return@withContext false
+                val localFilePath = mp3Manager.getLocalFilePath(displayName)
+                val localFile = File(localFilePath)
+                suspendCoroutine<Boolean> { cont ->
+                    firebaseRef.getFile(localFile)
+                        .addOnSuccessListener { cont.resume(true) }
+                        .addOnFailureListener { cont.resume(false) }
+                }
+            } catch (e: Exception) {
+                false
             }
         }
     }

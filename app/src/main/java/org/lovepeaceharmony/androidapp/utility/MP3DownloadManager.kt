@@ -22,7 +22,7 @@ class MP3DownloadManager(private val context: Context) {
     private val localMp3Dir: File = File(context.filesDir, LOCAL_MP3_DIR)
 
     // Updated mapping to match actual file names
-    private val displayToFileNameMap: Map<String, String> = mapOf(
+    val displayToFileNameMap: Map<String, String> = mapOf(
         "Mandarin Soul Language and English" to "01_Mandarin_Soul_Language_English.mp3",
         "Instrumental" to "02_Instrumental.mp3",
         "Hindi Soul Language English" to "04_Hindi_Soul_Language_English.mp3",

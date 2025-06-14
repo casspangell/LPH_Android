@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.ui.activity.LocalVideoPlayerActivity
@@ -41,6 +42,7 @@ class TheSongFragment : Fragment(R.layout.fragment_the_song) {
     private fun setupVideoCover(view: View) {
         val coverImageView = view.findViewById<ImageView>(R.id.videoCoverImageView)
         val playButton = view.findViewById<Button>(R.id.playButton)
+        val downloadProgress = view.findViewById<ProgressBar>(R.id.downloadProgress)
 
         try {
             val assetManager = requireContext().assets
