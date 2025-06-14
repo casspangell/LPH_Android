@@ -38,6 +38,7 @@ class MP3DownloadManager(private val context: Context) {
     init {
         initializeLocalDirectory()
         copyDefaultSongFromAssets()
+        ensureAllSongsInDb()
     }
 
     /**
@@ -72,6 +73,27 @@ class MP3DownloadManager(private val context: Context) {
             }
         } catch (e: IOException) {
             Log.e(TAG, "Error copying default song from assets", e)
+        }
+    }
+
+    /**
+     * Ensure all songs from the map are present in the SongsModel database
+     */
+    private fun ensureAllSongsInDb() {
+        val allDisplayNames = getAllSongDisplayNames()
+        val existingSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(context)?.map { it.songTitle } ?: emptyList()
+        allDisplayNames.forEachIndexed { i, displayName ->
+            val fileName = getFileName(displayName)
+            if (fileName != null && !existingSongs.contains(fileName)) {
+                val song = org.lovepeaceharmony.androidapp.model.SongsModel().apply {
+                    id = i
+                    songTitle = fileName
+                    songPath = "songs/$fileName"
+                    isChecked = (fileName == "01_Mandarin_Soul_Language_English.mp3")
+                    isToolTip = false
+                }
+                org.lovepeaceharmony.androidapp.model.SongsModel.insertSong(context, song)
+            }
         }
     }
 

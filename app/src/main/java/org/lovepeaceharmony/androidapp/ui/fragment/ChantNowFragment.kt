@@ -899,16 +899,23 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
     override fun onLoadFinished(loader: Loader<Cursor>, cursor: Cursor?) {
         if (loader.id == Constants.URL_SONG_LOADER) {
-            if (cursor != null) {
-                val songsList = ArrayList<SongsModel>()
-                if (cursor.moveToFirst()) {
-                    do {
-                        val song = SongsModel.getValueFromCursor(cursor)
-                        songsList.add(song)
-                    } while (cursor.moveToNext())
+            val mp3Manager = org.lovepeaceharmony.androidapp.utility.MP3DownloadManager(requireContext())
+            val displayNames = mp3Manager.getAllSongDisplayNames()
+            val dbSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(requireContext()) ?: emptyList()
+
+            val songRows = displayNames.map { displayName ->
+                val fileName = mp3Manager.getFileName(displayName)
+                val dbSong = dbSongs.find { it.songTitle == fileName }
+                val isChecked = dbSong?.isChecked ?: false
+                val isToolTip = dbSong?.isToolTip ?: false
+                org.lovepeaceharmony.androidapp.model.SongsModel().apply {
+                    songTitle = fileName ?: ""
+                    songPath = "songs/$fileName"
+                    this.isChecked = isChecked
+                    this.isToolTip = isToolTip
                 }
-                songsAdapter?.updateData(songsList)
             }
+            songsAdapter?.updateData(songRows)
         }
     }
 
