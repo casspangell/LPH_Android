@@ -20,10 +20,12 @@
     <string name="logout">Abmelden</string>
 
     <!--User Controller-->
+    <string name="logout_confirmation">Sind Sie sicher, dass Sie sich abmelden möchten?</string>
     <string name="delete_account">Konto löschen</string>
     <string name="are_you_sure_warning">Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.</string>
     <string name="success">Erfolg.</string>
     <string name="yes">Ja</string>
+    <string name="no">Nein</string>
     <string name="failed_to_delete_user_data">Benutzerdaten konnten nicht gelöscht werden: </string>
     <string name="failed_to_delete_account">Konto konnte nicht gelöscht werden: </string>
 
@@ -213,9 +215,27 @@ the world.</string>
     <string name="repeat_not_possible">Repeat is not possible. Please enable your song &amp; play.</string>
     <string name="shuffle_not_possible">Shuffle is not possible. Please enable your song &amp; play.</string>
     <string name="get_news_updates_tool_tip">Get news updates, manage your profile and more here.</string>
+    <string name="try_again">Erneut versuchen</string>
     <string name="permission_granted">permission granted</string>
     <string name="reminder_deleted_successfully">Reminder deleted successfully!</string>
     <string name="please_select_time">Please select the Alarm time.</string>
     <string name="once">Once</string>
+    <string name="permission_required">Berechtigung erforderlich</string>
+    <string name="storage_permission_explanation">Speicherberechtigung ist erforderlich, um Audiodateien abzuspielen</string>
+    <string name="storage_permission_settings_explanation">Bitte aktivieren Sie die Speicherberechtigung in den Einstellungen</string>
+    <string name="grant_permission">Berechtigung erteilen</string>
+    <string name="open_settings">Einstellungen öffnen</string>
+    <string name="error_email_required">E-Mail ist erforderlich</string>
+    <string name="error_password_required">Passwort ist erforderlich</string>
+    <string name="error_confirm_password_required">Bitte bestätigen Sie Ihr Passwort</string>
+    <string name="error_passwords_dont_match">Passwörter stimmen nicht überein</string>
+    <string name="error_email_already_in_use">Diese E-Mail ist bereits registriert</string>
+    <string name="error_invalid_email">Bitte geben Sie eine gültige E-Mail-Adresse ein</string>
+    <string name="error_invalid_password">Passwort muss mindestens 6 Zeichen enthalten</string>
+    <string name="error_registration_failed">Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut</string>
+    <string name="password_reset_email_sent">Eine E-Mail zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und befolgen Sie die Anweisungen zum Zurücksetzen Ihres Passworts.</string>
+    <string name="failed_to_send_reset_email">Fehler beim Senden der Reset-E-Mail. Bitte versuchen Sie es erneut.</string>
+    <string name="at_least_one_song_must_be_selected">Mindestens ein Lied muss ausgewählt werden</string>
+    <string name="default_song_enabled">Standardlied wurde aktiviert</string>
 
 </resources>

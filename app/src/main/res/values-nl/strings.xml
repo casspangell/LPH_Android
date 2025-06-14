@@ -20,10 +20,12 @@
     <string name="logout">Uitloggen</string>
 
     <!--User Controller-->
+    <string name="logout_confirmation">Weet je zeker dat je wilt uitloggen?</string>
     <string name="delete_account">Account verwijderen</string>
     <string name="are_you_sure_warning">Weet u zeker dat u uw account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.</string>
     <string name="success">Succes.</string>
     <string name="yes">Ja</string>
+    <string name="no">Nee</string>
     <string name="failed_to_delete_user_data">Kan gebruikersgegevens niet verwijderen: </string>
     <string name="failed_to_delete_account">Kan account niet verwijderen: </string>
 
@@ -212,9 +214,27 @@ the world.</string>
     <string name="repeat_not_possible">Repeat is not possible. Please enable your song &amp; play.</string>
     <string name="shuffle_not_possible">Shuffle is not possible. Please enable your song &amp; play.</string>
     <string name="get_news_updates_tool_tip">Get news updates, manage your profile and more here.</string>
+    <string name="try_again">Opnieuw proberen</string>
     <string name="permission_granted">permission granted</string>
     <string name="reminder_deleted_successfully">Reminder deleted successfully!</string>
     <string name="please_select_time">Please select the Alarm time.</string>
     <string name="once">Once</string>
+    <string name="permission_required">Toestemming vereist</string>
+    <string name="storage_permission_explanation">Opslagtoestemming is nodig om audiobestanden af te spelen</string>
+    <string name="storage_permission_settings_explanation">Schakel opslagtoestemming in bij Instellingen</string>
+    <string name="grant_permission">Toestemming geven</string>
+    <string name="open_settings">Instellingen openen</string>
+    <string name="error_email_required">E-mail is vereist</string>
+    <string name="error_password_required">Wachtwoord is vereist</string>
+    <string name="error_confirm_password_required">Bevestig je wachtwoord</string>
+    <string name="error_passwords_dont_match">Wachtwoorden komen niet overeen</string>
+    <string name="error_email_already_in_use">Dit e-mailadres is al geregistreerd</string>
+    <string name="error_invalid_email">Voer een geldig e-mailadres in</string>
+    <string name="error_invalid_password">Wachtwoord moet minstens 6 tekens bevatten</string>
+    <string name="error_registration_failed">Registratie mislukt. Probeer opnieuw</string>
+    <string name="password_reset_email_sent">Een wachtwoord reset e-mail is verzonden naar je e-mailadres. Controleer je inbox en volg de instructies om je wachtwoord te resetten.</string>
+    <string name="failed_to_send_reset_email">Verzenden reset e-mail mislukt. Probeer opnieuw.</string>
+    <string name="at_least_one_song_must_be_selected">Minstens één lied moet geselecteerd zijn</string>
+    <string name="default_song_enabled">Standaardlied is ingeschakeld</string>
 
 </resources>
