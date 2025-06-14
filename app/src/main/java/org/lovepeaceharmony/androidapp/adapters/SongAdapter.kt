@@ -105,7 +105,9 @@ class SongsAdapter(
             // Check if song is downloaded
             val displayName = songsModel.getDisplayName()
             val songFileName = MP3DownloadManager(context).getFileName(displayName)
-            val isDownloaded = if (songFileName != null) {
+            val isDownloaded = if (songFileName == "01_Mandarin_Soul_Language_English.mp3") {
+                true
+            } else if (songFileName != null) {
                 File(context.filesDir, "songs/$songFileName").exists()
             } else false
 

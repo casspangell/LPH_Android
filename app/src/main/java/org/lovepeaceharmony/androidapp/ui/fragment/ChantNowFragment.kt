@@ -255,9 +255,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             Log.d("ChantNowFragment", "Songs directory does not exist.")
         }
 
-        // Download video on app load
-        downloadVideoFromFirebase()
-
         // Update the UI to show all possible songs
         updateSongListUI()
     }
@@ -1137,26 +1134,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
     private fun updateSongListUI() {
         // Implementation of updateSongListUI method
-    }
-
-    private fun downloadVideoFromFirebase() {
-        val videoDir = File(requireContext().filesDir, "video")
-        if (!videoDir.exists()) videoDir.mkdirs()
-        val videoFile = File(videoDir, "how_to_change_the_world.mp4")
-        if (videoFile.exists()) {
-            Log.d("ChantNowFragment", "Video already exists at: ${videoFile.absolutePath}")
-            return
-        }
-        val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
-        val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Video/how_to_change_the_world.mp4")
-        Log.d("ChantNowFragment", "Starting video download...")
-        storageRef.getFile(videoFile)
-            .addOnSuccessListener {
-                Log.d("ChantNowFragment", "Video download complete: ${videoFile.absolutePath}")
-            }
-            .addOnFailureListener { e ->
-                Log.e("ChantNowFragment", "Video download failed: ${e.message}")
-            }
     }
 
 }
