@@ -40,6 +40,7 @@ class SongsAdapter(
     }
 
     private var items: List<ListItem> = emptyList()
+    private val downloadingSet: MutableSet<String> = mutableSetOf() // Track downloading songs
 
     sealed class ListItem {
         data class Header(val title: String, val backgroundColor: Int) : ListItem()
@@ -70,7 +71,12 @@ class SongsAdapter(
             }
             TYPE_SONG -> {
                 val binding = SongsRowBinding.inflate(LayoutInflater.from(context), parent, false)
-                SongViewHolder(binding, activity, onSongRefresh, context)
+                SongViewHolder(binding, activity, onSongRefresh, context, downloadingSet) { fileName ->
+                    val index = items.indexOfFirst {
+                        it is ListItem.Song && MP3DownloadManager(context).getFileName((it as ListItem.Song).songModel.getDisplayName()) == fileName
+                    }
+                    if (index != -1) notifyItemChanged(index)
+                }
             }
             else -> throw IllegalArgumentException("Invalid view type: $viewType")
         }
@@ -96,7 +102,9 @@ class SongsAdapter(
         private val binding: SongsRowBinding,
         private val activity: FragmentActivity,
         private val onSongRefresh: OnSongRefresh,
-        private val context: Context
+        private val context: Context,
+        private val downloadingSet: MutableSet<String>,
+        private val notifyRowChanged: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(songsModel: SongsModel, position: Int) = with(binding) {
             tvTitle.text = songsModel.getDisplayName()
@@ -111,8 +119,15 @@ class SongsAdapter(
                 File(context.filesDir, "songs/$songFileName").exists()
             } else false
 
+            // Show/hide download progress indicator
+            if (songFileName != null && downloadingSet.contains(songFileName)) {
+                downloadProgress.visibility = View.VISIBLE
+            } else {
+                downloadProgress.visibility = View.GONE
+            }
+
             // Set colors based on download status
-            if (isDownloaded) {
+            if (songFileName == "01_Mandarin_Soul_Language_English.mp3" || isDownloaded) {
                 binding.root.setBackgroundColor(ContextCompat.getColor(context, android.R.color.white))
                 tvTitle.setTextColor(ContextCompat.getColor(context, android.R.color.black))
             } else {
@@ -122,9 +137,8 @@ class SongsAdapter(
             
             with(toggleEnabled) {
                 setOnCheckedChangeListener(null)
-                // Only allow toggle if song is downloaded
-                isEnabled = isDownloaded
-                isChecked = isDownloaded && songsModel.isChecked
+                isEnabled = true // Always enabled, regardless of download state
+                isChecked = songsModel.isChecked
                 
                 val sharedPrefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 val hasSeenIntro = sharedPrefs.getBoolean("has_seen_intro", false)
@@ -143,30 +157,47 @@ class SongsAdapter(
                     }
                 }
                 setOnCheckedChangeListener { _, isChecked ->
-                    if (!isEnabled) return@setOnCheckedChangeListener
-                    
-                    LPHLog.d("onCheckedChanged : $isChecked")
                     val currentSongModel = binding.root.tag as SongsModel
-                    val updateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
-                    if (updateSuccessful) {
-                        currentSongModel.isChecked = isChecked
-                        onSongRefresh.onRefresh()
-                        onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
-                    } else {
-                        setOnCheckedChangeListener(null)
-                        toggleEnabled.isChecked = true
-                        setOnCheckedChangeListener { _, newIsChecked ->
-                            val newUpdateSuccessful = SongsModel.updateIsEnabled(context, currentSongModel.songTitle, newIsChecked)
-                            if (newUpdateSuccessful) {
-                                currentSongModel.isChecked = newIsChecked
-                                onSongRefresh.onRefresh()
-                                onSongRefresh.onDisableSong(currentSongModel.songTitle, newIsChecked, currentSongModel)
-                            } else {
-                                setOnCheckedChangeListener(null)
-                                toggleEnabled.isChecked = true
-                                setOnCheckedChangeListener { _, _ -> }
-                            }
+                    val displayName = currentSongModel.getDisplayName()
+                    val songFileName = MP3DownloadManager(context).getFileName(displayName)
+                    val isDownloaded = songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
+                        (songFileName != null && File(context.filesDir, "songs/$songFileName").exists())
+
+                    if (isChecked && !isDownloaded) {
+                        // Not downloaded, revert toggle
+                        toggleEnabled.isChecked = false
+                        // Start download and show indicator
+                        if (songFileName != null) {
+                            downloadingSet.add(songFileName)
+                            notifyRowChanged(songFileName)
+                            val localFile = File(context.filesDir, "songs/$songFileName")
+                            val storage = FirebaseStorage.getInstance()
+                            val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
+                            storageRef.getFile(localFile)
+                                .addOnSuccessListener {
+                                    downloadingSet.remove(songFileName)
+                                    notifyRowChanged(songFileName)
+                                    // Optionally, auto-enable after download
+                                    toggleEnabled.isChecked = true
+                                }
+                                .addOnFailureListener { _ ->
+                                    downloadingSet.remove(songFileName)
+                                    notifyRowChanged(songFileName)
+                                }
                         }
+                        return@setOnCheckedChangeListener
+                    }
+
+                    org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, currentSongModel.songTitle, isChecked)
+                    currentSongModel.isChecked = isChecked
+                    onSongRefresh.onRefresh()
+                    onSongRefresh.onDisableSong(currentSongModel.songTitle, isChecked, currentSongModel)
+                    // After disabling, if no songs are enabled, re-enable 01 automatically
+                    val updatedSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(context) ?: emptyList()
+                    val anyEnabled = updatedSongs.any { it.isChecked }
+                    if (!anyEnabled) {
+                        org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, "01_Mandarin_Soul_Language_English.mp3", true)
+                        onSongRefresh.onRefresh()
                     }
                 }
             }

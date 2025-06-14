@@ -39,6 +39,7 @@ class MP3DownloadManager(private val context: Context) {
         initializeLocalDirectory()
         copyDefaultSongFromAssets()
         ensureAllSongsInDb()
+        ensureAtLeastOneSongEnabled()
     }
 
     /**
@@ -98,6 +99,17 @@ class MP3DownloadManager(private val context: Context) {
     }
 
     /**
+     * Ensure at least one song is enabled (01 as fallback)
+     */
+    private fun ensureAtLeastOneSongEnabled() {
+        val dbSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(context) ?: emptyList()
+        val anyEnabled = dbSongs.any { it.isChecked }
+        if (!anyEnabled) {
+            org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, "01_Mandarin_Soul_Language_English.mp3", true)
+        }
+    }
+
+    /**
      * Check if a file exists locally
      * @param displayName The display name of the song
      * @return Boolean indicating if the file exists locally
@@ -134,7 +146,9 @@ class MP3DownloadManager(private val context: Context) {
      * @return String representing the file name, or null if not found
      */
     fun getFileName(displayName: String): String? {
-        return displayToFileNameMap[displayName]
+        val fileName = displayToFileNameMap[displayName]
+        Log.d(TAG, "getFileName: Looking up displayName='$displayName', result='$fileName'")
+        return fileName
     }
 
     /**
