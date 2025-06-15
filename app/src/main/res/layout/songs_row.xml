@@ -27,14 +27,6 @@
         android:textOn=""
         android:background="@drawable/toggle_selector" />
 
-    <ProgressBar
-        android:id="@+id/downloadProgress"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_toStartOf="@id/toggle_enabled"
-        android:layout_centerVertical="true"
-        android:visibility="gone" />
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

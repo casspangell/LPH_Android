@@ -26,6 +26,12 @@ import java.io.File
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.graphics.Color
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 
 /**
  * SongsAdapter
@@ -89,6 +95,13 @@ class SongsAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        if (holder is SongViewHolder) {
+            holder.onViewRecycled()
+        }
+    }
+
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleTextView: TextView = itemView.findViewById(R.id.headerTitle)
         private val headerContainer: LinearLayout = itemView.findViewById(R.id.headerContainer)
@@ -108,9 +121,54 @@ class SongsAdapter(
         private val adapter: SongsAdapter,
         private val mp3Manager: MP3DownloadManager  // Pass the cached manager
     ) : RecyclerView.ViewHolder(binding.root) {
+        
+        private var pulseAnimation: ValueAnimator? = null
+        private var currentDisplayName: String? = null
+        private val lightGreyColor = ContextCompat.getColor(context, R.color.light_grey)
+        private val whiteColor = ContextCompat.getColor(context, R.color.white)
+        private val goldenColor = ContextCompat.getColor(context, R.color.top_bar_orange)
+        private val goldenColorWithOpacity = Color.argb((0.15 * 255).toInt(), goldenColor.red, goldenColor.green, goldenColor.blue)
+        private val blackColor = ContextCompat.getColor(context, android.R.color.black)
+
+        init {
+            // Initialize pulse animation for text color
+            pulseAnimation = ValueAnimator.ofArgb(blackColor, goldenColor, blackColor).apply {
+                duration = 1500
+                repeatCount = ValueAnimator.INFINITE
+                repeatMode = ValueAnimator.REVERSE
+                addUpdateListener { animator ->
+                    binding.tvTitle.setTextColor(animator.animatedValue as Int)
+                }
+            }
+        }
+
+        private fun startPulseAnimation() {
+            pulseAnimation?.let {
+                if (!it.isRunning) {
+                    it.start()
+                }
+            }
+        }
+
+        private fun stopPulseAnimation() {
+            pulseAnimation?.let {
+                if (it.isRunning) {
+                    it.cancel()
+                }
+                // Reset text color to black
+                binding.tvTitle.setTextColor(blackColor)
+            }
+        }
+
         fun bind(songsModel: SongsModel, position: Int) {
+            // Clean up previous animation if display name changed
+            if (currentDisplayName != null && currentDisplayName != songsModel.songTitle) {
+                stopPulseAnimation()
+            }
+
             // Map file name back to display name for correct title
             val displayName = mp3Manager.displayToFileNameMap.entries.find { it.value == songsModel.songTitle }?.key ?: songsModel.getDisplayName()
+            currentDisplayName = displayName
             binding.tvTitle.text = displayName
             binding.root.tag = songsModel
             val songFileName = mp3Manager.getFileName(displayName)
@@ -119,16 +177,15 @@ class SongsAdapter(
                 File(context.filesDir, "songs/$songFileName").exists()
             )
 
-            // Set background color based on download status
+            // Set initial background color based on download status
             binding.root.setBackgroundColor(
-                ContextCompat.getColor(
-                    context,
-                    if (isDownloaded) R.color.white else R.color.light_grey
-                )
+                if (isDownloaded) whiteColor else lightGreyColor
             )
 
+            // Set initial text color
+            binding.tvTitle.setTextColor(blackColor)
+
             // UI state
-            binding.downloadProgress.visibility = View.GONE
             binding.toggleEnabled.isEnabled = true
             binding.toggleEnabled.isChecked = songsModel.isChecked && isDownloaded
 
@@ -141,11 +198,38 @@ class SongsAdapter(
                         songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
                         File(context.filesDir, "songs/$songFileName").exists()
                     )
-                    Toast.makeText(
-                        context,
-                        if (isDownloaded) "$displayName is downloaded" else "$displayName is NOT downloaded",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    
+                    if (!isDownloaded) {
+                        // Start download and animation
+                        startPulseAnimation()
+                        
+                        // Download from Firebase Storage
+                        val storage = FirebaseStorage.getInstance()
+                        val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
+                        val localFile = File(context.filesDir, "songs/$songFileName")
+                        
+                        storageRef.getFile(localFile)
+                            .addOnSuccessListener {
+                                stopPulseAnimation()
+                                Toast.makeText(context, "Download complete", Toast.LENGTH_SHORT).show()
+                                // Update UI to reflect downloaded state
+                                binding.root.setBackgroundColor(whiteColor)
+                                adapter.updateItem(position)
+                            }
+                            .addOnFailureListener { e ->
+                                stopPulseAnimation()
+                                Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
+                                // Reset toggle state since download failed
+                                binding.toggleEnabled.isChecked = false
+                                onSongRefresh.onDisableSong(displayName, false, songsModel)
+                            }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "$displayName is downloaded",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 onSongRefresh.onDisableSong(displayName, isChecked, songsModel)
                 // Post the UI update to the next frame
@@ -175,8 +259,10 @@ class SongsAdapter(
             }
         }
 
-        // Commented out: downloadSong function
-        // private suspend fun downloadSong(displayName: String): Boolean = withContext(Dispatchers.IO) { ... }
+        fun onViewRecycled() {
+            stopPulseAnimation()
+            currentDisplayName = null
+        }
     }
 
     fun updateData(songs: List<SongsModel>) {
