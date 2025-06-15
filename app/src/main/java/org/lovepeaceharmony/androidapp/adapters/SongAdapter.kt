@@ -43,9 +43,9 @@ class SongsAdapter(
     }
 
     private var items: List<ListItem> = emptyList()
-
     private val downloadingSet = mutableSetOf<String>()
     private val adapterScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val mp3Manager = MP3DownloadManager(context)  // Cache the manager instance
 
     sealed class ListItem {
         data class Header(val title: String, val backgroundColor: Int) : ListItem()
@@ -76,7 +76,7 @@ class SongsAdapter(
             }
             TYPE_SONG -> {
                 val binding = SongsRowBinding.inflate(LayoutInflater.from(context), parent, false)
-                SongViewHolder(binding, activity, onSongRefresh, context, downloadingSet, adapterScope)
+                SongViewHolder(binding, activity, onSongRefresh, context, downloadingSet, adapterScope, this, mp3Manager)  // Pass cached manager
             }
             else -> throw IllegalArgumentException("Invalid view type: $viewType")
         }
@@ -104,63 +104,45 @@ class SongsAdapter(
         private val onSongRefresh: OnSongRefresh,
         private val context: Context,
         private val downloadingSet: MutableSet<String>,
-        private val adapterScope: CoroutineScope
+        private val adapterScope: CoroutineScope,
+        private val adapter: SongsAdapter,
+        private val mp3Manager: MP3DownloadManager  // Pass the cached manager
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(songsModel: SongsModel, position: Int) = with(binding) {
             // Map file name back to display name for correct title
-            val mp3Manager = MP3DownloadManager(context)
             val displayName = mp3Manager.displayToFileNameMap.entries.find { it.value == songsModel.songTitle }?.key ?: songsModel.getDisplayName()
             tvTitle.text = displayName
             binding.root.tag = songsModel
-            val songFileName = MP3DownloadManager(context).getFileName(displayName)
-            val isDownloaded = songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
-                (songFileName != null && File(context.filesDir, "songs/$songFileName").exists())
-            val isDownloading = downloadingSet.contains(displayName)
+            val songFileName = mp3Manager.getFileName(displayName)
+            val isDownloaded = songFileName != null && (
+                songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
+                File(context.filesDir, "songs/$songFileName").exists()
+            )
 
             // UI state
-            downloadProgress?.visibility = if (isDownloading) View.VISIBLE else View.GONE
-            toggleEnabled.isEnabled = !isDownloading
+            downloadProgress?.visibility = View.GONE
+            toggleEnabled.isEnabled = true
             toggleEnabled.isChecked = songsModel.isChecked && isDownloaded
 
+            // Detach listener before setting state
             toggleEnabled.setOnCheckedChangeListener(null)
             toggleEnabled.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    if (!isDownloaded && !isDownloading) {
-                        // Start download
-                        downloadingSet.add(displayName)
-                        downloadProgress?.visibility = View.VISIBLE
-                        toggleEnabled.isEnabled = false
-                        adapterScope.launch {
-                            val success = downloadSong(displayName)
-                            downloadingSet.remove(displayName)
-                            downloadProgress?.visibility = View.GONE
-                            toggleEnabled.isEnabled = true
-                            if (success) {
-                                toggleEnabled.isChecked = true
-                                org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", true)
-                                songsModel.isChecked = true
-                                onSongRefresh.onRefresh()
-                            } else {
-                                toggleEnabled.isChecked = false
-                                Toast.makeText(context, "Download failed", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    } else if (isDownloaded) {
-                        org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", true)
-                        songsModel.isChecked = true
-                        onSongRefresh.onRefresh()
-                    }
-                } else {
-                    org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, songFileName ?: "", false)
-                    songsModel.isChecked = false
-                    onSongRefresh.onRefresh()
-                    // Fallback logic for 01
-                    val updatedSongs = org.lovepeaceharmony.androidapp.model.SongsModel.getSongsModelList(context) ?: emptyList()
-                    val anyEnabled = updatedSongs.any { it.isChecked }
-                    if (!anyEnabled) {
-                        org.lovepeaceharmony.androidapp.model.SongsModel.updateIsEnabled(context, "01_Mandarin_Soul_Language_English.mp3", true)
-                        onSongRefresh.onRefresh()
-                    }
+                    // Only check download status when toggling ON
+                    val isDownloaded = songFileName != null && (
+                        songFileName == "01_Mandarin_Soul_Language_English.mp3" ||
+                        File(context.filesDir, "songs/$songFileName").exists()
+                    )
+                    Toast.makeText(
+                        context,
+                        if (isDownloaded) "$displayName is downloaded" else "$displayName is NOT downloaded",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                onSongRefresh.onDisableSong(displayName, isChecked, songsModel)
+                // Post the UI update to the next frame
+                binding.root.post {
+                    adapter.updateItem(position)
                 }
             }
             binding.root.setOnClickListener {
@@ -185,21 +167,8 @@ class SongsAdapter(
             }
         }
 
-        private suspend fun downloadSong(displayName: String): Boolean = withContext(Dispatchers.IO) {
-            try {
-                val mp3Manager = MP3DownloadManager(context)
-                val firebaseRef = mp3Manager.getFirebaseReference(displayName) ?: return@withContext false
-                val localFilePath = mp3Manager.getLocalFilePath(displayName)
-                val localFile = File(localFilePath)
-                suspendCoroutine<Boolean> { cont ->
-                    firebaseRef.getFile(localFile)
-                        .addOnSuccessListener { cont.resume(true) }
-                        .addOnFailureListener { cont.resume(false) }
-                }
-            } catch (e: Exception) {
-                false
-            }
-        }
+        // Commented out: downloadSong function
+        // private suspend fun downloadSong(displayName: String): Boolean = withContext(Dispatchers.IO) { ... }
     }
 
     fun updateData(songs: List<SongsModel>) {
@@ -228,5 +197,9 @@ class SongsAdapter(
             result.add(ListItem.Song(song, index + 7))
         }
         return result
+    }
+
+    fun updateItem(position: Int) {
+        notifyItemChanged(position)
     }
 }
