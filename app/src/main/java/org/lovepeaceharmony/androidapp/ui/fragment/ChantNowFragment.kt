@@ -52,6 +52,7 @@ import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import org.lovepeaceharmony.androidapp.utility.copyDefaultSongToInternalStorageIfNeeded
 
 /**
  * A simple [Fragment] subclass.
@@ -176,6 +177,16 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // First run logic: copy default song if needed
+        val prefs = requireContext().getSharedPreferences("lph_prefs", Context.MODE_PRIVATE)
+        val isFirstRun = prefs.getBoolean("is_first_run", true)
+        if (isFirstRun) {
+            Log.d("ChantNowFragment", "First run detected. Copying default song to internal storage.")
+            copyDefaultSongToInternalStorageIfNeeded(requireContext())
+            prefs.edit().putBoolean("is_first_run", false).apply()
+        } else {
+            Log.d("ChantNowFragment", "Not first run. Skipping default song copy.")
+        }
         mAudioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         enabledSongModelList = SongsModel.getEnabledSongsMadelList(requireContext())
 
@@ -660,7 +671,8 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
             isSongPlay = true
             mp!!.reset()
 
-            val songFileName = songPlayList[songIndex].songTitle
+            // Always use the full filename from songTitle (with number and .mp3 extension)
+            val songFileName = songPlayList[songIndex].songTitle // e.g., "01_Mandarin_Soul_Language_English.mp3"
             val localFile = File(requireContext().filesDir, "songs/$songFileName")
             val loadingSpinner = rootView!!.findViewById<ProgressBar>(R.id.loadingSpinner)
 
@@ -676,7 +688,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     timerStart()
 
                     val songName =
-                        resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
+                        resources.getString(R.string.now_playing) + " " + songFileName.removeSuffix(".mp3").replace("_", " ")
                     tvNowPlaying!!.text = songName
                     tvNowPlaying!!.visibility = View.VISIBLE
 
@@ -710,7 +722,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     minutes = 0f
                     updatingMinutes = 0f
                 }
-                // Use plain display name for getFileName
                 playSong(i)
                 break
             }

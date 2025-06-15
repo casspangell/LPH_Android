@@ -57,7 +57,7 @@ class SongsModel {
 
         private const val IS_TOOL_TIP = "Is_tool_tip"
 
-        private const val DEFAULT_FIRST_SONG = "mandarin_soul_language_and_english"
+        private const val DEFAULT_FIRST_SONG = "01_Mandarin_Soul_Language_English.mp3"
 
         fun createSongsModelTable(): String {
             LPHLog.d("CreateSongTable OnCreate")
@@ -113,6 +113,10 @@ class SongsModel {
             } finally {
                 cursor?.close()
             }
+            // Debug log
+            for (song in songsModelList) {
+                android.util.Log.d("SongsModel", "Loaded song: ${song.songTitle}, isChecked: ${song.isChecked}")
+            }
             return songsModelList
         }
 
@@ -135,26 +139,10 @@ class SongsModel {
             } finally {
                 cursor?.close()
             }
-
-            if (songsModelList.isNullOrEmpty()) {
-                // Check if the default song exists before trying to enable it
-                if (isFileExist(context, DEFAULT_FIRST_SONG)) {
-                    enableDefaultSong(context)
-                    return getEnabledSongsMadelList(context)
-                } else {
-                    // Insert the default song, enable it, and return the enabled list
-                    val defaultSong = SongsModel().apply {
-                        songTitle = DEFAULT_FIRST_SONG
-                        songPath = "songs/01_mandarin_soul_language_english.mp3" // Set to new filename
-                        isChecked = true
-                        isToolTip = false
-                    }
-                    insertSong(context, defaultSong)
-                    enableDefaultSong(context)
-                    return getEnabledSongsMadelList(context)
-                }
+            // Debug log
+            for (song in songsModelList ?: emptyList<SongsModel>()) {
+                android.util.Log.d("SongsModel", "Loaded enabled song: ${song.songTitle}, isChecked: ${song.isChecked}")
             }
-
             return songsModelList
         }
 

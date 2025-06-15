@@ -32,6 +32,7 @@ import android.graphics.Color
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import android.util.Log
 
 /**
  * SongsAdapter
@@ -192,6 +193,11 @@ class SongsAdapter(
             // Detach listener before setting state
             binding.toggleEnabled.setOnCheckedChangeListener(null)
             binding.toggleEnabled.setOnCheckedChangeListener { _, isChecked ->
+                Log.d("SongAdapter", "Toggling song: ${songsModel.songTitle}, isChecked: $isChecked")
+                // Always update the enabled state in the database/model
+                SongsModel.updateIsEnabled(context, songsModel.songTitle, isChecked)
+                // Update the model immediately so the adapter's data stays in sync
+                songsModel.isChecked = isChecked
                 if (isChecked) {
                     // Only check download status when toggling ON
                     val isDownloaded = songFileName != null && (

@@ -117,7 +117,9 @@ class MP3DownloadManager(private val context: Context) {
     fun isFileDownloaded(displayName: String): Boolean {
         val fileName = getFileName(displayName) ?: return false
         val localFile = File(localMp3Dir, fileName)
-        return localFile.exists()
+        val exists = localFile.exists()
+        Log.d(TAG, "isFileDownloaded: displayName='$displayName', fileName='$fileName', path='${localFile.absolutePath}', exists=$exists")
+        return exists
     }
 
     /**
@@ -160,7 +162,7 @@ class MP3DownloadManager(private val context: Context) {
         val fileName = getFileName(displayName) ?: return false
         val file = File(localMp3Dir, fileName)
         val exists = file.exists()
-        Log.d(TAG, "Checking song: $displayName (${file.absolutePath}) - Exists: $exists")
+        Log.d(TAG, "checkSongDownloaded: displayName='$displayName', fileName='$fileName', path='${file.absolutePath}', exists=$exists")
         return exists
     }
 
@@ -186,13 +188,14 @@ class MP3DownloadManager(private val context: Context) {
      */
     fun getDownloadedSongs(): List<String> {
         val downloadedSongs = displayToFileNameMap.entries
-            .filter { (_, fileName) -> 
-                File(localMp3Dir, fileName).exists() 
+            .filter { (_, fileName) ->
+                val file = File(localMp3Dir, fileName)
+                val exists = file.exists()
+                Log.d(TAG, "getDownloadedSongs: fileName='$fileName', path='${file.absolutePath}', exists=$exists")
+                exists
             }
             .map { it.key }
-        Log.d(TAG, "Checking directory: ${localMp3Dir.absolutePath}")
-        Log.d(TAG, "Directory exists: ${localMp3Dir.exists()}")
-        Log.d(TAG, "Directory contents: ${localMp3Dir.listFiles()?.map { it.name }?.joinToString()}")
+        Log.d(TAG, "getDownloadedSongs: Found ${downloadedSongs.size} downloaded songs: ${downloadedSongs.joinToString()}")
         return downloadedSongs
     }
 
@@ -202,5 +205,31 @@ class MP3DownloadManager(private val context: Context) {
     private fun checkDownloadedSongs() {
         val downloadedSongs = getDownloadedSongs()
         Log.d(TAG, "Found ${downloadedSongs.size} downloaded songs: ${downloadedSongs.joinToString()}")
+    }
+}
+
+// Top-level function for copying the default song from assets to internal storage
+fun copyDefaultSongToInternalStorageIfNeeded(context: Context) {
+    val fileName = "01_Mandarin_Soul_Language_English.mp3"
+    val internalDir = File(context.filesDir, "songs")
+    if (!internalDir.exists()) {
+        val created = internalDir.mkdirs()
+        Log.d("MP3DownloadManager", "Created internal songs directory: $created at ${internalDir.absolutePath}")
+    }
+    val internalFile = File(internalDir, fileName)
+    if (internalFile.exists()) {
+        Log.d("MP3DownloadManager", "Default song already exists in internal storage: ${internalFile.absolutePath}")
+        return // Already copied
+    }
+    try {
+        Log.d("MP3DownloadManager", "Copying default song from assets/songs/$fileName to internal storage...")
+        context.assets.open("songs/$fileName").use { input ->
+            FileOutputStream(internalFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+        Log.d("MP3DownloadManager", "Successfully copied default song to: ${internalFile.absolutePath}")
+    } catch (e: Exception) {
+        Log.e("MP3DownloadManager", "Failed to copy default song: ${e.message}", e)
     }
 } 
