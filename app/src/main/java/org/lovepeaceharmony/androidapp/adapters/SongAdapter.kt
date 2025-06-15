@@ -108,10 +108,10 @@ class SongsAdapter(
         private val adapter: SongsAdapter,
         private val mp3Manager: MP3DownloadManager  // Pass the cached manager
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(songsModel: SongsModel, position: Int) = with(binding) {
+        fun bind(songsModel: SongsModel, position: Int) {
             // Map file name back to display name for correct title
             val displayName = mp3Manager.displayToFileNameMap.entries.find { it.value == songsModel.songTitle }?.key ?: songsModel.getDisplayName()
-            tvTitle.text = displayName
+            binding.tvTitle.text = displayName
             binding.root.tag = songsModel
             val songFileName = mp3Manager.getFileName(displayName)
             val isDownloaded = songFileName != null && (
@@ -119,14 +119,22 @@ class SongsAdapter(
                 File(context.filesDir, "songs/$songFileName").exists()
             )
 
+            // Set background color based on download status
+            binding.root.setBackgroundColor(
+                ContextCompat.getColor(
+                    context,
+                    if (isDownloaded) R.color.white else R.color.light_grey
+                )
+            )
+
             // UI state
-            downloadProgress?.visibility = View.GONE
-            toggleEnabled.isEnabled = true
-            toggleEnabled.isChecked = songsModel.isChecked && isDownloaded
+            binding.downloadProgress.visibility = View.GONE
+            binding.toggleEnabled.isEnabled = true
+            binding.toggleEnabled.isChecked = songsModel.isChecked && isDownloaded
 
             // Detach listener before setting state
-            toggleEnabled.setOnCheckedChangeListener(null)
-            toggleEnabled.setOnCheckedChangeListener { _, isChecked ->
+            binding.toggleEnabled.setOnCheckedChangeListener(null)
+            binding.toggleEnabled.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     // Only check download status when toggling ON
                     val isDownloaded = songFileName != null && (
