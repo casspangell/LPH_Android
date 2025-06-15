@@ -223,12 +223,6 @@ class SongsAdapter(
                                 binding.toggleEnabled.isChecked = false
                                 onSongRefresh.onDisableSong(displayName, false, songsModel)
                             }
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "$displayName is downloaded",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
                 onSongRefresh.onDisableSong(displayName, isChecked, songsModel)

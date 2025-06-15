@@ -651,36 +651,32 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     }
 
     private fun playSong(songIndex: Int) {
-        try {
-            var songPlayList = enabledSongModelList
-            if (isShuffle) {
-                songPlayList = shuffledSongModelList
-            }
-            if (songPlayList!!.size > 0) {
-                currentSongIndex = songIndex
-                isSongPlay = true
-                mp!!.reset()
+        var songPlayList = enabledSongModelList
+        if (isShuffle) {
+            songPlayList = shuffledSongModelList
+        }
+        if (songPlayList!!.size > 0) {
+            currentSongIndex = songIndex
+            isSongPlay = true
+            mp!!.reset()
 
-                val displayName = songPlayList[songIndex].getDisplayName()
-                val songFileName = org.lovepeaceharmony.androidapp.utility.MP3DownloadManager(requireContext()).getFileName(displayName)
-                if (songFileName == null) {
-                    Toast.makeText(requireContext(), "Filename mapping not found for $displayName", Toast.LENGTH_SHORT).show()
-                    return
-                }
-                val localFile = File(requireContext().filesDir, "songs/$songFileName")
-                val loadingSpinner = rootView!!.findViewById<ProgressBar>(R.id.loadingSpinner)
+            val songFileName = songPlayList[songIndex].songTitle
+            val localFile = File(requireContext().filesDir, "songs/$songFileName")
+            val loadingSpinner = rootView!!.findViewById<ProgressBar>(R.id.loadingSpinner)
 
-                // Log the filename being checked
-                Log.d("ChantNowFragment", "Checking for file: ${localFile.absolutePath}")
+            Log.d("ChantNowFragment", "Attempting playback for song index: $songIndex, file: $songFileName")
+            Log.d("ChantNowFragment", "Local file path: ${localFile.absolutePath}")
+            Log.d("ChantNowFragment", "File exists: ${localFile.exists()}")
 
-                if (localFile.exists()) {
+            if (localFile.exists()) {
+                try {
                     mp!!.setDataSource(localFile.absolutePath)
                     mp!!.prepare()
                     playPlayer()
                     timerStart()
 
                     val songName =
-                        resources.getString(R.string.now_playing) + " " + displayName
+                        resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
                     tvNowPlaying!!.text = songName
                     tvNowPlaying!!.visibility = View.VISIBLE
 
@@ -688,42 +684,15 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     songProgressBar!!.progress = 0
                     songProgressBar!!.max = 100
                     updateProgressBar()
-                } else {
-                    // Show spinner and toast
-                    loadingSpinner.visibility = View.VISIBLE
-                    val downloadingToast = Toast.makeText(
-                        requireContext(),
-                        "Downloading $displayName",
-                        Toast.LENGTH_SHORT
-                    )
-                    downloadingToast.show()
-
-                    // Download from Firebase Storage
-                    val storage = com.google.firebase.storage.FirebaseStorage.getInstance()
-                    val storageRef = storage.getReferenceFromUrl("gs://love-peace-harmony.appspot.com/Songs/$songFileName")
-                    storageRef.getFile(localFile)
-                        .addOnSuccessListener {
-                            loadingSpinner.visibility = View.GONE
-                            downloadingToast.cancel()
-                            Toast.makeText(requireContext(), "Download complete", Toast.LENGTH_SHORT).show()
-                            // Play the song after download
-                            playSong(songIndex)
-                        }
-                        .addOnFailureListener { e ->
-                            loadingSpinner.visibility = View.GONE
-                            downloadingToast.cancel()
-                            Toast.makeText(requireContext(), "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
-                        }
+                    Log.d("ChantNowFragment", "Playback started for: $songFileName")
+                } catch (e: Exception) {
+                    Log.e("ChantNowFragment", "Error during playback for $songFileName: ${e.message}", e)
+                    Toast.makeText(requireContext(), "Playback error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             } else {
-                Toast.makeText(
-                    context,
-                    resources.getString(R.string.please_enable_your_song_and_play),
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.e("ChantNowFragment", "File not found for playback: $songFileName")
+                Toast.makeText(requireContext(), "File not found: $songFileName", Toast.LENGTH_SHORT).show()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
@@ -741,6 +710,7 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                     minutes = 0f
                     updatingMinutes = 0f
                 }
+                // Use plain display name for getFileName
                 playSong(i)
                 break
             }
