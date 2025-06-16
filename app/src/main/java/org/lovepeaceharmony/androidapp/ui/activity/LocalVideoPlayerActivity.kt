@@ -7,6 +7,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -37,8 +39,18 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
     private var videoWidth = 0
     private var videoHeight = 0
     private lateinit var loadingSpinner: ProgressBar
-    private lateinit var volumeSeekBar: SeekBar
-    private lateinit var audioManager: AudioManager
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateSeekBarRunnable = object : Runnable {
+        override fun run() {
+            mediaPlayer?.let {
+                if (it.isPlaying) {
+                    seekBar.progress = it.currentPosition
+                    updateTimeText(it.currentPosition)
+                    handler.postDelayed(this, 500)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,17 +65,6 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         exitButton = findViewById(R.id.exitButton)
         seekBar = findViewById(R.id.seekBar)
         timeText = findViewById(R.id.timeText)
-        volumeSeekBar = findViewById(R.id.volumeSeekBar)
-        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        volumeSeekBar.max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        volumeSeekBar.progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-        volumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
         // Add a loading spinner overlay (add to layout if not present)
         loadingSpinner = ProgressBar(this)
         val params = FrameLayout.LayoutParams(
@@ -107,12 +108,14 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         mediaPlayer?.start()
         isPlaying = true
         playPauseButton.setImageResource(android.R.drawable.ic_media_pause)
+        handler.post(updateSeekBarRunnable)
     }
 
     private fun pauseVideo() {
         mediaPlayer?.pause()
         isPlaying = false
         playPauseButton.setImageResource(android.R.drawable.ic_media_play)
+        handler.removeCallbacks(updateSeekBarRunnable)
     }
 
     private fun updateTimeText(position: Int) {
@@ -171,6 +174,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         loadingSpinner.visibility = View.VISIBLE
         try {
             val newMediaPlayer = MediaPlayer()
+            newMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             newMediaPlayer.setDataSource(this, Uri.parse(videoUrl))
             newMediaPlayer.setDisplay(holder)
             newMediaPlayer.setOnPreparedListener {
@@ -178,7 +182,6 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 videoHeight = it.videoHeight
                 updateVideoSize()
                 seekBar.max = it.duration
-                it.setVolume(1.0f, 1.0f)
                 playVideo()
                 loadingSpinner.visibility = View.GONE
             }
@@ -231,6 +234,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 it.pause()
             }
         }
+        handler.removeCallbacks(updateSeekBarRunnable)
     }
 
     override fun onResume() {
@@ -239,6 +243,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
             it.seekTo(currentPosition)
             if (isPlaying) {
                 it.start()
+                handler.post(updateSeekBarRunnable)
             }
         }
     }
@@ -247,6 +252,7 @@ class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
         super.onDestroy()
         mediaPlayer?.release()
         mediaPlayer = null
+        handler.removeCallbacks(updateSeekBarRunnable)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 

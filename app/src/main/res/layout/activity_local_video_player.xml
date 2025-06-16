@@ -67,13 +67,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <SeekBar
-        android:id="@+id/volumeSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="16dp" />
-
     <ProgressBar
         android:id="@+id/loadingSpinner"
         android:layout_width="64dp"
