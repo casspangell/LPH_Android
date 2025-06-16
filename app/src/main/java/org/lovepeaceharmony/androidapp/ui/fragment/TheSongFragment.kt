@@ -1,37 +1,21 @@
 package org.lovepeaceharmony.androidapp.ui.fragment
 
-import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.MediaMetadataRetriever
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import org.lovepeaceharmony.androidapp.R
-import org.lovepeaceharmony.androidapp.ui.activity.LocalVideoPlayerActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URL
 
 /**
  * A simple [Fragment] subclass.
  * Use the [TheSongFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * create a new instance of this fragment.
  * Created by Naveen Kumar M on 07/12/17.
  */
 class TheSongFragment : Fragment(R.layout.fragment_the_song) {
-
-    private val firebaseVideoUrl = "https://firebasestorage.googleapis.com/v0/b/love-peace-harmony.appspot.com/o/Video%2Fhow_to_change_the_world.mp4?alt=media&token=c926436c-5344-4bc5-a657-065c41a55de0"
-    private val firebaseCoverImageUrl = "https://firebasestorage.googleapis.com/v0/b/love-peace-harmony.appspot.com/o/Video%2Fcover_image.png?alt=media&token=929ad2a6-59d7-43b7-a99d-1319084a13a0"
-
-    object ImageCache {
-        var coverBitmap: Bitmap? = null
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,48 +26,23 @@ class TheSongFragment : Fragment(R.layout.fragment_the_song) {
         val coverImageView = view.findViewById<ImageView>(R.id.videoCoverImageView)
         val playButton = view.findViewById<Button>(R.id.playButton)
 
-        if (ImageCache.coverBitmap != null) {
-            coverImageView.setImageBitmap(ImageCache.coverBitmap)
-        } else {
-            // Show placeholder while loading
+        // Load and set the cover image from assets
+        try {
+            val inputStream = requireContext().assets.open("video/cover_image_500.png")
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream.close()
+            coverImageView.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            // Fallback to placeholder if image loading fails
             coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-            Log.d("CoverImageDebug", "Attempting to load cover image from: $firebaseCoverImageUrl")
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val input = URL(firebaseCoverImageUrl).openStream()
-                    val bitmap = BitmapFactory.decodeStream(input)
-                    input.close()
-                    withContext(Dispatchers.Main) {
-                        if (bitmap != null) {
-                            Log.d("CoverImageDebug", "Successfully loaded cover image bitmap")
-                            coverImageView.setImageBitmap(bitmap)
-                            ImageCache.coverBitmap = bitmap
-                        } else {
-                            Log.e("CoverImageDebug", "BitmapFactory.decodeStream returned null")
-                            coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("CoverImageDebug", "Exception loading cover image: ${e.message}", e)
-                    withContext(Dispatchers.Main) {
-                        coverImageView.setImageResource(R.drawable.ic_video_placeholder)
-                    }
-                }
-            }
         }
 
         playButton.setOnClickListener {
-            playRemoteVideo()
-        }
-    }
-
-    private fun playRemoteVideo() {
-        try {
-            val intent = Intent(requireContext(), LocalVideoPlayerActivity::class.java)
-            intent.putExtra("video_url", firebaseVideoUrl)
-            startActivity(intent)
-        } catch (e: Exception) {
-            Log.e("VideoPlayer", "Error launching video player: ${e.message}")
+            Toast.makeText(
+                requireContext(),
+                "Video is not available at this time",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -98,4 +57,4 @@ class TheSongFragment : Fragment(R.layout.fragment_the_song) {
             return TheSongFragment()
         }
     }
-}// Required empty public constructor
+}
