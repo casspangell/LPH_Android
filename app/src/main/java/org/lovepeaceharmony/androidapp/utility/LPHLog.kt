@@ -13,34 +13,34 @@ object LPHLog {
     private const val LOG_TAG = "LPH"
 
     fun e(message: String) {
-        // Logging disabled
+        Log.e(LOG_TAG, message)
     }
 
     fun e(tag: String, message: String) {
-        // Logging disabled
+        Log.e(tag, message)
     }
 
     fun d(message: String) {
-        // Logging disabled
+        Log.d(LOG_TAG, message)
     }
 
     fun d(`object`: Any, message: String) {
-        // Logging disabled
+        Log.d(LOG_TAG, message)
     }
 
     fun d(tag: String, message: String) {
-        // Logging disabled
+        Log.d(tag, message)
     }
 
     fun v(tag: String, message: String) {
-        // Logging disabled
+        Log.v(tag, message)
     }
 
     fun w(message: String) {
-        // Logging disabled
+        Log.w(LOG_TAG, message)
     }
 
     fun i(message: String) {
-        // Logging disabled
+        Log.i(LOG_TAG, message)
     }
 }

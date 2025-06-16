@@ -12,6 +12,7 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -46,6 +47,7 @@ import org.lovepeaceharmony.androidapp.utility.Helper
 import org.lovepeaceharmony.androidapp.utility.LPHLog
 import org.lovepeaceharmony.androidapp.utility.TimeTracker
 import org.lovepeaceharmony.androidapp.viewmodel.MainViewModel
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -111,13 +113,16 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
         }
     }
 
+    // Add this property at the class level
+    private var correctDuration: Long = 0L
+
     /**
      * Background Runnable thread
      */
     private val mUpdateTimeTask = object : Runnable {
         override fun run() {
             if (mp != null) {
-                val totalDuration = mp!!.duration.toLong()
+                val totalDuration = if (correctDuration > 0) correctDuration else mp!!.duration.toLong()
                 val currentDuration = mp!!.currentPosition.toLong()
 
                 val songDuration = "" + Helper.milliSecondsToTimer(totalDuration)
@@ -131,7 +136,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
                     // Updating progress bar
                     val progress = Helper.getProgressPercentage(currentDuration, totalDuration)
-                    //Log.d("Progress", ""+progress);
                     songProgressBar!!.progress = progress
                 }
 
@@ -634,7 +638,6 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
     private fun playSong(songIndex: Int) {
         // Play song
         try {
-
             var songPlayList = enabledSongModelList
             if (isShuffle) {
                 songPlayList = shuffledSongModelList
@@ -643,22 +646,30 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 currentSongIndex = songIndex
                 isSongPlay = true
                 mp!!.reset()
-                Log.d("SONG PATH : ", songPlayList[songIndex].songPath)
-                val descriptor = requireContext().assets.openFd(songPlayList[songIndex].songPath)
-                val start = descriptor.startOffset
-                val end = descriptor.length
-
-                mp!!.setDataSource(descriptor.fileDescriptor, start, end)
-                descriptor.close()
-                //			mp.setDataSource(songsList.get(songIndex).get("songPath"));
+                
+                // Create a temporary file to store the asset
+                val tempFile = File(requireContext().cacheDir, "temp_song.mp3")
+                requireContext().assets.open(songPlayList[songIndex].songPath).use { input ->
+                    tempFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                
+                // Use MediaMetadataRetriever to get the duration
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(tempFile.absolutePath)
+                val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                correctDuration = durationStr?.toLong() ?: 0L
+                retriever.release()
+                
+                // Set the data source from the temporary file
+                mp!!.setDataSource(tempFile.absolutePath)
                 mp!!.prepare()
+                
                 playPlayer()
-//                mp!!.start()
-
                 timerStart()
 
-                val songName =
-                    resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
+                val songName = resources.getString(R.string.now_playing) + " " + songPlayList[songIndex].getDisplayName()
                 tvNowPlaying!!.text = songName
                 tvNowPlaying!!.visibility = View.VISIBLE
 
@@ -671,6 +682,9 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
 
                 // Updating progress bar
                 updateProgressBar()
+                
+                // Clean up the temporary file
+                tempFile.delete()
             } else {
                 Toast.makeText(
                     context,
@@ -679,13 +693,15 @@ class ChantNowFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor>,
                 ).show()
             }
         } catch (e: IllegalArgumentException) {
+            LPHLog.e("IllegalArgumentException in playSong: ${e.message}")
             e.printStackTrace()
         } catch (e: IllegalStateException) {
+            LPHLog.e("IllegalStateException in playSong: ${e.message}")
             e.printStackTrace()
         } catch (e: IOException) {
+            LPHLog.e("IOException in playSong: ${e.message}")
             e.printStackTrace()
         }
-
     }
 
     private fun playSongByTitle(songTitle: String) {
