@@ -1,8 +1,7 @@
 package org.lovepeaceharmony.androidapp.utility
 
 /**
- * Confirmation Alert CallBack
- * Created by Naveen Kumar M on 06/12/2017.
+ * Created by Cass Pangell on 06/15/25.
  */
 interface ConfirmationAlertCallback {
 

@@ -10,8 +10,7 @@ import android.view.Window
 import org.lovepeaceharmony.androidapp.R
 
 /**
- * MessageBox
- * Created by Naveen Kumar M on 02/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 class MessageBox(private val context: Context, private val title: String, private val message: String) {
 

@@ -4,8 +4,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 
 /**
- *
- * Created by Naveen Kumar M on 13/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 object PermissionUtil {
 

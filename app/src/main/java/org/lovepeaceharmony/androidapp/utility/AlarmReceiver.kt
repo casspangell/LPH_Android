@@ -6,8 +6,7 @@ import android.content.Intent
 import org.lovepeaceharmony.androidapp.ui.activity.MainActivity
 
 /**
- * AlarmReceiver
- * Created by Naveen Kumar M on 01/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 
 class AlarmReceiver : BroadcastReceiver() {

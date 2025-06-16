@@ -5,8 +5,7 @@ import android.database.DataSetObserver
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- *
- * Created by Naveen Kumar on 01/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 abstract class CursorRecyclerViewAdapter<VH : RecyclerView.ViewHolder>(cursor: Cursor?) : RecyclerView.Adapter<VH>() {
 

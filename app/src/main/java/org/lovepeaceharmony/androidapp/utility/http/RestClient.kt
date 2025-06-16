@@ -13,8 +13,7 @@ import java.net.URLEncoder
 import javax.net.ssl.HttpsURLConnection
 
 /**
- * RestClient
- * Created by Naveen Kumar M on 02/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 class RestClient {
 

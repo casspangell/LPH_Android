@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit
  * to handle interaction events.
  * Use the [ChantNowFragment.newInstance] factory method to
  * create an instance of this fragment.
- * Created by Naveen Kumar M on 09/11/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 @AndroidEntryPoint
 @ExperimentalCoroutinesApi

@@ -6,8 +6,7 @@ import java.net.SocketException
 import java.net.UnknownHostException
 
 /**
- * Response
- * Created by Naveen Kumar M on 02/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 class Response<T:Any>: Serializable {
 

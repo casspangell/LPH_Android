@@ -9,8 +9,7 @@ import org.lovepeaceharmony.androidapp.utility.Helper
 import java.util.*
 
 /**
- * LPHServiceImpl
- * Created by Naveen Kumar M on 02/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 class LPHServiceImpl(private var _context: Context): LPHService {
 

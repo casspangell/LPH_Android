@@ -4,8 +4,7 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 /**
- * LPHApplication
- * Created by Naveen Kumar M on 13/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 
 @HiltAndroidApp

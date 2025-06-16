@@ -1,8 +1,7 @@
 package org.lovepeaceharmony.androidapp.utility.http
 
 /**
- * LPHUrl
- * Created by Naveen Kumar M on 02/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 object LPHUrl {
     const val BASE_URL = "https://lovepeaceharmony.org/app/api/"

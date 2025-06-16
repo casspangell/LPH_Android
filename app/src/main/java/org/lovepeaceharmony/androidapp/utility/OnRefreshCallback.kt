@@ -1,8 +1,7 @@
 package org.lovepeaceharmony.androidapp.utility
 
 /**
- * OnRefreshCallback
- * Created by Naveen Kumar M on 24/01/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 interface OnRefreshCallback {
     fun onRefresh()

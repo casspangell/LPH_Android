@@ -5,8 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 
 /**
- * ThreadClearService
- * Created by Naveen Kumar M on 01/02/18.
+ * Created by Cass Pangell on 06/15/25.
  */
 class ThreadClearService: Service() {
 

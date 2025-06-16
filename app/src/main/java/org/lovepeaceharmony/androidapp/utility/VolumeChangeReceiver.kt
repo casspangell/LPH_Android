@@ -5,8 +5,7 @@ import android.content.Context
 import android.content.Intent
 
 /**
- * VolumeChangeReceiver
- * Created by Naveen Kumar M on 14/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 
 class VolumeChangeReceiver : BroadcastReceiver() {

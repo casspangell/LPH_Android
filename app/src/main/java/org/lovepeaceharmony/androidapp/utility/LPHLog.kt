@@ -5,8 +5,7 @@ import android.util.Log
 import org.lovepeaceharmony.androidapp.BuildConfig
 
 /**
- * LPHLog
- * Created by Naveen Kumar M on 04/12/17.
+ * Created by Cass Pangell on 06/15/25.
  */
 
 object LPHLog {
