@@ -59,13 +59,12 @@ class ContentProviderDb : ContentProvider() {
         private val AUTHORITY = "org.lovepeaceharmony.android.app.db.contentProviderAuthorities"
         val CONTENT_URI = Uri.parse("content://" + AUTHORITY)!!
 
-        fun getPath(uri: Uri?): String? {
-            var value: String? = null
-            if (null != uri) {
-                value = uri.path
-                value = value!!.replace("/", "")
+        fun getPath(uri: Uri?): String {
+            return if (uri != null && uri.path != null) {
+                uri.path!!.replace("/", "")
+            } else {
+                throw IllegalArgumentException("Invalid URI: $uri")
             }
-            return value
         }
     }
 }

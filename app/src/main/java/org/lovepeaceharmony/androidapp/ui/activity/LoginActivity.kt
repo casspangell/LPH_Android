@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.appcompat.app.AppCompatActivity
 // import com.facebook.CallbackManager
 // import com.facebook.FacebookCallback
@@ -45,6 +48,10 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        
+        // Set up edge-to-edge display with custom inset handling
+        setupEdgeToEdge()
+        
         initView()
     }
 
@@ -269,4 +276,19 @@ class LoginActivity : BaseActivity() {
 //            }
 //            .show()
 //    }
+
+    private fun setupEdgeToEdge() {
+        // Handle window insets for the login layout using the latest APIs
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            // Apply top inset to the header to avoid status bar overlap
+            binding.header.root.updatePadding(top = insets.top)
+            
+            // Apply bottom inset to avoid navigation bar overlap
+            view.updatePadding(bottom = insets.bottom)
+            
+            WindowInsetsCompat.CONSUMED
+        }
+    }
 }

@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.databinding.ActivitySplashBinding
+import org.lovepeaceharmony.androidapp.ui.base.BaseActivity
 import org.lovepeaceharmony.androidapp.viewmodel.AuthState
 import org.lovepeaceharmony.androidapp.viewmodel.SplashViewModel
 
 @AndroidEntryPoint
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySplashBinding
     private val viewModel: SplashViewModel by viewModels()

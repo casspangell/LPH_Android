@@ -6,6 +6,9 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import org.lovepeaceharmony.androidapp.R
@@ -29,6 +32,10 @@ class RegisterActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        
+        // Set up edge-to-edge display with custom inset handling
+        setupEdgeToEdge()
+        
         initView()
     }
 
@@ -142,6 +149,21 @@ class RegisterActivity : BaseActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+    }
+
+    private fun setupEdgeToEdge() {
+        // Handle window insets for the register layout using the latest APIs
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            // Apply top inset to the header to avoid status bar overlap
+            binding.header.root.updatePadding(top = insets.top)
+            
+            // Apply bottom inset to avoid navigation bar overlap
+            view.updatePadding(bottom = insets.bottom)
+            
+            WindowInsetsCompat.CONSUMED
         }
     }
 }

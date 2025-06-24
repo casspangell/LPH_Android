@@ -1,6 +1,9 @@
 package org.lovepeaceharmony.androidapp.ui.activity
 
-import android.content.pm.ActivityInfo
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.PixelFormat
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.ConnectivityManager
@@ -22,11 +25,12 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
+import org.lovepeaceharmony.androidapp.ui.base.BaseActivity
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class LocalVideoPlayerActivity : AppCompatActivity(), SurfaceHolder.Callback {
+class LocalVideoPlayerActivity : BaseActivity(), SurfaceHolder.Callback {
     private lateinit var surfaceView: SurfaceView
     private lateinit var controlsLayout: LinearLayout
     private lateinit var playPauseButton: ImageButton

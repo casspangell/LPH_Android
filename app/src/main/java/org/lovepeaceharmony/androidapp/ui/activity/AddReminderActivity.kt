@@ -6,7 +6,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -16,6 +15,7 @@ import android.widget.Toast
 import org.lovepeaceharmony.androidapp.R
 import org.lovepeaceharmony.androidapp.model.AlarmModel
 import org.lovepeaceharmony.androidapp.model.Repeat
+import org.lovepeaceharmony.androidapp.ui.base.BaseActivity
 import org.lovepeaceharmony.androidapp.ui.fragment.RepeatDialog
 import org.lovepeaceharmony.androidapp.utility.*
 import java.text.SimpleDateFormat
@@ -26,7 +26,7 @@ import java.util.*
  * Created by Naveen Kumar M on 29/11/17.
  */
 
-class AddReminderActivity : AppCompatActivity() {
+class AddReminderActivity : BaseActivity() {
     private var context: Context? = null
     private var repeatList: List<Repeat>? = null
     private var currentToneUri: Uri? = null

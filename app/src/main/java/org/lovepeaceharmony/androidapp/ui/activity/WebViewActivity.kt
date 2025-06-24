@@ -7,10 +7,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageButton
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import org.lovepeaceharmony.androidapp.R
+import org.lovepeaceharmony.androidapp.ui.base.BaseActivity
 
-class WebViewActivity : AppCompatActivity() {
+class WebViewActivity : BaseActivity() {
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var exitButton: ImageButton

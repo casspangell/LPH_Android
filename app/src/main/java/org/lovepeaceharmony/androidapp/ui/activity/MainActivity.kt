@@ -17,6 +17,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.getkeepsafe.taptargetview.TapTarget
@@ -61,6 +64,10 @@ class MainActivity : AppCompatActivity() {
         if (intent.extras != null)
             isFromProfile = intent.getBooleanExtra(Constants.BUNDLE_IS_FROM_PROFILE, false)
         setContentView(binding.root)
+        
+        // Set up edge-to-edge display with custom inset handling
+        setupEdgeToEdge()
+        
         initView()
         if (savedInstanceState == null) setupBottomNavigationBar()
 
@@ -231,5 +238,20 @@ class MainActivity : AppCompatActivity() {
             containerId = R.id.nav_host_fragment,
             intent = intent
         )
+    }
+
+    private fun setupEdgeToEdge() {
+        // Handle window insets for the main layout using the latest APIs
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            
+            // Apply top inset to the header to avoid status bar overlap
+            binding.loginHeader.root.updatePadding(top = insets.top)
+            
+            // Apply bottom inset to the bottom navigation to avoid navigation bar overlap
+            binding.bottomNavigationMenu.updatePadding(bottom = insets.bottom)
+            
+            WindowInsetsCompat.CONSUMED
+        }
     }
 }
